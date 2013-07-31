@@ -13,14 +13,13 @@
 
 (function(J){
     var logger = J.logger, eC = encodeURIComponent;
-    if(logger.autoTrack){
+    if(logger.autoLogger){
         J.W.onerror = function(message, url, line){
             var errorInfo = '?tp=error&msg=' + eC(message)
                 + '&url=' + eC(url)
                 + '&line=' + line;
-            logger.loggerUrl && (new Image().src = logger.serverUrl + errorInfo);
+            new Image().src = logger.loggerUrl + errorInfo;
+            logger.onError && logger.onError(message, url, line);
         }
-
-        console.log(J.W)
     }
 })(J);
