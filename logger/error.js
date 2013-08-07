@@ -13,8 +13,8 @@
 
 (function(J){
     var logger = J.logger, eC = encodeURIComponent;
-    if(logger.autoLogger){
-        J.W.onerror = function(message, url, line){
+    J.W.onerror = function(message, url, line){
+        if(logger.autoLogger){
             var errorInfo = '?tp=error&msg=' + eC(message)
                 + '&url=' + eC(url)
                 + '&line=' + line;
