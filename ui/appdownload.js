@@ -100,7 +100,7 @@
 			}else{
 				J.create('span',{
 					'style':as
-				}).html('急速下载').on('click',function(){
+				}).html('极速下载').on('click',function(){
                 	T.trackEvent(opts.track_android);
                 	setTimeout(function(){location.href=opts.link_android}, 500);
 				}).appendTo(e);
