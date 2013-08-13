@@ -10,8 +10,10 @@
  */
 
 (function(J){
-    var a = '.anjuke.', c = 'dev.fang', u = 'http://' + ( /dev|test/.test(J.D.location.host) ? c + a + 'test' : 'm' + a + 'com' ) + '/ts.html';
+    var a = '.anjuke.', c = 'dev.fang', h = J.D.location.host, u = 'http://' + ( /dev|test/.test(h) ? c + a + 'test' : 'm' + a + 'com' ) + '/ts.html',
+        s = h.match(/^(\w)\.(\w+)\./);
     J.add('logger', {
+        site: s ? s[1] === 'm' ? 'm' : s[2] : 'unknow',
         loggerUrl:u,
         autoLogger:true,
         onError:null
