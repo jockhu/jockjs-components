@@ -83,7 +83,7 @@
 				'id':'app_download_'+options,
 				'class':'app_download',
 				'style':'height: 77px;background-color: #e5e6e7;background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fff), to(#e5e6e7));border-bottom: #d9d9d9 solid 1px;'
-			}).html(h);
+			}).html(h).hide();
 			if(opts.isIos){
 				J.create('a',{
 					'href':"javascript:void(0);",
