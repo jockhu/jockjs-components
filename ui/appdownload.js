@@ -112,7 +112,7 @@
 			element.s('.download_c').eq(0).on('click', function() {
 				var t = opts.isIos ? opts.track_ios_close : opts.track_android_close;
 				T.trackEvent(t);
-				localStorage['appclose'+options] = (new Date()).getTime();
+				try{localStorage['appclose'+options] = (new Date()).getTime();}catch(e){};
 				remove();
 			});
 		}
