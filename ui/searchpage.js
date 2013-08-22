@@ -165,7 +165,7 @@
 	        }
 	    }
 	    function hidePage(){
-
+	        baseDiv && baseDiv.hide();
 	    }
 	    //可调用的方法
 	    return {
