@@ -49,7 +49,7 @@
 	        }else if(oldHistory.length < opts.hisLength){
 	            localStorage.searchHis = oldHistory.content + v +',';
 	        }else{
-	            localStorage.searchHis = checkValue(oldHistory, v);
+	            localStorage.searchHis = checkValue(oldHistory.content, v);
 	        }
 	    }
 	    function checkValue(str, v){
@@ -69,7 +69,7 @@
 	            for(var i= 0;i<hisArray.length;i++){
 	                newArray.push(decodeURI(hisArray.array[i]));
 	            }
-	            return newArray;
+	            return newArray.reverse();
 	        }
 	    }
 	    function createTemplate(){
@@ -97,13 +97,14 @@
 	        for(var i=0;i<hisArr.length;i++){
 	            hisList = hisList + '<span style="display:block;font-size:14px;line-height:25px;color:#550c8c;padding:10px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border-bottom:1px solid #c9c9c9">' + hisArr[i] + '</span>';
 	        }
+	        hisList = '<div>' + hisList + '</div>';
 	        if(hList){
 	            hList.html('');
 	            hList.html(hisList);
 	        }else{
-	            (hList = J.create('div',{id:'hisSearchList'}).html(hisList)).appendTo(backDiv);
-	            sScroll = new iScroll('hisSearchList');
+	            (hList = J.create('div',{id:'hisSearchList',style:'position:absolute;width:100%;height:100%'}).html(hisList)).appendTo(backDiv);
 	        }
+	        sScroll = new iScroll('hisSearchList');
 	        (opts.onTapList && hList.s('span').eq(0)) && hList.s('span').each(function(i,v){
 	            v.on('click',function(){
 	                backDiv.hide();
@@ -117,7 +118,7 @@
 	                if(hList){
 	                    hList.html('');
 	                }else{
-	                    (hList = J.create('div',{id:'hisSearchList'})).appendTo(backDiv);
+	                    (hList = J.create('div',{}).html('<div id="hisSearchList"></div>')).appendTo(backDiv);
 	                    sScroll = new iScroll('hisSearchList');
 	                }
 	            }else{
@@ -162,10 +163,14 @@
 	            isFocus(baseDiv.s('input').eq(0));
 	        }
 	    }
+	    function hidePage(){
+	    	
+	    }
 	    //可调用的方法
 	    return {
 	        hisArray: historyArray,
-	        showPage:showPage
+	        showPage:showPage,
+	        hidePage:hidePage
 	    };
 	}
 	J.ui.searchpage = searchPage;
