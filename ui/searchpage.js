@@ -92,19 +92,19 @@
 	    function historyList(input, backDiv){
 	        if(input.val() != '') {
 	            autoComplete(backDiv, inputText);
+	            return;
 	        };
 	        var hisList = '', hisArr = historyArray();
 	        for(var i=0;i<hisArr.length;i++){
 	            hisList = hisList + '<span style="display:block;font-size:14px;line-height:25px;color:#550c8c;padding:10px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border-bottom:1px solid #c9c9c9">' + hisArr[i] + '</span>';
 	        }
-	        hisList = '<div>' + hisList + '</div>';
 	        if(hList){
-	            hList.html('');
-	            hList.html(hisList);
+	        	hList.html(hisList);
+	            hList.show();
 	        }else{
-	            (hList = J.create('div',{id:'hisSearchList',style:'position:absolute;width:100%;height:100%'}).html(hisList)).appendTo(backDiv);
+	            (hList = J.create('div',{id:'hisSearchList',style:'position:absolute;width:100%;height:100%'}).html('<div>' + hisList + '</div>')).appendTo(backDiv);
+	        	hList = hList.s('div').eq(0);
 	        }
-	        sScroll = new iScroll('hisSearchList');
 	        (opts.onTapList && hList.s('span').eq(0)) && hList.s('span').each(function(i,v){
 	            v.on('click',function(){
 	                backDiv.hide();
@@ -115,12 +115,7 @@
 	    function autoComplete(backDiv, input){
 	        input && input.on('input',function(){
 	            if(input.val() != ''){
-	                if(hList){
-	                    hList.html('');
-	                }else{
-	                    (hList = J.create('div',{}).html('<div id="hisSearchList"></div>')).appendTo(backDiv);
-	                    sScroll = new iScroll('hisSearchList');
-	                }
+	                if(hList) hList.hide();
 	            }else{
 	                historyList(input, backDiv);
 	            }
@@ -133,7 +128,7 @@
 	                return input.up();
 	            },
 	            boxTarget: function(){
-	                return hList;
+	                return hList.up();
 	            },
 	            url: opts.url,
 	            offset: {
@@ -160,11 +155,12 @@
 	    function showPage(){
 	        if(baseDiv){
 	            baseDiv && baseDiv.show();
+	            sScroll = new iScroll('hisSearchList');
 	            isFocus(baseDiv.s('input').eq(0));
 	        }
 	    }
 	    function hidePage(){
-	    	
+
 	    }
 	    //可调用的方法
 	    return {
