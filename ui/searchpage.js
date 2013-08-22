@@ -19,7 +19,7 @@
 	        onCancel: null,
 	        onSearch: null,
 	        onTapList: null
-	    }, opts, hList, baseDiv, firstLoad = true;
+	    }, opts, hList, baseDiv, firstLoad = true, sScroll;
 	    var searchHead = '<div style="position:relative;padding:8px 10px 8px 55px;background-image:-webkit-gradient(linear,0 0,0 100%,from(#fafafa),to(#e2e2e2));color:#111"><form style="display:block;margin:0;padding:0"><a style="position:absolute;text-decoration:none;height:40px;width:50px;text-align:center;font-size:16px;line-height:40px;left:5px">取消</a><input type="text" style="border-radius:3px;height:40px;border:1px solid #d9d9d9;font-size:14px;background-color:#fff;outline:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-appearance:none;margin:0;padding:0 35px 0 10px;width:100%;-webkit-box-sizing:border-box" /><i style="position:absolute;width:30px;height:32px;top:12px;right:16px;background:url(\'' + J.site.info.includePrefix + '/touch/img/search.png\') no-repeat;background-size:30px"></i></form></div>';
 	    (function(){
 	        opts = J.mix(defaultOptions, options || {}, true);
@@ -101,7 +101,8 @@
 	            hList.html('');
 	            hList.html(hisList);
 	        }else{
-	            (hList = J.create('div',{}).html(hisList)).appendTo(backDiv);
+	            (hList = J.create('div',{id:'hisSearchList'}).html(hisList)).appendTo(backDiv);
+	            sScroll = new iScroll('hisSearchList');
 	        }
 	        (opts.onTapList && hList.s('span').eq(0)) && hList.s('span').each(function(i,v){
 	            v.on('click',function(){
@@ -116,7 +117,8 @@
 	                if(hList){
 	                    hList.html('');
 	                }else{
-	                    (hList = J.create('div',{})).appendTo(backDiv);
+	                    (hList = J.create('div',{id:'hisSearchList'})).appendTo(backDiv);
+	                    sScroll = new iScroll('hisSearchList');
 	                }
 	            }else{
 	                historyList(input, backDiv);
