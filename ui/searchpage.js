@@ -47,15 +47,13 @@
 	        var oldHistory = getStorage();
 	        if(oldHistory.length == 0){
 	            localStorage.searchHis = ',' + v + ',';
-	        }else if(oldHistory.length < opts.hisLength){
-	            localStorage.searchHis = oldHistory.content + v +',';
 	        }else{
-	            localStorage.searchHis = checkValue(oldHistory.content, v);
+	            localStorage.searchHis = checkValue(oldHistory.content, v, oldHistory.length);
 	        }
 	    }
-	    function checkValue(str, v){
+	    function checkValue(str, v, l){
 	        var cStr,subStr = ',' + v + ',';
-	        if(str.indexOf(subStr) == -1){
+	        if(str.indexOf(subStr) == -1 && l >= opts.hisLength){
 	            cStr = str.replace(/^,.*?,/,',');
 	        }else{
 	            cStr = str.replace(',' + v, '');
@@ -73,26 +71,25 @@
 	            return newArray.reverse();
 	        }
 	    }
-	    function tapAction(backDiv){
-	    	backDiv.hide();
-	    	opts.onTapAction && opts.onTapAction();
-	    }
 	    function createTemplate(){
 	        var backDiv = J.create('div',{style:'display:none;position: fixed;width: 100%;height: 100%;background-color: #f4f4f4;top:0px;left:0px;z-index: 999;'}).html(searchHead);
 	        backDiv.appendTo('body');
-	        var cancelBtn = backDiv.s('a').eq(0), inputText = backDiv.s('input').eq(0), searchBtn = backDiv.s('i').eq(0);
 	        baseDiv = backDiv;
-	        (opts.onCancel && cancelBtn) && cancelBtn.on('click',function(){
-	            tapAction(backDiv);
+	        bindEvent(backDiv);
+	    }
+	    function bindEvent(backDiv){
+	    	var cancelBtn = backDiv.s('a').eq(0), inputText = backDiv.s('input').eq(0), searchBtn = backDiv.s('i').eq(0);
+	    	(opts.onCancel && cancelBtn) && cancelBtn.on('click',function(){
+	        	backDiv.hide();
 	            opts.onCancel();
 	        }, null, true, true);
 	        (opts.onSearch && searchBtn) && searchBtn.on('click',function(){
-	            tapAction(backDiv);
+	            tapAction(backDiv, inputText);
 	            setStorage(inputText.val());
 	            opts.onSearch();
 	        }, null, true, true);
 	        historyList(inputText, backDiv);
-	        autoComplete(backDiv, inputText);
+	        autoComplete(backDiv, inputText);	
 	    }
 	    function historyList(input, backDiv){
 	        if(input.val() != '') {
@@ -106,14 +103,16 @@
 	        if(hList){
 	        	hList.html(hisList);
 	            hList.show();
+	            sScroll.refresh();
 	        }else{
 	            (hList = J.create('div',{id:'hisSearchList',style:'position:absolute;width:100%;height:100%'}).html('<div><div>' + hisList + '</div></div>')).appendTo(backDiv);
 	        	hList = hList.down(1);
+	        	sScroll = new iScroll('hisSearchList');
 	        }
 	        if(hisArr != ''){
 		        (opts.onTapList && hList.s('span').eq(0)) && hList.s('span').each(function(i,v){
 		            v.on('click',function(){
-		                backDiv.hide();
+		                tapAction(backDiv, input);
 		                opts.onTapList();
 		            });
 		        });
@@ -147,10 +146,20 @@
 	                }
 	            },
 	            onSelect : function(data) {
-	                tapAction(backDiv);
+	                tapAction(backDiv, input);
 	                opts.onSearch();
 	            }
 	        });
+	    }
+	    function tapAction(backDiv, input){
+	    	backDiv.hide();
+	    	hList.show();
+	    	console.log('aa');
+	    	opts.onTapAction && opts.onTapAction();
+	    }
+	    function clearAutoComplete(){
+	    	var autoDiv = baseDiv.s('.autocomplete_m_def').eq(0);
+	    	autoDiv && autoDiv.html('');	
 	    }
 	    function isFocus(input){
 	        if(opts.isFocus){
@@ -159,9 +168,15 @@
 	    }
 	    function showPage(){
 	        if(baseDiv){
+	        	var input = baseDiv.s('input').eq(0).val('');
 	            baseDiv && baseDiv.show();
-	            sScroll = new iScroll('hisSearchList');
-	            isFocus(baseDiv.s('input').eq(0));
+	            sScroll.refresh();
+	            input.val('');
+	            clearAutoComplete();
+	            isFocus(input);
+	            if(!firstLoad){
+	            	historyList(input, baseDiv);	
+	            }
 	        }
 	    }
 	    function hidePage(){
