@@ -74,7 +74,7 @@
 	        }
 	    }
 	    function createTemplate(){
-	        (baseDiv = J.create('div',{style:'display:none;position: fixed;width: 100%;height: 100%;background-color: #f4f4f4;top:0px;left:0px;z-index: 999;'}).html(searchHead)).appendTo('body');
+	        (baseDiv = J.create('div',{style:'display:none;position: fixed;width: 100%;height: 100%;background-color: #f4f4f4;top:0px;left:0px;z-index: 999;background-image: url(\'' + J.site.info.includePrefix + '/touch/img/search_bg.png\');background-repeat: no-repeat;background-position: 50% 100px;background-size: 141px;'}).html(searchHead)).appendTo('body');
 	        input = baseDiv.s('input').eq(0);
 	        bindEvent();
 	    }
@@ -106,7 +106,7 @@
 	        };
 	        var hisList = '', hisArr = historyArray();
 	        for(var i=0;i<hisArr.length;i++){
-	            hisList = hisList + '<span style="display:block;font-size:14px;line-height:25px;color:#550c8c;padding:10px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border-bottom:1px solid #c9c9c9">' + hisArr[i] + '</span>';
+	            hisList = hisList + '<span style="display:block;font-size:14px;line-height:25px;color:#550c8c;padding:10px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border-bottom:1px solid #c9c9c9;background-color:#f4f4f4;">' + hisArr[i] + '</span>';
 	        }
 	        if(hList){
 	            hList.html(hisList);
