@@ -22,7 +22,7 @@
 	        onTapHisList: null,
 	        onTapAction: null
 	    }, opts, hList, baseDiv, firstLoad = true, sScroll;
-	    var searchHead = '<div style="position:relative;padding:8px 10px 8px 55px;background-image:-webkit-gradient(linear,0 0,0 100%,from(#fafafa),to(#e2e2e2));color:#111"><form style="display:block;margin:0;padding:0"><a style="position:absolute;text-decoration:none;height:40px;width:50px;text-align:center;font-size:16px;line-height:40px;left:5px">取消</a><input type="text" style="border-radius:3px;height:40px;border:1px solid #d9d9d9;font-size:14px;background-color:#fff;outline:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-appearance:none;margin:0;padding:0 35px 0 10px;width:100%;-webkit-box-sizing:border-box" /><i style="position:absolute;width:30px;height:32px;top:12px;right:16px;background:url(\'' + J.site.info.includePrefix + '/touch/img/search.png\') no-repeat;background-size:30px"></i></form></div>';
+	    var searchHead = '<div style="position:relative;padding:8px 10px 8px 55px;background-image:-webkit-gradient(linear,0 0,0 100%,from(#fafafa),to(#e2e2e2));color:#111"><form onsubmit="return false" style="display:block;margin:0;padding:0"><a style="position:absolute;text-decoration:none;height:40px;width:50px;text-align:center;font-size:16px;line-height:40px;left:5px">取消</a><input type="text" style="border-radius:3px;height:40px;border:1px solid #d9d9d9;font-size:14px;background-color:#fff;outline:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-appearance:none;margin:0;padding:0 35px 0 10px;width:100%;-webkit-box-sizing:border-box" /><i style="position:absolute;width:30px;height:32px;top:12px;right:16px;background:url(\'' + J.site.info.includePrefix + '/touch/img/search.png\') no-repeat;background-size:30px"></i></form></div>';
 	    (function(){
 	        opts = J.mix(defaultOptions, options || {}, true);
 	        if(firstLoad){
@@ -84,11 +84,17 @@
 	        	backDiv.hide();
 	            opts.onCancel();
 	        }, null, true, true);
-	        (opts.onSearch && searchBtn) && searchBtn.on('click',function(){
+	        searchBtn.on('click',function(){
 	            tapAction(backDiv, inputText, inputText.val());
 	            setStorage(inputText.val());
-	            opts.onSearch();
+	            opts.onSearch &&opts.onSearch();
 	        }, null, true, true);
+	        inputText.get().addEventListener('keydown',function(e){
+	        	if(e.keyCode==13){
+	            	tapAction(backDiv, inputText, inputText.val());
+	            	setStorage(inputText.val());
+	        	}
+	        });
 	        historyList(inputText, backDiv);
 	        autoComplete(backDiv, inputText);	
 	    }
