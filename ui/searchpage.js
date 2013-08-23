@@ -18,10 +18,11 @@
 	        isFocus: false,
 	        onCancel: null,
 	        onSearch: null,
+	        onTapEnter: null,
 	        onTapList: null,
 	        onTapHisList: null,
 	        onTapAction: null
-	    }, opts, hList, baseDiv, firstLoad = true, sScroll;
+	    }, opts, hList, baseDiv, input, firstLoad = true, sScroll;
 	    var searchHead = '<div style="position:relative;padding:8px 10px 8px 55px;background-image:-webkit-gradient(linear,0 0,0 100%,from(#fafafa),to(#e2e2e2));color:#111"><form onsubmit="return false" style="display:block;margin:0;padding:0"><a style="position:absolute;text-decoration:none;height:40px;width:50px;text-align:center;font-size:16px;line-height:40px;left:5px">取消</a><input type="text" style="border-radius:3px;height:40px;border:1px solid #d9d9d9;font-size:14px;background-color:#fff;outline:none;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-appearance:none;margin:0;padding:0 35px 0 10px;width:100%;-webkit-box-sizing:border-box" /><i style="position:absolute;width:30px;height:32px;top:12px;right:16px;background:url(\'' + J.site.info.includePrefix + '/touch/img/search.png\') no-repeat;background-size:30px"></i></form></div>';
 	    (function(){
 	        opts = J.mix(defaultOptions, options || {}, true);
@@ -73,34 +74,34 @@
 	        }
 	    }
 	    function createTemplate(){
-	        var backDiv = J.create('div',{style:'display:none;position: fixed;width: 100%;height: 100%;background-color: #f4f4f4;top:0px;left:0px;z-index: 999;'}).html(searchHead);
-	        backDiv.appendTo('body');
-	        baseDiv = backDiv;
-	        bindEvent(backDiv);
+	        (baseDiv = J.create('div',{style:'display:none;position: fixed;width: 100%;height: 100%;background-color: #f4f4f4;top:0px;left:0px;z-index: 999;'}).html(searchHead)).appendTo('body');
+	        input = baseDiv.s('input').eq(0);
+	        bindEvent();
 	    }
-	    function bindEvent(backDiv){
-	    	var cancelBtn = backDiv.s('a').eq(0), inputText = backDiv.s('input').eq(0), searchBtn = backDiv.s('i').eq(0);
-	    	(opts.onCancel && cancelBtn) && cancelBtn.on('click',function(){
-	        	backDiv.hide();
-	            opts.onCancel();
+	    function bindEvent(){
+	        var cancelBtn = baseDiv.s('a').eq(0), searchBtn = baseDiv.s('i').eq(0);
+	        cancelBtn.on('click',function(){
+	            hidePage();
+	            opts.onCancel && opts.onCancel();
 	        }, null, true, true);
 	        searchBtn.on('click',function(){
-	            tapAction(backDiv, inputText, inputText.val());
-	            setStorage(inputText.val());
-	            opts.onSearch &&opts.onSearch();
+	            tapAction(input.val());
+	            setStorage(input.val());
+	            opts.onSearch && opts.onSearch();
 	        }, null, true, true);
-	        inputText.get().addEventListener('keydown',function(e){
+	        input.get().addEventListener('keydown',function(e){
 	        	if(e.keyCode==13){
-	            	tapAction(backDiv, inputText, inputText.val());
-	            	setStorage(inputText.val());
+	            	tapAction(input.val());
+	            	setStorage(input.val());
+	            	opts.onTapEnter && opts.onTapEnter();
 	        	}
 	        });
-	        historyList(inputText, backDiv);
-	        autoComplete(backDiv, inputText);	
+	        historyList();
+	        autoComplete();
 	    }
-	    function historyList(input, backDiv){
+	    function historyList(){
 	        if(input.val() != '') {
-	            autoComplete(backDiv, inputText);
+	            autoComplete();
 	            return;
 	        };
 	        var hisList = '', hisArr = historyArray();
@@ -108,29 +109,29 @@
 	            hisList = hisList + '<span style="display:block;font-size:14px;line-height:25px;color:#550c8c;padding:10px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border-bottom:1px solid #c9c9c9">' + hisArr[i] + '</span>';
 	        }
 	        if(hList){
-	        	hList.html(hisList);
+	            hList.html(hisList);
 	            hList.show();
 	            sScroll.refresh();
 	        }else{
-	            (hList = J.create('div',{id:'hisSearchList',style:'position:absolute;width:100%;height:100%'}).html('<div><div>' + hisList + '</div></div>')).appendTo(backDiv);
-	        	hList = hList.down(1);
-	        	sScroll = new iScroll('hisSearchList');
+	            (hList = J.create('div',{id:'hisSearchList',style:'position:absolute;width:100%;height:100%'}).html('<div><div>' + hisList + '</div></div>')).appendTo(baseDiv);
+	            hList = hList.down(1);
+	            sScroll = new iScroll('hisSearchList');
 	        }
 	        if(hisArr != ''){
-		        (opts.onTapList && hList.s('span').eq(0)) && hList.s('span').each(function(i,v){
-		            v.on('click',function(){
-		                tapAction(backDiv, input, v.html());
-		                opts.onTapHisList();
-		            });
-		        });
-	    	}
+	            hList.s('span').eq(0) && hList.s('span').each(function(i,v){
+	                v.on('click',function(){
+	                    tapAction(v.html());
+	                    opts.onTapHisList && opts.onTapHisList();
+	                });
+	            });
+	        }
 	    }
-	    function autoComplete(backDiv, input){
+	    function autoComplete(){
 	        input && input.on('input',function(){
 	            if(input.val() != ''){
 	                if(hList) hList.hide();
 	            }else{
-	                historyList(input, backDiv);
+	                historyList();
 	            }
 	        });
 	        input.autocomplete({
@@ -153,36 +154,35 @@
 	                }
 	            },
 	            onSelect : function(data) {
-	                tapAction(backDiv, input, data.name);
+	                tapAction(data.name);
 	                setStorage(data.name);
-	                opts.onSearch();
+	                opts.onTapList && opts.onTapList();
 	            }
 	        });
 	    }
-	    function tapAction(backDiv, input, v){
-	    	backDiv.hide();
-	    	hList.show();
-	    	opts.onTapAction && opts.onTapAction(v);
+	    function tapAction(v){
+	        hidePage();
+	        hList.show();
+	        opts.onTapAction && opts.onTapAction(v);
 	    }
 	    function clearAutoComplete(){
-	    	var autoDiv = baseDiv.s('.autocomplete_m_def').eq(0);
-	    	autoDiv && autoDiv.html('');	
+	        var autoDiv = baseDiv.s('.autocomplete_m_def').eq(0);
+	        autoDiv && autoDiv.html('');
 	    }
-	    function isFocus(input){
+	    function isFocus(){
 	        if(opts.isFocus){
 	            input.get().focus();
 	        }
 	    }
 	    function showPage(){
 	        if(baseDiv){
-	        	var input = baseDiv.s('input').eq(0).val('');
 	            baseDiv && baseDiv.show();
 	            sScroll.refresh();
 	            input.val('');
 	            clearAutoComplete();
-	            isFocus(input);
+	            isFocus();
 	            if(!firstLoad){
-	            	historyList(input, baseDiv);	
+	                historyList();
 	            }
 	        }
 	    }
