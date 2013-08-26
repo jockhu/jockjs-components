@@ -94,6 +94,7 @@
 	            	tapAction(input.val());
 	            	setStorage(input.val());
 	            	opts.onTapEnter && opts.onTapEnter();
+	            	input.get().blur();
 	        	}
 	        });
 	        historyList();
