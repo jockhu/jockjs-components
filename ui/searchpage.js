@@ -119,6 +119,7 @@
 	            sScroll = new iScroll('hisSearchList');
 	        }
 	        if(hisArr != ''){
+	        	baseDiv.setStyle({'background-image':'none'});
 	            hList.s('span').eq(0) && hList.s('span').each(function(i,v){
 	                v.on('click',function(){
 	                    tapAction(v.html());
