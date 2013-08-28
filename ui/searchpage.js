@@ -187,6 +187,7 @@
 	            input.val('');
 	            clearAutoComplete();
 	            isFocus();
+	            sScroll.scrollTo(0,0,0);
 	            if(!firstLoad){
 	                historyList();
 	            }
