@@ -151,8 +151,6 @@
 	                y: -48
 	            },
 	            itemBuild:function(item){
-	            	var a=0;
-	            	console.log(a++);
 	            	var str_v = item.name, str_l = item.name.replace(inputVal,'<em style="color:#999999">'+inputVal+'</em>');
 	                return {
 	                    l: str_l,
