@@ -28,6 +28,7 @@
         var m = J.isString(message) ? message : getEx(message);
         var errorInfo = '?tp=error'
             + '&site=' + site
+            + '&v=' + PHPVERSION || ''
             + '&msg=' + m;
         new Image().src = u + errorInfo;
         logger.onError && logger.onError(m);
