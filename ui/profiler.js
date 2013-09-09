@@ -140,7 +140,7 @@
             timingStart = timingStart * t + 1;
             timingOffset = timingOffset * t + 1;
             timingLen = timingLen * t + 2;
-            return '<div style="background:'+color.s+';height:20px;width:'+timingLen+'px;margin-left:'+timingStart+'px"><div style="background:'+color.t+';margin-left:'+timingOffset+'px; width:'+tm+'px;height:20px;"></div></div><div style="position:absolute;top:0;right:0;height:28px;width:290px;padding:0 5px;background:#fffdf2;color:'+color.t+'">'+i+' : <strong>'+v+'</strong></div>'
+            return '<div style="background:'+color.s+';height:20px;padding-left:300px;width:'+timingLen+'px;margin-left:'+timingStart+'px"><div style="background:'+color.t+';margin-left:'+timingOffset+'px; width:'+tm+'px;height:20px;"></div></div><div style="position:absolute;top:0;left:0;height:28px;width:290px;padding:0 5px;background:#fffdf2;color:'+color.t+'">'+i+' : <strong>'+v+'</strong></div>'
         }
 
         function getColor(type){
