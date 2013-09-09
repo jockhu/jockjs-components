@@ -51,7 +51,7 @@
                 requestTime : tim.responseStart - tim.requestStart,
                 responseTime : tim.responseEnd - tim.responseStart,
                 domParsingTime : tim.domInteractive - tim.domLoading,
-                firstScreenTime : tim.domInteractive - navigationStart,
+                firstScreenTime : tim.domInteractive - tim.responseStart,
                 resourcesLoadedTime : tim.loadEventStart - tim.domLoading,
                 domContentLoadedTime : tim.domContentLoadedEventStart - tim.fetchStart,
                 windowLoadedTime : tim.loadEventStart - tim.fetchStart
