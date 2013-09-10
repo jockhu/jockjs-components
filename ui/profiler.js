@@ -51,7 +51,7 @@
                 requestTime : tim.responseStart - tim.requestStart,
                 responseTime : tim.responseEnd - tim.responseStart,
                 domParsingTime : tim.domInteractive - tim.domLoading,
-                firstScreenTime : tim.domInteractive - tim.responseStart,
+                firstScreenTime : tim.domInteractive - navigationStart,
                 resourcesLoadedTime : tim.loadEventStart - tim.domLoading,
                 domContentLoadedTime : tim.domContentLoadedEventStart - tim.fetchStart,
                 windowLoadedTime : tim.loadEventStart - tim.fetchStart
@@ -75,7 +75,7 @@
 
             box.html('');
 
-            box.append(header = J.create('div',{style:'height:40px;line-height:40px;padding-left:10px; border-bottom:1px solid #ad9825; margin-bottom:20px; background:#fef0a5;'}).html(' Anjuke JockJs Timing &nbsp; / <span style="color:'+getColor('network').t+'">network</span> / <span style="color:'+getColor('server').t+'">server</span> / <span style="color:'+getColor('browser').t+'">browser</span> '));
+            box.append(header = J.create('div',{style:'height:40px;line-height:40px;padding-left:10px; border-bottom:1px solid #ad9825; margin-bottom:20px; background:#fef0a5;'}).html(' Anjuke JockJs Timing &nbsp; / <span style="color:'+getColor('network').t+'">network</span> / <span style="color:'+getColor('server').t+'">server</span> / <span style="color:'+getColor('browser').t+'">browser</span> / <span style="margin-left:50px">Site : ' + document.location.host + '</span>'));
             header.append(close = J.create('a',{style:"position: absolute; top:3px; right:15px; font-size:12px; color:#999;cursor:pointer;"}).html('Close X'));
             header.get().onclick = function(){
                 container.hide();
