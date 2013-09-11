@@ -31,6 +31,7 @@
 	            createTemplate();
 	        }
 	    }.require('ui.autocomplete', 'ui.autocomplete_m_def'));
+
 	    //历史记录的存储过程
 	    function getStorage(){
 	        if(localStorage){
@@ -76,9 +77,11 @@
 	    function createTemplate(){
 	        (baseDiv = J.create('div',{style:'display:none;position: fixed;width: 100%;height: 100%;background-color: #f4f4f4;top:0px;left:0px;z-index: 999;background-image: url(\'' + J.site.info.includePrefix + '/touch/img/search_bg.png\');background-repeat: no-repeat;background-position: 50% 100px;background-size: 141px;'}).html(searchHead)).appendTo('body');
 	        input = baseDiv.s('input').eq(0);
+
 	        bindEvent();
 	    }
 	    function bindEvent(){
+
 	        var cancelBtn = baseDiv.s('a').eq(0), searchBtn = baseDiv.s('i').eq(0);
 	        cancelBtn.on('click',function(){
 	            hidePage();
@@ -96,7 +99,9 @@
 	            	opts.onTapEnter && opts.onTapEnter();
 	            	input.get().blur();
 	        	}
+
 	        });
+
 	        historyList();
 	        autoComplete();
 	    }
@@ -112,11 +117,11 @@
 	        if(hList){
 	            hList.html(hisList);
 	            hList.show();
-	            sScroll.refresh();
+	           // sScroll.refresh();
 	        }else{
 	            (hList = J.create('div',{id:iScrollId,style:'position:absolute;left:0;top:56px;height:'+(J.page.viewHeight()-56)+'px'+';width:100%;'}).html('<div><div>' + hisList + '</div></div>')).appendTo(baseDiv);
 	            hList = hList.down(1);
-	            sScroll = new iScroll(iScrollId);
+	          //  sScroll = new iScroll(iScrollId);
 	        }
 	        if(hisArr != ''){
 	        	baseDiv.setStyle({'background-image':'none'});
@@ -129,6 +134,7 @@
 	        }
 	    }
 	    function autoComplete(){
+
 	        input && input.on('input',function(){
 	            if(input.val() != ''){
 	            	inputVal = input.val();
@@ -160,6 +166,7 @@
 	            onSelect : function(data) {
 	                tapAction(data.name);
 	                setStorage(data.name);
+
 	                opts.onTapList && opts.onTapList();
 	            }
 	        });
