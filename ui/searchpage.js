@@ -109,7 +109,7 @@
 	        if(input.val() != '') {
 	            autoComplete();
 	            return;
-	        };
+	        }
 	        var hisList = '', hisArr = historyArray();
 	        for(var i=0;i<hisArr.length;i++){
 	            hisList = hisList + '<span style="display:block;font-size:14px;line-height:25px;color:#550c8c;padding:10px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border-bottom:1px solid #c9c9c9;background-color:#f4f4f4;">' + hisArr[i] + '</span>';
@@ -166,7 +166,6 @@
 	            onSelect : function(data) {
 	                tapAction(data.name);
 	                setStorage(data.name);
-
 	                opts.onTapList && opts.onTapList();
 	            }
 	        });
@@ -188,11 +187,11 @@
 	    function showPage(){
 	        if(baseDiv){
 	            baseDiv && baseDiv.show();
-	            sScroll.refresh();
+	            //sScroll.refresh();
 	            input.val('');
 	            clearAutoComplete();
 	            isFocus();
-	            sScroll.scrollTo(0,0,0);
+	            //sScroll.scrollTo(0,0,0);
 	            if(!firstLoad){
 	                historyList();
 	            }
