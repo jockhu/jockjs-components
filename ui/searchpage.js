@@ -117,11 +117,11 @@
 	        if(hList){
 	            hList.html(hisList);
 	            hList.show();
-	           // sScroll.refresh();
+	            sScroll.refresh();
 	        }else{
 	            (hList = J.create('div',{id:iScrollId,style:'position:absolute;left:0;top:56px;height:'+(J.page.viewHeight()-56)+'px'+';width:100%;'}).html('<div><div>' + hisList + '</div></div>')).appendTo(baseDiv);
 	            hList = hList.down(1);
-	          //  sScroll = new iScroll(iScrollId);
+	            sScroll = new iScroll(iScrollId);
 	        }
 	        if(hisArr != ''){
 	        	baseDiv.setStyle({'background-image':'none'});
@@ -187,11 +187,11 @@
 	    function showPage(){
 	        if(baseDiv){
 	            baseDiv && baseDiv.show();
-	            //sScroll.refresh();
+	            sScroll.refresh();
 	            input.val('');
 	            clearAutoComplete();
 	            isFocus();
-	            //sScroll.scrollTo(0,0,0);
+	            sScroll.scrollTo(0,0,0);
 	            if(!firstLoad){
 	                historyList();
 	            }
