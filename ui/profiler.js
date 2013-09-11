@@ -13,7 +13,7 @@
 /// require('page.page');
 
 (function(J){
-    var win = J.W, per = win.performance || {}, tim = per.timing, ns = '__profiler',pageWidth, box,container, header, close;
+    var win = J.W, per = win.performance || {}, tim = per.timing, ns = '__J',pageWidth, box,container, header, close;
 
 
     function Profiler(){
@@ -130,7 +130,7 @@
                 //console.log('timingType:'+timingType, 'timingStart:'+timingStart, 'timingLen:'+timingLen, 'v:'+v, 'timingOffset:'+timingOffset, 'allTim:'+allTim)
                 var color = getColor(timingType);
 
-                box.append(J.create('div', {style:'background:'+color.b+'; position:relative; overflow:hidden; margin:8px 4px 0; '}).html(buildItem(i, v, timingStart, timingLen, timingOffset, allTim, color)));
+                box.append(J.create('div', {style:'background:'+color.b+'; position:relative; overflow:hidden; margin:8px 4px 8px; '}).html(buildItem(i, v, timingStart, timingLen, timingOffset, allTim, color)));
             })
         }
 
@@ -172,7 +172,7 @@
         }
 
         function showInfo(str){
-            box && box.html('<div style="padding:50px; text-align: center">'+str+'</div>');
+            box && box.html('<div style="padding:10px 0;font-size:13px;line-height:23px;text-align: center">'+str+'</div>');
         }
 
         function resize(){
@@ -183,8 +183,8 @@
 
         (function(){
 
-            container = J.create('div', {style:'position:fixed;top:0;left:0;z-index:9999999;font-size:13px;'})
-                .append(box = J.create('div',{style:'font-size:13px;font-family:Arial;position:relative;border:1px solid #f8d4c7;background:#fffdf2;padding-bottom:8px;box-shadow:0px 4px 20px #555;'}));
+            container = J.create('div', {style:'position:fixed;top:0;left:0;z-index:99999;font-size:13px;'})
+                .append(box = J.create('div',{style:'font-size:13px;font-family:Arial;position:relative;border:1px solid #f8d4c7;background:#fffdf2;box-shadow:0px 4px 20px #555;'}));
             container.appendTo('body');
             resize();
 
