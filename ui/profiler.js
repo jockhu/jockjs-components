@@ -184,7 +184,7 @@
         (function(){
 
             container = J.create('div', {style:'position:fixed;top:0;left:0;z-index:99999;font-size:13px;'})
-                .append(box = J.create('div',{style:'font-size:13px;font-family:Arial;position:relative;border:1px solid #f8d4c7;background:#fffdf2;box-shadow:0px 4px 20px #555;'}));
+                .append(box = J.create('div',{style:'text-align:left;font-size:13px;font-family:Arial;position:relative;border:1px solid #f8d4c7;background:#fffdf2;box-shadow:0px 4px 20px #555;'}));
             container.appendTo('body');
             resize();
 
