@@ -136,7 +136,7 @@
 
         function buildItem(i, v, timingStart, timingLen, timingOffset, allTim, color){
             var p = pageWidth - 300, t = (p / allTim), tm = (v * t) + 1;
-            v = (v < 1000) ? v + 'ms' : (v / 1000) + 'm'
+            v = (v < 1000) ? v + 'ms' : (v / 1000) + 's'
             timingStart = timingStart * t + 1;
             timingOffset = timingOffset * t + 1;
             timingLen = timingLen * t + 2;
