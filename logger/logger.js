@@ -10,12 +10,13 @@
  */
 
 (function(J){
-    var a = '.anjuke.', c = 'dev.fang', h = J.D.location.host, u = 'http://' + ( /dev|test/.test(h) ? c + a + 'test' : 'm' + a + 'com' ) + '/ts.html',
+    var a = '.anjuke.', c = 'dev.fang', h = J.D.location.host, isDev =/dev|test/.test(h), u = 'http://' + ( isDev ? c + a + 'test' : 'm' + a + 'com' ) + '/ts.html',
         s = h.match(/^(\w)\.(\w+)\./), site = s ? s[1] === 'm' ? 'm' : s[2] : 'unknow', eC = encodeURIComponent;
 
     J.add('logger', {
         site: site,
         loggerUrl:u,
+        isDev:isDev,
         autoLogger:true,
         onError:null,
         add: add,
