@@ -44,15 +44,15 @@
                eventBind();
             }
             function eventBind(){
+               window.onscroll = taskAdd;
                 J.on(window,"scroll",taskAdd);
                 J.on(window,"resize",resize);
             }
             function add(doms){
                 doms&&doms.each(function(k,v){
                     v.attr(traceTag)&&(function(){
-                        setTimeout(function(){
                             cache.push({y:v.offset().y,elm:v,trace: v.attr(traceTag)})
-                        },0);
+                        v.attr("pos",v.offset().y)
                     })();
                 });
                 taskAdd();
@@ -84,9 +84,6 @@
                 pageW = J.page.viewWidth();
                 pageH = J.page.viewHeight();
             }
-            function start(){
-
-            }
             return {
                 add:add,
                 remove:remove,
@@ -95,7 +92,7 @@
         }
 
         function Tasker(options) {
-            var timer = null,delay = 3000,Ret={},WAITEDDATA= [];
+            var timer = null,delay = 1000,Ret={},WAITEDDATA= [];
             
             (function(){
                 J.on(window,'beforeunload',function(){
@@ -147,13 +144,3 @@
     }
     J.ui.exposure = Exposure;
 })(J);
-//J.ready(function(){
-//    var st =  new J.ui.exposure()
-//    st.setSite("anjuke-exposure-npv");
-//    st.setPage("Home_HomePage");
-//    st.setPageName("Home_HomePage");
-//    st.setReferrer(document.referrer);
-//    st.setNGuid("aQQ_ajkguid");
-//    st.setNUid("ajk_member_id");
-//    st.start();
-//});
