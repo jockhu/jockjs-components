@@ -142,7 +142,7 @@ function Tip_favorit(options){
         opts.onHide && opts.onHide();
     }
     function createMasker(){
-        masker = J.create('div',{'style':'height:100%; width:100%;position:fixed;background-color:#999;z-index:1000;opacity:0.5;top:0;left:0'});
+        masker = J.create('div',{'style':'height:150%; width:100%;position:fixed;background-color:#999;z-index:1000;opacity:0.5;top:0;left:0'});
         masker.appendTo('body');
         return masker;
     }
