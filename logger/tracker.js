@@ -15,7 +15,7 @@
 
 (function (J) {
 
-    var W = J.W, D = W.D, Logger = J.logger, EventTracker, JPage = J.page;
+    var W = J.W, D = J.D, Logger = J.logger, EventTracker, JPage = J.page;
 
     /**
      * AA log && SOJ
@@ -25,7 +25,7 @@
      * @returns Tracker Object
      */
     Logger.Tracker = function (s, p, u) {
-        var D = document, o = {}, getCookie = J.getCookie, m = {
+        var o = {}, getCookie = J.getCookie, m = {
             track:track
         };
         s && (o.site = s);
@@ -50,10 +50,10 @@
                     + ',"r":"'+(W.devicePixelRatio >= 2 ? 1 : 0)+'"'
                 + '}',
                 site:o.site || '',
-                guid:getCookie(o.nGuid) || '',
-                ctid:getCookie(o.nCtid) || '',
+                guid:getCookie(o.nGuid || 'aQQ_ajkguid') || '',
+                ctid:getCookie(o.nCtid || 'ctid') || '',
                 luid:getCookie(o.nLiu || 'lui') || '',
-                ssid:getCookie(o.nSessid) || '',
+                ssid:getCookie(o.nSessid || 'sessid') || '',
                 uid:u || getCookie(o.nUid) || '0',
                 t:+new Date()
             };
