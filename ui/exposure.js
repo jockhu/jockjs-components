@@ -121,7 +121,7 @@
                 Ret = {};
                 WAITEDDATA = [];
                 //return U;
-                return '{' + U.join(",") + '}';
+                return  '{"exposure":' + '{' + U.join(",") + '}'+ '}';
             }
             function add(data){
                 WAITEDDATA=WAITEDDATA.concat(data)
@@ -147,3 +147,13 @@
     }
     J.ui.exposure = Exposure;
 })(J);
+J.ready(function(){
+    var st =  new J.ui.exposure()
+    st.setSite("anjuke-exposure-npv");
+    st.setPage("Home_HomePage");
+    st.setPageName("Home_HomePage");
+    st.setReferrer(document.referrer);
+    st.setNGuid("aQQ_ajkguid");
+    st.setNUid("ajk_member_id");
+    st.start();
+});
