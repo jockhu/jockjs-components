@@ -22,7 +22,7 @@
 	        onTapList: null,
 	        onTapHisList: null,
 	        onTapAction: null
-	    }, opts, hList, baseDiv, input, firstLoad = true, sScroll, inputVal, iScrollId = ('IR' + Math.random()).replace(/\./,'');
+	    }, opts, hList, baseDiv, input, firstLoad = true, inputVal, iScrollId = ('IR' + Math.random()).replace(/\./,'');
 	    var searchHead = '<div style="position:relative;padding:8px 10px 8px 55px;background-image:-webkit-gradient(linear,0 0,0 100%,from(#fafafa),to(#e2e2e2));color:#111"><form onsubmit="return false" style="display:block;margin:0;padding:0"><a style="position:absolute;text-decoration:none;height:40px;width:50px;text-align:center;font-size:16px;line-height:40px;left:5px">取消</a><input type="search" style="display:block;border-radius:3px;height:40px;border:1px solid #d9d9d9;font-size:14px;background-color:#fff;outline:none;-webkit-user-modify:read-write-plaintext-only;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-appearance:none;margin:0;padding:0 35px 0 10px;width:100%;-webkit-box-sizing:border-box" /><i style="position:absolute;width:30px;height:32px;top:12px;right:16px;background:url(\'' + J.site.info.includePrefix + '/touch/img/search.png\') no-repeat 2px 3px;background-size:25px"></i></form></div>';
 	    (function(){
 	        opts = J.mix(defaultOptions, options || {}, true);
@@ -109,7 +109,7 @@
 	        if(input.val() != '') {
 	            autoComplete();
 	            return;
-	        }
+	        };
 	        var hisList = '', hisArr = historyArray();
 	        for(var i=0;i<hisArr.length;i++){
 	            hisList = hisList + '<span style="display:block;font-size:14px;line-height:25px;color:#550c8c;padding:10px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;border-bottom:1px solid #c9c9c9;background-color:#f4f4f4;">' + hisArr[i] + '</span>';
@@ -117,11 +117,11 @@
 	        if(hList){
 	            hList.html(hisList);
 	            hList.show();
-	            sScroll.refresh();
+	           // sScroll.refresh();
 	        }else{
 	            (hList = J.create('div',{id:iScrollId,style:'position:absolute;left:0;top:56px;height:'+(J.page.viewHeight()-56)+'px'+';width:100%;'}).html('<div><div>' + hisList + '</div></div>')).appendTo(baseDiv);
 	            hList = hList.down(1);
-	            sScroll = new iScroll(iScrollId);
+	          //  sScroll = new iScroll(iScrollId);
 	        }
 	        if(hisArr != ''){
 	        	baseDiv.setStyle({'background-image':'none'});
@@ -166,6 +166,7 @@
 	            onSelect : function(data) {
 	                tapAction(data.name);
 	                setStorage(data.name);
+
 	                opts.onTapList && opts.onTapList();
 	            }
 	        });
@@ -187,11 +188,11 @@
 	    function showPage(){
 	        if(baseDiv){
 	            baseDiv && baseDiv.show();
-	            sScroll.refresh();
+	            // sScroll.refresh();
 	            input.val('');
 	            clearAutoComplete();
 	            isFocus();
-	            sScroll.scrollTo(0,0,0);
+	            // sScroll.scrollTo(0,0,0);
 	            if(!firstLoad){
 	                historyList();
 	            }
