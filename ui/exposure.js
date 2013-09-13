@@ -32,7 +32,7 @@
         (function(){
             opts = J.mix(defaultOpts, options || {},true);
             traceTag = opts.trackTag;
-            tracker = new J.site.tracker(opts.site, opts.pageName);
+            tracker = new J.logger.Tracker(opts.site, opts.pageName);
             tasker = new Tasker(opts);
             disPatch =  new Dispatch();
         })();
