@@ -12,13 +12,7 @@
 /// require('logger.logger');
 
 (function(J){
-    var logger = J.logger, win = J.W, per = win.performance || {}, tim = per.timing, isNew = J.iN || 0;
-    var a = '.anjuke.', c = 'dev.fang', h = J.D.location.host, isDev =/dev|test/.test(h), u = 'http://' + ( isDev ? c + a + 'test' : 'm' + a + 'com' ) + '/ts.html',
-        s = h.match(/^(\w)\.(\w+)\./), site = s ? s[1] === 'm' ? 'm' : s[2] : 'unknow', eC = encodeURIComponent;
-
-    function getSpeedUrl(pageName){
-        return logger.url + '?pn=' + pageName + '&in=' + J.iN || 0
-    }
+    var logger = J.logger, win = J.W, per = win.performance || {}, tim = per.timing, timing;
 
     function getSpeed(){
         var tm = J.times, url = '&tp=speed'
@@ -30,7 +24,8 @@
     }
 
     function getTiming(){
-        var url = '&tp=timing',u=[],navigationStart = tim.navigationStart, timing = {
+        var url = '&tp=timing',u=[],navigationStart = tim.navigationStart;
+        timing = {
             redirectTime : tim.redirectEnd - tim.redirectStart,
             domainLookupTime : tim.domainLookupEnd - tim.domainLookupStart,
             connectTime : tim.connectEnd - tim.connectStart,
@@ -50,90 +45,25 @@
         return url + u.join('');
     }
 
+
     function speed(){
-        if(!(tim && tim.navigationStart)){
-            showInfo('Navigation Timing API is not supported by your browser.');
-            return
+        var url, pageName = J.g('body');
+        if(pageName && (pageName = pageName.attr('data-page'))){
+            console.log(pageName)
+            url = logger.url + '?pn=' + pageName + '&in=' + (J.iN || 0)
+            + (tim && tim.navigationStart ? getTiming() : getSpeed());
+            (new Image()).src = url;
         }
-
     }
 
-    logger.speed = function(){
-
-
-        function speedSend(){
-
+    J.ready(function(){
+        if( !(tim && !(tim.loadEventStart - tim.fetchStart <= 0) || false) || !J.times.PL){
+            J.on && J.on(win, 'load', speed);
+            return;
         }
-
-    }
-
-    J.add('logger', {
-        site: site,
-        loggerUrl:u,
-        isDev:isDev,
-        autoLogger:true,
-        onError:null,
-        add: add,
-        log: log
+        speed();
     });
 
-    var logger = J.logger;
-
-    function log(message){
-        var m = J.isString(message) ? message : getEx(message);
-        var errorInfo = '?tp=error'
-            + '&site=' + site
-            + '&v=' + PHPVERSION || ''
-            + '&msg=' + m;
-        new Image().src = u + errorInfo;
-        logger.onError && logger.onError(m);
-    }
-
-    function getEx(ex){
-        var m = [];
-        J.each(['name','message','description','url','stack','fileName','lineNumber','number','line'], function(i, v){
-            if(v in ex){
-                if(v == 'stack'){
-                    m.push( v + ':' + eC(ex[v].split(/\n/)[0]) )
-                }else{
-                    m.push( v + ':' + eC(ex[v]) )
-                }
-            }
-        });
-        return m.join(',')
-    }
-
-    function add(instance){
-        /*for (item in instance || {}){
-            if(J.isFunction( instance[item] )){
-                applyLogger(instance, item);
-            }
-        }
-
-        function applyLogger(instance, item){
-            var method = instance[item];
-            if(method.logged) return false;
-            instance[item] = function(method){
-                return function(){
-                    try{
-                        return method.apply(this, arguments);
-                    }catch(ex){
-                        log(ex)
-                    }
-                }
-            }(method);
-            method.logged = true;
-        }*/
-    }
-
-    J.W.onerror = function(message, url, line){
-        if(J.logger.autoLogger){
-            log({
-                message:message,
-                url:url,
-                line:line
-            });
-        }
-    };
+    logger.speed = speed;
 
 })(J);
