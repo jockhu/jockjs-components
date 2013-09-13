@@ -72,7 +72,7 @@ function Tip_favorit(options){
             template.p[1]?posi+='right:'+template.p[1]+'px;':posi;
             template.p[2]?posi+='bottom:'+template.p[2]+'px;':posi;
             template.p[3]?posi+='left:'+template.p[3]+'px;':posi;
-            J.create('div',{'id':'tipBox','style':posi+'position: absolute;z-index: 1001;padding: 10px 8px 6px 12px ; border-radius: 6px; min-height:60px;background-image: -webkit-gradient(linear,left top,left bottom, color-stop(0,#fff),color-stop(1,#e5e6e7))'}).html(template.tpl).appendTo(opts.target||'body');
+            J.create('div',{'id':'tipBox','style':posi+'position: fixed;z-index: 1001;padding: 10px 8px 6px 12px ; border-radius: 6px; min-height:60px;background-image: -webkit-gradient(linear,left top,left bottom, color-stop(0,#fff),color-stop(1,#e5e6e7))'}).html(template.tpl).appendTo(opts.target||'body');
             setStorage();
             createMasker();
             tipBox= J.g('tipBox');
@@ -142,7 +142,7 @@ function Tip_favorit(options){
         opts.onHide && opts.onHide();
     }
     function createMasker(){
-        masker = J.create('div',{'style':'height:100%; width:100%;position:absolute;background-color:#999;z-index:1000;opacity:0.5;top:0;left:0'});
+        masker = J.create('div',{'style':'height:100%; width:100%;position:fixed;background-color:#999;z-index:1000;opacity:0.5;top:0;left:0'});
         masker.appendTo('body');
         return masker;
     }
