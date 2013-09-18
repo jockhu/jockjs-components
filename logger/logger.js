@@ -11,7 +11,7 @@
 
 (function(J){
     var a = '.anjuke.', c = 'dev.fang', h = J.D.location.host, isDev =/dev|test/.test(h), u = 'http://' + ( isDev ? c + a + 'test' : 'm' + a + 'com' ) + '/ts.html',
-        s = h.match(/^(\w)\.(\w+)\./), site = s ? s[1] === 'm' ? 'm' : s[2] : 'unknow', eC = encodeURIComponent;
+        s = h.match(/^(\w+)\.(\w+)\./), site = s ? s[1] === 'm' ? 'm' : s[2] : 'unknow', eC = encodeURIComponent;
 
     J.add('logger', {
         site: site,
