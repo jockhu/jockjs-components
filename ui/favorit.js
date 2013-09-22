@@ -106,11 +106,18 @@ function Tip_favorit(options){
     }
     function getUaKey(){
         var ua = J.ua.ua;
+        /*for weixin brower*/
+        if(ua.match(/MicroMessenger/i)){
+            return false;
+        }
         if(ua.match(/UCBrowser/i)){ //is UC
             return ua.match(/(?:Android)|(?:iPhone)/)+'UC'+ ua.match(/UCBrowser\/(\d)/)[1];
         }
         else if(ua.match(/MQQBrowser/i)){ //is qq
             return ua.match(/(?:Android)|(?:iPhone)/)+'QQ'+ ua.match(/MQQBrowser\/(\d)/)[1];
+        }
+        else if(ua.match(/qq/i)){
+            return false; //for qq  
         }
         else if(ua.match(/Mozilla\/\d\.\d\s*\((?:iPhone)|(?:iPod).*Mac\s*OS.*\)\s*AppleWebKit\/\d*.*Version\/\d.*Mobile\/\w*\s*Safari\/\d*\.\d*\.*\d*$/i)){//is iphone safari
             return 'self_iPhone';
