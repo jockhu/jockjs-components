@@ -23,7 +23,7 @@
 		track_ios:'',
 		track_ios_close:'',
 		title:'',
-		expires: 14*24*60*60*1000,
+		expires: 30*24*60*60*1000,
 		link_android:'',
 		link_ios:''
 	};
@@ -32,7 +32,7 @@
 		var appOptions = {
 			anjuke: {
 				app_link: "openanjuke://",
-				img: J.site.info.includePrefix + "/touch/img/down_anjuke.jpg",
+				img: J.site.info.includePrefix + "/touch/img/down_anjuke.png",
 				title: "安居客App",
 				link_android: "http://android.anjuke.com/getapkx.php?app=Anjuke&pm=b190&b190.apk",
 				link_ios: "https://itunes.apple.com/cn/app/ju-ke-er-shou-fang-fang-jia/id415606289?mt=8",
@@ -40,28 +40,6 @@
 				track_android_close: 'track_home_android_close',
 				track_ios: 'track_home_ios_download',
 				track_ios_close: 'track_home_ios_close'
-			},
-			haozu: {
-				app_link: "openhaozu://",
-				img: J.site.info.includePrefix + "/touch/img/down_haozu.jpg",
-				title: "安居客租房App",
-				link_android: "http://android.anjuke.com/getapkx.php?app=Haozu&pm=b190&b190.apk",
-				link_ios: "https://itunes.apple.com/cn/app/hao-zu-zu-fang/id467586884?mt=8",
-				track_android: 'track_home_haozu_android_download',
-				track_android_close: 'track_home_haozu_android_close',
-				track_ios: 'track_home_haozug_ios_download',
-				track_ios_close: 'track_home_haozu_ios_close'
-			},
-			xinfang: {
-				app_link: "opennewhouse://",
-				img: J.site.info.includePrefix + "/touch/img/down_xinfang.jpg",
-				title: "安居客新房App",
-				link_android: "http://android.anjuke.com/getapkx.php?app=Xinfang&pm=b190&b190.apk",
-				link_ios: "https://itunes.apple.com/cn/app/an-ju-ke-xin-fang/id582908841?mt=8",
-				track_android: 'track_home_xinfang_android_download',
-				track_android_close: 'track_home_xinfang_android_close',
-				track_ios: 'track_home_xinfang_ios_download',
-				track_ios_close: 'track_home_xinfang_ios_close'
 			}
 		}
 		var opts = J.mix(defaultOpts, appOptions[options] || {}, true),element,ls = localStorage['appclose'+options];
