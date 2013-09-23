@@ -33,6 +33,7 @@
         forceClear:false,
         defer: 100,
         width: 0,
+        allowEmpty:false,//是否允许空值触发ａｊａｘ
         params: {},
         source: null,
         offset:{
@@ -67,7 +68,7 @@
      */
     function Autocomplete(el, options) {
         var disabled = false, el = J.g(el), targetEl, equaled = -1, selectedIndex = -1, currentValue = el.val().trim(), CACHED = [], DATA = [], opts, aId, isShow = false, divs,
-            mainContainer, container, valueChangeTimer = null, ignoreValueChange = false, intervalTimer = null, st,isFocusSupport=false,sendedStr='';
+            mainContainer, container, valueChangeTimer = null, ignoreValueChange = false, intervalTimer = null, st,isFocusSupport=false,sendedStr='',skipedNum=0;
 
         (function(){
             el.attr('autocomplete', 'off');
@@ -112,15 +113,18 @@
         }
 
         function fixPosition() {
-			var offset = targetEl.offset();
-			mainContainer.setStyle({ top: (offset.y + el.height() + opts.offset.y) + 'px', left: (offset.x + opts.offset.x) + 'px' });
-		}
+            var offset = targetEl.offset();
+            mainContainer.setStyle({ top: (offset.y + el.height() + opts.offset.y) + 'px', left: (offset.x + opts.offset.x) + 'px' });
+        }
 
         function bindEvent(){
             J.on(el, J.ua.opera ? 'keypress' : 'keydown', KeyPress);
             J.on(el, 'keyup', keyup);
             J.on(el, 'blur', blur);
             J.on(el, 'focus', focus);
+            J.on(el, 'click', function(e){
+                e&& e.stop();
+            });
             J.on(window, 'resize', fixPosition);
 
         }
@@ -128,45 +132,45 @@
         function KeyPress(e){
             if (disabled) { return; }
             (opts.onKeyPress) && opts.onKeyPress(el);
-			switch (e.keyCode) {
-				case 27: //KEY_ESC:
-					el.val(currentValue.trim());
-					hide();
-					break;
-				case 9: //KEY_TAB:
-				case 13: //KEY_RETURN:
-					if (selectedIndex === -1) {
-						hide();
-						return;
-					}
-					select(null, selectedIndex);
-					break;
-				case 38: //KEY_UP:
-					moveUp();
-					break;
-				case 40: //KEY_DOWN:
-					moveDown();
-					break;
-				default:
-					return;
-			}
-			e.preventDefault();
+            switch (e.keyCode) {
+                case 27: //KEY_ESC:
+                    el.val(currentValue.trim());
+                    hide();
+                    break;
+                case 9: //KEY_TAB:
+                case 13: //KEY_RETURN:
+                    if (selectedIndex === -1) {
+                        hide();
+                        return;
+                    }
+                    select(null, selectedIndex);
+                    break;
+                case 38: //KEY_UP:
+                    moveUp();
+                    break;
+                case 40: //KEY_DOWN:
+                    moveDown();
+                    break;
+                default:
+                    return;
+            }
+            e.preventDefault();
         }
 
         function keyup(e){
             if (disabled) return;
             (opts.onKeyUp) && opts.onKeyUp(el);
-			switch (e.keyCode) {
-				case 38: //KEY_UP:
-				case 40: //KEY_DOWN:
+            switch (e.keyCode) {
+                case 38: //KEY_UP:
+                case 40: //KEY_DOWN:
                 case 13: //KEY_RETURN:
                 case 27: //KEY_ESC:
-					return;
-			}
+                    return;
+            }
             if(ignoreValueChange) return;
-            if(el.val().trim()=='') hide();
-			clearTimeout(valueChangeTimer);
-			!isFocusSupport && (valueChangeTimer = setTimeout(valueChange, opts.defer));
+            if(!el.val().trim()&&!opts.allowEmpty) hide();
+            clearTimeout(valueChangeTimer);
+            !isFocusSupport &&el.val().trim()&&(valueChangeTimer = setTimeout(valueChange, opts.defer));
         }
 
         function blur(e){
@@ -198,8 +202,8 @@
             if (opts.placeholder == el.val().trim()){
                 el.val('');
                 opts.toggleClass && el.addClass(opts.toggleClass);
-                // return;
             }
+            opts.allowEmpty&&valueChange();
             isFocusSupport && (intervalTimer = setInterval(function(){
                 if(currentValue != (el.val().trim()) && !ignoreValueChange){;valueChange();}
             },30));
@@ -207,15 +211,14 @@
 
         function valueChange(){
             if (disabled || ignoreValueChange) {
-				ignoreValueChange = false;
-				return;
-			}
-            if(!(currentValue = el.val().trim())) return;
+                ignoreValueChange = false;
+                return;
+            }
+            currentValue = el.val().trim();
             selectedIndex = -1;
             onChange(selectedIndex);
-			getData();
+            getData();
         }
-
         function getCacheKey(){
             return encodeURIComponent(currentValue.trim());
         }
@@ -229,11 +232,8 @@
                 else suggest(opts.source);
                 return;
             }
-
             var a;
             if(opts.cache && (a = CACHED[getCacheKey()])) return suggest(a,'c');
-
-
             J.get({
                 url:opts.url,
                 type:'json',
@@ -241,7 +241,6 @@
                 onSuccess:suggest
             });
         }
-
         function buildData(a){
             var dataArr = [];
             if(J.isString(a)) return dataArr;
@@ -268,7 +267,6 @@
             var div, t, val, elVal = el.val();
             st = false;
             equaled = -1;
-
             if(cached){
                 DATA = a
             }else{
@@ -276,29 +274,44 @@
                 a = opts.dataKey && a[opts.dataKey] || a.data || a;
                 DATA = buildData(a);
             }
-
             (opts.onResult) && opts.onResult(el, DATA);
 
             if (!DATA || DATA.length === 0) {
-				hide();
-				return;
-			}
+                hide();
+                return;
+            }
 
             cached || (CACHED[getCacheKey()] = DATA);
 
             container.empty();
 
             J.each(DATA, function(i, v){
-                cached || (opts.itemBuild && J.mix( v, opts.itemBuild(v) || {} ) );
+                var buildItem = opts.itemBuild(v);//ｉｔｅｍ build出来的数据;
+                var isSkip = !!buildItem.isSkip;
+
+                cached || (opts.itemBuild && J.mix( v, buildItem || {} ) );
                 t = opts.filterHtml ? getValue(v.v) : v.v;
                 if(t == elVal) equaled = i;
-                v.l && (div = J.create('div', {"class": selectedIndex === i ? 'ui_item ui_sel':'ui_item', title:t}).html(v.l).appendTo(container)).on('mouseover', activate, i).on('click', function(e, i){
-                    if(opts.onItemClick && opts.onItemClick(i, v, div) == false){
-                        return
-                    }
-                    select(e, i);
-                }, i, true, true);
+                if(isSkip){
+                    skipedNum++;
+                    v.l && (div = J.create('p', {"class": 'ui_item'}).html(v.l).appendTo(container).on('click',function(e){
+                        e&& e.stop();
+                    }));
+                    delete DATA[i];
+                }else{
+                    i = i -skipedNum;
+                    v.l && (div = J.create('div', {"class": selectedIndex === i ? 'ui_item ui_sel':'ui_item', title:t}).html(v.l).appendTo(container)).on('mouseover', activate, i).on('click', function(e, i){
+                        if(opts.onItemClick && opts.onItemClick(i, v, div) === false){
 
+                            return
+                        }
+                        select(e, i);
+                    }, i, true, true);
+                }
+            });
+            skipedNum =0;
+            J.each(DATA,function(k,v){
+                !v&&DATA.splice(k,1);
             });
             show();
             divs = container.s('div');
@@ -318,7 +331,8 @@
             divs.each(function(i, div){
                 div.removeClass('ui_sel')
             });
-            divs.eq(selectedIndex = selIndex).addClass('ui_sel');
+            this.className = "ui_item ui_sel";
+//            divs.eq(selectedIndex = selIndex).addClass('ui_sel');
         }
 
         function select(e, selIndex){
@@ -331,7 +345,6 @@
                 J.mix( item, onSelect(selIndex) || {} );
                 el.val( currentValue = ( opts.filterHtml ? getValue(item.v) : item.v) );
             }
-            hide();
             if(opts.autoSubmit && (form = el.up('form'))){
                 if (opts.placeholder == el.val().trim()){
                     el.val('');
@@ -353,8 +366,11 @@
             };
             var div;
             ignoreValueChange = true;
+            divs.each(function(i, div){
+                div.removeClass('ui_sel')
+            });
             el.val( currentValue = getValue((div = divs.eq(--selectedIndex).addClass('ui_sel')).html()) );
-            div.next()&&div.next().removeClass('ui_sel')||divs.eq(0).removeClass("ui_sel");
+            //  div.next()&&div.next().removeClass('ui_sel')||divs.eq(0).removeClass("ui_sel");
             onChange(selectedIndex);
         }
 
@@ -370,8 +386,10 @@
             }
             var div;
             ignoreValueChange = true;
+            divs.each(function(i, div){
+                div.removeClass('ui_sel')
+            });
             el.val( currentValue = getValue((div = divs.eq(++selectedIndex).addClass('ui_sel')).html()) );
-            selectedIndex > 0 && div.prev()&&div.prev().removeClass('ui_sel')||divs.eq(divs.length-1).removeClass("ui_sel");
             onChange(selectedIndex);
         }
 
@@ -385,14 +403,14 @@
 
         function show(){
             selectedIndex = -1;
-			isShow || (container.show(),isShow = true);
+            isShow || (container.show(),isShow = true);
             fixPosition();
         }
 
         function hide(){
             selectedIndex = -1;
             ignoreValueChange = false;
-			isShow && (container.empty().hide(),isShow = false);
+            isShow && (container.empty().hide(),isShow = false);
         }
 
         function enable(){
@@ -415,14 +433,9 @@
             hide:hide,
             show:show
         };
-	}
-
-
+    }
     J.dom.fn.autocomplete = function(options){
         return new Autocomplete(this.get(), options)
     };
-
     J.ui.autocomplete = Autocomplete;
-
-
 })(J, document);
