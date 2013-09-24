@@ -49,7 +49,7 @@
     function speed(){
         var url, pageName = J.g('body');
         if(pageName && (pageName = pageName.attr('data-page'))){
-            url = logger.url + '?pn=' + pageName + '&site='+logger.site+'&in=' + (J.iN || 0)
+            url = logger.logUrl + '?pn=' + pageName + '&site='+logger.site+'&in=' + (J.iN || 0)
             + (tim && tim.navigationStart ? getTiming() : getSpeed());
             (new Image()).src = url;
         }

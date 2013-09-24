@@ -10,12 +10,15 @@
  */
 
 (function(J){
-    var a = '.anjuke.', c = 'dev.fang', h = J.D.location.host, isDev =/dev|test/.test(h), u = 'http://' + ( isDev ? c + a + 'test' : 'm' + a + 'com' ) + '/ts.html',
-        s = h.match(/^(\w+)\.(\w+)\./), site = s ? s[1] === 'm' ? 'm' : s[2] : 'unknow', eC = encodeURIComponent;
+    var a = '.anjuke', c = 'soj.dev.aifang', cm = '.com', h = J.D.location.host, http = 'http://', isDev = /dev|test/.test(h),
+        logUrl = http + ( isDev ? c + cm : 'm' + a + cm ) + '/ts.html',
+        sojUrl = http + (isDev ? c + cm : 's' + a + cm) + '/stb',
+        s = h.match(/^(\w)\.(\w+)\./), site = s ? s[1] === 'm' ? 'm' : s[2] : 'unknow', eC = encodeURIComponent;
 
     J.add('logger', {
         site: site,
-        url:u,
+        logUrl:logUrl,
+        sojUrl:sojUrl,
         isDev:isDev,
         autoLogger:true,
         onError:null,
@@ -31,7 +34,7 @@
             + '&site=' + site
             + '&v=' + (J.W.PHPVERSION || '')
             + '&msg=' + m;
-        new Image().src = u + errorInfo;
+        new Image().src = logUrl + errorInfo;
         logger.onError && logger.onError(m);
     }
 

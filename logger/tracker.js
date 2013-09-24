@@ -65,10 +65,9 @@
         }
 
         function track(url) {
-            var P = buildParams(), T = '.com/st';
-            url = url || 'http://' + (Logger.isDev ? 'soj.dev.aifang' + T : 's.anjuke' + T + 'b');
+            var P = buildParams();
             try{
-                J[o.sendType||'post']({url:url, type:'jsonp', data:P});
+                J[o.sendType||'post']({url:url || Logger.sojUrl, type:'jsonp', data:P});
             }catch(e){
                 Logger.log(e)
             }
