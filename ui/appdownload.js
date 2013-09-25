@@ -32,7 +32,7 @@
 		var appOptions = {
 			anjuke: {
 				app_link: "openanjuke://",
-				img: J.site.info.includePrefix + "/touch/img/down_anjuke.png",
+				img: J.site.info.includePrefix + "/touch/img/down_anjuke.jpg",
 				title: "安居客App",
 				link_android: "http://android.anjuke.com/getapkx.php?app=Anjuke&pm=b190&b190.apk",
 				link_ios: "https://itunes.apple.com/cn/app/ju-ke-er-shou-fang-fang-jia/id415606289?mt=8",
