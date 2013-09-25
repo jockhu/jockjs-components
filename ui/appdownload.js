@@ -29,10 +29,15 @@
 	};
 
 	function Appdownload(options){
+		if(defaultOpts.isIos){
+			var pic = '/touch/img/down_anjuke_ios.png';
+		}else{
+			var pic = '/touch/img/down_anjuke_android.png'
+		}
 		var appOptions = {
 			anjuke: {
 				app_link: "openanjuke://",
-				img: J.site.info.includePrefix + "/touch/img/down_anjuke.jpg",
+				img: J.site.info.includePrefix + pic,
 				title: "安居客App",
 				link_android: "http://android.anjuke.com/getapkx.php?app=Anjuke&pm=b190&b190.apk",
 				link_ios: "https://itunes.apple.com/cn/app/ju-ke-er-shou-fang-fang-jia/id415606289?mt=8",
