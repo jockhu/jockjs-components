@@ -30,7 +30,7 @@
 	            firstLoad = false;
 	            createTemplate();
 	        }
-	    }.require('ui.autocomplete', 'ui.autocomplete_m_def'));
+	    }.require('ui.autocomplete'));
 
 	    //历史记录的存储过程
 	    function getStorage(){
