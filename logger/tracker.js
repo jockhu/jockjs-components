@@ -9,13 +9,12 @@
  *
  */
 
-/// require('page.page');
 /// require('logger.logger');
 
 
 (function (J) {
 
-    var W = J.W, D = J.D, Logger = J.logger, EventTracker, JPage = J.page;
+    var W = J.W, D = J.D, Logger = J.logger, EventTracker;
 
     /**
      * AA log && SOJ
@@ -45,8 +44,8 @@
                 h:o.href || D.location.href,
                 r:o.referrer || D.referrer || '',
                 sc:o.screen || '{'
-                    + '"w":"'+JPage.width()+'"'
-                    + ',"h":"'+JPage.height()+'"'
+                    + '"w":"'+ W.screen.width +'"'
+                    + ',"h":"'+ W.screen.height +'"'
                     + ',"r":"'+(W.devicePixelRatio >= 2 ? 1 : 0)+'"'
                 + '}',
                 site:o.site || '',

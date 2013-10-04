@@ -152,6 +152,7 @@
 	                return hList.up();
 	            },
 	            url: opts.url,
+                params: {TP: 'SEARCH'}, // DEBUG Jock
 	            offset: {
 	                x: -55,
 	                y: -48

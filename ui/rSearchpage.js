@@ -75,7 +75,7 @@
 	        }
 	    }
 	    function createTemplate(){
-	        (baseDiv = J.create('div',{style:'display:none;position: fixed;width: 100%;height: 100%;background-color: #f4f4f4;top:0px;left:0px;z-index: 999;background-image: url(\'' + J.site.info.includePrefix + '/touch/img/search_bg.png\');background-repeat: no-repeat;background-position: 50% 100px;background-size: 141px;'}).html(searchHead)).appendTo('body');
+	        (baseDiv = J.create('div',{style:'display:none;position: fixed;width: 100%;height: 100%;background-color: #f4f4f4;top:0px;left:0px;z-index: 999;background-image: url(' + J.site.info.includePrefix + '/touch/img/search_bg.png);background-repeat: no-repeat;background-position: 50% 100px;background-size: 141px;'}).html(searchHead)).appendTo('body');
 	        input = baseDiv.s('input').eq(0);
 
 	        bindEvent();
@@ -152,6 +152,7 @@
 	                return hList.up();
 	            },
 	            url: opts.url,
+                params: {TP: 'SEARCH'}, // DEBUG Jock
 	            offset: {
 	                x: -55,
 	                y: -48

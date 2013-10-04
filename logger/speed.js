@@ -48,7 +48,7 @@
 
     function speed(){
         var url, pageName = J.g('body');
-        if(pageName && (pageName = pageName.attr('data-page'))){
+        if(pageName && (pageName = J.W.PAGENAME || pageName.attr('data-page'))){
             url = logger.logUrl + '?pn=' + pageName + '&site='+logger.site+'&in=' + (J.iN || 0)
             + (tim && tim.navigationStart ? getTiming() : getSpeed());
             (new Image()).src = url;
@@ -58,9 +58,7 @@
     J.ready(function(){
         if( !(tim && !(tim.loadEventStart - tim.fetchStart <= 0) || false) || !J.times.PL){
             J.on && J.on(win, 'load', speed);
-            return;
-        }
-        speed();
+        }else speed();
     });
 
     logger.speed = speed;
