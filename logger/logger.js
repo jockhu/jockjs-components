@@ -28,8 +28,8 @@
 
     var logger = J.logger;
 
-    function log(message){
-        var m = J.isString(message) ? message : getEx(message);
+    function log(message, customMessage){
+        var m = getEx(message, customMessage);
         var errorInfo = '?tp=error'
             + '&site=' + site
             + '&v=' + (J.W.PHPVERSION || '')
@@ -38,7 +38,9 @@
         logger.onError && logger.onError(m);
     }
 
-    function getEx(ex){
+    function getEx(ex, cM){
+        cM = cM ? 'Custom:' +cM+ ',' : '';
+        if(J.isString(ex)) return cM + ex;
         var m = [];
         J.each(['name','message','description','url','stack','fileName','lineNumber','number','line'], function(i, v){
             if(v in ex){
@@ -49,7 +51,7 @@
                 }
             }
         });
-        return m.join(',')
+        return cM + m.join(',')
     }
 
     function add(instance){

@@ -64,12 +64,22 @@
         }
 
         function track(url) {
-            var P = buildParams();
+            var P = buildParams(), sojUrl = url || Logger.sojUrl;
             try{
-                J[o.sendType||'post']({url:url || Logger.sojUrl, type:'jsonp', data:P});
+                o.sendType === 'get' ? (new Image().src = sojUrl + '?' + param(P)) : J.post({url:sojUrl, type:'jsonp', data:P});
             }catch(e){
-                Logger.log(e)
+                Logger.log(e,'TrackError')
             }
+        }
+
+        function param(a) {
+            var s = [],encode = encodeURIComponent;
+            function add(key, value) {
+                s[s.length] = encode(key) + '=' + encode(value);
+            }
+            for (var j in a)
+                add(j, a[j]);
+            return s.join("&").replace(/%20/g, "+");
         }
 
         return m;
