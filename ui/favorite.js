@@ -70,7 +70,7 @@
                 var tpl = '<b>指向箭头</b><div><i>左侧图标</i><span>'+browser.title+'</span><span>请点击+图标</span><span>选择“'+browser.content+'”</span><a>close</a><a>我知道了</a></div>',
                 tip = J.create('div',{
                     class:'fav_tip' + browser.class
-                }).html(tpl);
+                }).html(tpl).appendTo(opts.target||'body');
                 setStorage();
                 bindEvents(tip);
             }
