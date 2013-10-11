@@ -25,12 +25,12 @@
             AndroidUC9:{
                 title:'添加安居客到桌面',
                 content:'发送至桌面',
-                class:'ucbrowser'
+                class:'uc_android'
             },
             iPhoneUC9:{
                 title:'收藏安居客',
                 content:'添加到首页导航',
-                class:'ucbrowser'
+                class:'uc_ios'
             },
             QQBrowser:{
                 title:'收藏安居客',
@@ -67,9 +67,9 @@
         function createTip(){
             var browser = getUaKey()?UA_STASH[getUaKey()]:false;
             if(browser){
-                var tpl = '<b>指向箭头</b><div><i>左侧图标</i><span>'+browser.title+'</span><span>请点击+图标</span><span>选择“'+browser.content+'”</span><a>close</a><a>我知道了</a></div>',
+                var tpl = '<div class="fav_tip"><b></b><div><i></i><span>'+browser.title+'</span><span class="sIcon">请点击</span><span>选择“'+browser.content+'”</span><a>×</a><a>我知道了</a></div></div>',
                 tip = J.create('div',{
-                    class:'fav_tip' + browser.class
+                    class: browser.class
                 }).html(tpl).appendTo(opts.target||'body');
                 setStorage();
                 bindEvents(tip);
@@ -94,7 +94,7 @@
         }
         //get the browser
         function getUaKey(){
-            var ua = J.ua.ua;
+            var ua = navigator.userAgent;
             /*for weixin brower*/
             if(ua.match(/MicroMessenger/i)){
                 return false;
@@ -115,9 +115,10 @@
                 return 'iPhone_6';
             }
             //safari 7.x
-            else if(ua.match(/Mozilla\/\d\.\d\s*\((?:iPhone)|(?:iPod).*Mac\s*OS.*\)\s*AppleWebKit\/\d*.*Version\/7\d.*Mobile\/\w*\s*Safari\/\d*\.\d*\.*\d*$/i)){
+            else if(ua.match(/Mozilla\/\d\.\d\s*\((?:iPhone)|(?:iPod).*Mac\s*OS.*\)\s*AppleWebKit\/\d*.*Version\/7\.\d.*Mobile\/\w*\s*Safari\/\d*\.\d*\.*\d*$/i)){
                 return 'iPhone_7';
             }
+            
             //MIUI browser
             else if(ua.match(/MI.*\/.*AppleWebKit\/.*Version\/\d(?:\.\d)?\s?Mobile\s*Safari\/\w*\.\w*$/i)||ua.match(/AppleWebKit\/.*Version\/\d(?:\.\d)?\s?Mobile\s*Safari\/\w*\.\w*.*XiaoMi\/miuiBrowser/i)){ //is Mi self
                 return 'MIUI';
