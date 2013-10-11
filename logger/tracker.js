@@ -9,13 +9,12 @@
  *
  */
 
-/// require('page.page');
 /// require('logger.logger');
 
 
 (function (J) {
 
-    var W = J.W, D = J.D, Logger = J.logger, EventTracker, JPage = J.page;
+    var W = J.W, D = J.D, Logger = J.logger, EventTracker;
 
     /**
      * AA log && SOJ
@@ -45,8 +44,8 @@
                 h:o.href || D.location.href,
                 r:o.referrer || D.referrer || '',
                 sc:o.screen || '{'
-                    + '"w":"'+JPage.width()+'"'
-                    + ',"h":"'+JPage.height()+'"'
+                    + '"w":"'+ W.screen.width +'"'
+                    + ',"h":"'+ W.screen.height +'"'
                     + ',"r":"'+(W.devicePixelRatio >= 2 ? 1 : 0)+'"'
                 + '}',
                 site:o.site || '',
@@ -65,13 +64,22 @@
         }
 
         function track(url) {
-            var P = buildParams(), T = '.com/st';
-            url = url || 'http://' + (Logger.isDev ? 'soj.dev.aifang' + T : 's.anjuke' + T + 'b');
+            var P = buildParams(), sojUrl = url || Logger.sojUrl;
             try{
-                J[o.sendType||'post']({url:url, type:'jsonp', data:P});
+                o.sendType === 'get' ? (new Image().src = sojUrl + '?' + param(P)) : J.post({url:sojUrl, type:'jsonp', data:P});
             }catch(e){
-                Logger.log(e)
+                Logger.log(e,'TrackError')
             }
+        }
+
+        function param(a) {
+            var s = [],encode = encodeURIComponent;
+            function add(key, value) {
+                s[s.length] = encode(key) + '=' + encode(value);
+            }
+            for (var j in a)
+                add(j, a[j]);
+            return s.join("&").replace(/%20/g, "+");
         }
 
         return m;
