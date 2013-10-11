@@ -69,7 +69,6 @@
     function Autocomplete(el, options) {
         var disabled = false, el = J.g(el), targetEl, equaled = -1, selectedIndex = -1, currentValue = el.val().trim(), CACHED = [], DATA = [], opts, aId, isShow = false, divs,
             mainContainer, container, valueChangeTimer = null, ignoreValueChange = false, intervalTimer = null, st,isFocusSupport=false,sendedStr='',skipedNum=0;
-
         (function(){
             el.attr('autocomplete', 'off');
             opts = J.mix(defaultOpts, options || {}, true);
@@ -152,6 +151,7 @@
                     moveDown();
                     break;
                 default:
+                    ignoreValueChange = false;
                     return;
             }
             e.preventDefault();
@@ -203,9 +203,9 @@
                 el.val('');
                 opts.toggleClass && el.addClass(opts.toggleClass);
             }
-            opts.allowEmpty&&valueChange();
+           // opts.allowEmpty&&valueChange();
             isFocusSupport && (intervalTimer = setInterval(function(){
-                if(currentValue != (el.val().trim()) && !ignoreValueChange){;valueChange();}
+                if(currentValue != (el.val().trim()) && !ignoreValueChange){valueChange();}
             },30));
         }
 
