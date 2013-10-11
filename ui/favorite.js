@@ -71,25 +71,28 @@
                 tip = J.create('div',{
                     class: browser.class
                 }).html(tpl).appendTo(opts.target||'body');
-                setStorage();
+                setStorage((new Date()).valueOf(),false);
                 bindEvents(tip);
             }
         }
         function getStorage(){
-            if(localStorage){
-                return localStorage.tip?1:0;
-            }
-            else{
-                return J.getCookie('tip');
-            }
+            var v, timestamp = parseInt((new Date()).valueOf());
+            if(localStorage) v = localStorage.tip ? localStorage.tip : 0;
+            else v = J.getCookie('tip') ? J.getCookie('tip') : 0;
+            timestamp = timestamp - parseInt(v);
+            if(timestamp<86400000) return 1;
+            else return 0;
+
         }
-        function setStorage(){
+        function setStorage(v,f){
+            if(f){
+                v = parseInt(v) + 2592000000;
+            }
             if(localStorage){
-                try{localStorage.tip=1;}catch(e){};
+                try{localStorage.tip = v;}catch(e){};
             }
             else{
-                J.setCookie("tip", '1', 365);
-                J.setCookie();
+                J.setCookie("tip", v, 365);
             }
         }
         //get the browser
@@ -101,26 +104,25 @@
             }
             //UC android/ios
             if(ua.match(/UCBrowser/i)){ //is UC
-                return ua.match(/(?:Android)|(?:iPhone)/)+'UC'+ ua.match(/UCBrowser\/(\d)/)[1];    //(Android||iPhone)UC9
+                return ua.match(/(?:Android)|(?:iPhone)/)+'UC'+ ua.match(/UCBrowser\/(\d)/)[1];
             }
             //QQ android/ios
-            else if(ua.match(/MQQBrowser/i)){ //is qq
+            else if(ua.match(/MQQBrowser/i)){
                 return 'QQBrowser';
             }
             else if(ua.match(/qq/i)){
                 return false; //for qq
             }
             //safari 6.x
-            else if(ua.match(/Mozilla\/\d\.\d\s*\((?:iPhone)|(?:iPod).*Mac\s*OS.*\)\s*AppleWebKit\/\d*.*Version\/[456]\d.*Mobile\/\w*\s*Safari\/\d*\.\d*\.*\d*$/i)){
+            else if(ua.match(/Mac.*OS.*Version\/6.*Mobile/i)){
                 return 'iPhone_6';
             }
             //safari 7.x
-            else if(ua.match(/Mozilla\/\d\.\d\s*\((?:iPhone)|(?:iPod).*Mac\s*OS.*\)\s*AppleWebKit\/\d*.*Version\/7\.\d.*Mobile\/\w*\s*Safari\/\d*\.\d*\.*\d*$/i)){
+            else if(ua.match(/Mac.*OS.*Version\/7.*Mobile/i)){
                 return 'iPhone_7';
             }
-            
             //MIUI browser
-            else if(ua.match(/MI.*\/.*AppleWebKit\/.*Version\/\d(?:\.\d)?\s?Mobile\s*Safari\/\w*\.\w*$/i)||ua.match(/AppleWebKit\/.*Version\/\d(?:\.\d)?\s?Mobile\s*Safari\/\w*\.\w*.*XiaoMi\/miuiBrowser/i)){ //is Mi self
+            else if(ua.match(/MI.*Version\/4/i)||ua.match(/Version\/4.*XiaoMi\/MiuiBrowser/i)){
                 return 'MIUI';
             }
             //android default
@@ -138,6 +140,9 @@
             tip.s('a').each(function(i,v){
                 v.on('click',function(){
                     tip.hide();
+                    if(v == 1){
+                        setStorage((new Date()).valueOf(),true);
+                    }
                 });
             });
         }
