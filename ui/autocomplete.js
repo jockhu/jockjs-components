@@ -193,6 +193,7 @@
                 opts.toggleClass && el.removeClass(opts.toggleClass);
                 el.val(opts.placeholder);
             }
+            currentValue = el.val();
         }
         //mark onchange
         function focus(){
