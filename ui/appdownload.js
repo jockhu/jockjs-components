@@ -47,7 +47,7 @@
 				track_ios_close: 'track_home_ios_close'
 			}
 		}
-		var opts = J.mix(defaultOpts, appOptions[options] || {}, true),element,ls = localStorage['appclose'+options];
+		var opts = J.mix(defaultOpts, appOptions[options] || {}, true),element,ls = localStorage ? localStorage['appclose'+options]:"1";
         if ( (ls && (new Date()).getTime() - parseInt(ls) < opts.expires) || (opts.isIos&&opts.isChrome)){
             return false;
         }
