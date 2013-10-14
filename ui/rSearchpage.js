@@ -95,9 +95,9 @@
 	        });
 		}
 		function onTap(v){
-			hidePage();
 			setStorage(tag, v);
 			opts.onTapAction && opts.onTapAction(v);
+			// hidePage();
 		}
 		function isFocus(){
 	        if(opts.isFocus){
