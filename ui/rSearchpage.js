@@ -31,7 +31,11 @@
 	            createTemplate();
 	        }
 	    }.require('ui.autocomplete'));
-
+	    function htmlencode(s) {
+	    	var div = document.createElement('div');
+	    	div.appendChild(document.createTextNode(s));
+	    	return div.innerHTML;
+	    }
 	    //历史记录的存储过程
 	    function getStorage(){
 	        if(localStorage){
@@ -45,13 +49,13 @@
 	    }
 	    function setStorage(value){
 	        if(value == '') return;
-	        var v = encodeURI(value);
+	        var v = htmlencode(value.replace(',',''));
 	        //',q,w,e,r,t,y,'
 	        var oldHistory = getStorage();
 	        if(oldHistory.length == 0){
-	            localStorage.searchHis = ',' + v + ',';
+	            localStorage && (localStorage.searchHis = ',' + v + ',');
 	        }else{
-	            localStorage.searchHis = checkValue(oldHistory.content, v, oldHistory.length);
+	            localStorage && (localStorage.searchHis = checkValue(oldHistory.content, v, oldHistory.length));
 	        }
 	    }
 	    function checkValue(str, v, l){
@@ -69,7 +73,7 @@
 	            return '';
 	        }else{
 	            for(var i= 0;i<hisArray.length;i++){
-	                newArray.push(decodeURI(hisArray.array[i]));
+	                newArray.push(hisArray.array[i]);
 	            }
 	            return newArray.reverse();
 	        }
