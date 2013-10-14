@@ -346,6 +346,7 @@
                 J.mix( item, onSelect(selIndex) || {} );
                 el.val( currentValue = ( opts.filterHtml ? getValue(item.v) : item.v) );
             }
+            hide();
             if(opts.autoSubmit && (form = el.up('form'))){
                 if (opts.placeholder == el.val().trim()){
                     el.val('');
