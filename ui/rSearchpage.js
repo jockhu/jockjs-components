@@ -50,9 +50,9 @@
 	        //',q,w,e,r,t,y,'
 	        var oldHistory = getStorage(l);
 	        if(oldHistory.length == 0){
-	            localStorage && localStorage[l] = ',' + value + ',';
+	            localStorage[l] = ',' + value + ',';
 	        }else{
-	            localStorage && localStorage[l] = checkValue(oldHistory.content, value, oldHistory.length);
+	            localStorage[l] = checkValue(oldHistory.content, value, oldHistory.length);
 	        }
 		}
 		function checkValue(str, v, l){
