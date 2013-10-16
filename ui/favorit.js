@@ -13,7 +13,7 @@
 
 (function(J){
 
-function Tip_favorit(options){
+function favorit(options){
     var defaultOptions = {
             target:null,
             onShow:null,
@@ -154,5 +154,5 @@ function Tip_favorit(options){
         return masker;
     }
 }
-    J.ui.tipfavorit = Tip_favorit;
+    J.ui.favorit = favorit;
 })(J);
