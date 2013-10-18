@@ -68,7 +68,7 @@
      */
     function Autocomplete(el, options) {
         var disabled = false, el = J.g(el), targetEl, equaled = -1, selectedIndex = -1, currentValue = el.val().trim(), CACHED = [], DATA = [], opts, aId, isShow = false, divs,
-            mainContainer, container, valueChangeTimer = null, ignoreValueChange = false, intervalTimer = null, st,isFocusSupport=false,sendedStr='',skipedNum=0;
+            mainContainer, container, valueChangeTimer = null, ignoreValueChange = false, intervalTimer = null,isFocusSupport=false,sendedStr='',skipedNum=0;
         (function(){
             el.attr('autocomplete', 'off');
             opts = J.mix(defaultOpts, options || {}, true);
@@ -204,12 +204,9 @@
                 el.val('');
                 opts.toggleClass && el.addClass(opts.toggleClass);
             }
-           // opts.allowEmpty&&valueChange();
             isFocusSupport && (intervalTimer = setInterval(function(){
-//                if(!opts.allowEmpty&&!el.val().trim()){
-//                    return;
-//                }
-                if(currentValue != (el.val().trim()) && !ignoreValueChange){valueChange();}
+                if(currentValue != (el.val().trim()) && !ignoreValueChange){
+                    valueChange();}
             },30));
         }
 
@@ -228,8 +225,6 @@
         }
 
         function getData(){
-//            if(st) return;
-            st = true;
             sendedStr= opts.params[opts.query] = currentValue.trim();
             var a;
             if(opts.cache && (a = CACHED[getCacheKey()])) return suggest(a,'c');
@@ -269,7 +264,6 @@
 
         function suggest(a, cached){
             var div, t, val, elVal = el.val();
-            st = false;
             equaled = -1;
             if(cached){
                 DATA = a
