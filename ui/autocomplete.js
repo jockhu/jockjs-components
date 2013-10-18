@@ -170,7 +170,7 @@
             if(ignoreValueChange) return;
             if(!el.val().trim()&&!opts.allowEmpty) hide();
             clearTimeout(valueChangeTimer);
-            !isFocusSupport &&el.val().trim()&&(valueChangeTimer = setTimeout(valueChange, opts.defer));
+            !isFocusSupport &&el.val().trim()&&(valueChangeTimer = setTimeout( valueChange, opts.defer));
         }
 
         function blur(e){
@@ -206,6 +206,9 @@
             }
            // opts.allowEmpty&&valueChange();
             isFocusSupport && (intervalTimer = setInterval(function(){
+//                if(!opts.allowEmpty&&!el.val().trim()){
+//                    return;
+//                }
                 if(currentValue != (el.val().trim()) && !ignoreValueChange){valueChange();}
             },30));
         }
@@ -225,16 +228,16 @@
         }
 
         function getData(){
-            if(st) return;
+//            if(st) return;
             st = true;
             sendedStr= opts.params[opts.query] = currentValue.trim();
+            var a;
+            if(opts.cache && (a = CACHED[getCacheKey()])) return suggest(a,'c');
             if(opts.source){
                 if(J.isFunction(opts.source)) opts.source(opts.params, suggest);
                 else suggest(opts.source);
                 return;
             }
-            var a;
-            if(opts.cache && (a = CACHED[getCacheKey()])) return suggest(a,'c');
             J.get({
                 url:opts.url,
                 type:'json',
