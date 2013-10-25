@@ -23,13 +23,41 @@
         autoLogger:true,
         onError:null,
         add: add,
-        log: log
+        log: log,
+        setBackList: setBackList
     });
 
-    var logger = J.logger;
+    var logger = J.logger, BLACKLIST = ['BdPlayer','baiduboxapphomepagetag'];
+
+
+    function getBackList(){
+        return BLACKLIST;
+    }
+
+    /**
+     * 添加黑名单
+     * @param list Array|String
+     * @param rewrite 重写默认的黑名单
+     */
+    function setBackList(list, rewrite){
+        if(J.isString(list)){
+            if(rewrite) return (BLACKLIST = [list]);
+            BLACKLIST.push(list);
+        }else if(J.isArray(list)){
+            if(rewrite) return (BLACKLIST = list);
+            BLACKLIST = BLACKLIST.concat(list);
+        }
+    }
 
     function log(message, customMessage){
         var m = getEx(message, customMessage);
+
+        if(J.each(getBackList(),
+            function(i, v){
+                if((new RegExp(v,'g')).test(m)) return false;
+            }
+        ) == false) return;
+
         var errorInfo = '?tp=error'
             + '&site=' + site
             + '&v=' + (J.W.PHPVERSION || '')
