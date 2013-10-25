@@ -4,7 +4,7 @@
  * Aifang Javascript Framework.
  * Copyright 2012 ANJUKE Inc. All rights reserved.
  *
- * @path: ui/searchpage.js
+ * @path: ui/favorite.js
  * @author: hanhuizhang
  * @changed by :mingzhewang
  * @version: 1.0.0
@@ -19,7 +19,8 @@
         var defaultOptions = {
                 target:null,
                 onShow:null,
-                onHide:null
+                onHide:null,
+                onClose:null
         },
         UA_STASH = {
             AndroidUC9:{
@@ -62,6 +63,7 @@
             opts = J.mix(defaultOptions, options || {}, true);
             if(getStorage()==0){
                 createTip();
+                // alert(navigator.userAgent);
             }
         })();
         function createTip(){
@@ -114,7 +116,7 @@
                 return false; //for qq
             }
             //safari 6.x
-            else if(ua.match(/Mac.*OS.*Version\/6.*Mobile/i)){
+            else if(ua.match(/Mac.*OS.*Version\/[456].*Mobile/i)){
                 return 'iPhone_6';
             }
             //safari 7.x
@@ -139,10 +141,11 @@
         function bindEvents(tip){
             tip.s('a').each(function(i,v){
                 v.on('click',function(){
-                    tip.hide();
-                    if(v == 1){
+                    if(i == 1){
                         setStorage((new Date()).valueOf(),true);
                     }
+                    opts.onClose && opts.onClose();
+                    tip.hide();
                 });
             });
         }
