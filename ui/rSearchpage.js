@@ -22,7 +22,7 @@
 			onHide:null,
 			onTapAction:null
 		},
-		spId, tag, input;
+		spId, tag, input, opts;
 		(function(){
 			opts = J.mix(defaultOptions, options || {}, true);
 			spId = J.g(opts.eleId);
