@@ -27,7 +27,7 @@
         setBackList: setBackList
     });
 
-    var logger = J.logger, BLACKLIST = ['BdPlayer','baiduboxapphomepagetag'];
+    var logger = J.logger, BLACKLIST = ['Player','baiduboxapphomepagetag'];
 
 
     function getBackList(){

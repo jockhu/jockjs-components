@@ -52,6 +52,7 @@
 	        var v = htmlencode(value.replace(',',''));
 	        //',q,w,e,r,t,y,'
 	        var oldHistory = getStorage();
+            if(!localStorage) return;
 	        if(oldHistory.length == 0){
 	            localStorage && (localStorage.searchHis = ',' + v + ',');
 	        }else{

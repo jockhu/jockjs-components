@@ -50,6 +50,7 @@
 	        	var value = htmlencode(v.replace(',',''));
 	        	//',q,w,e,r,t,y,'
 	        	var oldHistory = getStorage(l);
+                if(!localStorage) return;
 	        	if(oldHistory.length == 0){
 	            	localStorage[l] = ',' + value + ',';
 	        	}else{
