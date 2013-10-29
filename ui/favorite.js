@@ -69,7 +69,7 @@
         function createTip(){
             var browser = getUaKey()?UA_STASH[getUaKey()]:false;
             if(browser){
-                var tpl = '<div class="fav_tip"><b></b><div><i></i><span>'+browser.title+'</span><span class="sIcon">请点击</span><span>选择“'+browser.content+'”</span><a>×</a><a>我知道了</a></div></div>',
+                var tpl = '<div class="fav_tip"><b></b><div><i></i><span>'+browser.title+'</span><span class="sIcon">请点击</span><span>选择“'+browser.content+'”</span><em>我知道了</em><em>×</em></div></div>',
                 tip = J.create('div',{
                     class: browser.class
                 }).html(tpl).appendTo(opts.target||'body');
@@ -139,13 +139,11 @@
             }
         }
         function bindEvents(tip){
-            tip.s('a').each(function(i,v){
+            tip.s('em').each(function(i,v){
                 v.on('click',function(){
-                    if(i == 1){
-                        setStorage((new Date()).valueOf(),true);
-                    }
-                    opts.onClose && opts.onClose();
                     tip.hide();
+                    opts.onClose && opts.onClose();
+                    if(i==0) setStorage((new Date()).valueOf(),true);
                 });
             });
         }
