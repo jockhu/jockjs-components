@@ -98,7 +98,6 @@
 	        });
 		}
 		function onTap(v){
-			alert(1);
 			setStorage(tag, v);
 			opts.onTapAction && opts.onTapAction(v);
 			// hidePage();
