@@ -45,15 +45,18 @@
 			}
 		}
 		function setStorage(l,v){
-			if(v == '') return;
-	        var value = htmlencode(v.replace(',',''));
-	        //',q,w,e,r,t,y,'
-	        var oldHistory = getStorage(l);
-	        if(oldHistory.length == 0){
-	            localStorage[l] = ',' + value + ',';
-	        }else{
-	            localStorage[l] = checkValue(oldHistory.content, value, oldHistory.length);
-	        }
+			try{
+				if(v == '') return;
+	        	var value = htmlencode(v.replace(',',''));
+	        	//',q,w,e,r,t,y,'
+	        	var oldHistory = getStorage(l);
+	        	if(oldHistory.length == 0){
+	            	localStorage[l] = ',' + value + ',';
+	        	}else{
+	            	localStorage[l] = checkValue(oldHistory.content, value, oldHistory.length);
+	        	}
+	    	}
+	    	catch(e){}
 		}
 		function checkValue(str, v, l){
 	        var cStr,subStr = ',' + v + ',';
@@ -95,6 +98,7 @@
 	        });
 		}
 		function onTap(v){
+			alert(1);
 			setStorage(tag, v);
 			opts.onTapAction && opts.onTapAction(v);
 			// hidePage();
