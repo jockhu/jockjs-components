@@ -30,14 +30,17 @@
 
 	function Appdownload(options){
 		if(defaultOpts.isIos){
-			var pic = '/touch/img/down_anjuke_ios.png';
+			// var pic = '/touch/img/down_anjuke_ios.png';
+			var pic = 'down_ios_icon';
 		}else{
-			var pic = '/touch/img/down_anjuke_android.png'
+			// var pic = '/touch/img/down_anjuke_android.png'
+			var pic = 'down_android_icon';
 		}
 		var appOptions = {
 			anjuke: {
 				app_link: "openanjuke://",
-				img: J.site.info.includePrefix + pic,
+				// img: J.site.info.includePrefix + pic,
+				img:pic,
 				title: "安居客App",
 				link_android: "http://android.anjuke.com/getapkx.php?app=Anjuke&pm=b190&b190.apk",
 				link_ios: "https://itunes.apple.com/cn/app/ju-ke-er-shou-fang-fang-jia/id415606289?mt=8",
@@ -61,11 +64,12 @@
 			as = "float: right;margin: 24px 8px 0 0;border: #bbb solid 1px;color: #333;line-height: 30px;padding: 0 10px;text-align: center;font-weight: bold;border-radius: 3px;font-size: 15px;background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fff), to(#dedede), color-stop(0.1,#fff));",
 			ss = "font-size: 16px;line-height: 25px;",
 			sps = "font-size: 13px;color: #5f5f5f;line-height: 30px;font-weight: bold;",
-			h = "<div class='download_c' style='"+cs+"' ></div><span style='"+ms+"'></span><div style='"+ts+"'><strong style='"+ss+"'>"+opts.title+"</strong><br/><span style='"+sps+"'>更快捷，更省流量</span><br/></div>",
+			// h = "<div class='download_c' style='"+cs+"' ></div><span style='"+ms+"'></span><div style='"+ts+"'><strong style='"+ss+"'>"+opts.title+"</strong><br/><span style='"+sps+"'>更快捷，更省流量</span><br/></div>",
+			h = "<div class='download_c'></div><span class='"+opts.img+"'></span><div style='"+ts+"'><strong style='"+ss+"'>"+opts.title+"</strong><br/><span style='"+sps+"'>更快捷，更省流量</span><br/></div>",
 			e = J.create('div',{
 				'id':'app_download_'+options,
-				'class':'app_download',
-				'style':'height: 77px;background-color: #e5e6e7;background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fff), to(#e5e6e7));border-bottom: #d9d9d9 solid 1px;'
+				'class':'app_download'
+				// 'style':'height: 77px;background-color: #e5e6e7;background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#fff), to(#e5e6e7));border-bottom: #d9d9d9 solid 1px;'
 			}).html(h).hide();
 			if(opts.isIos){
 				J.create('a',{
