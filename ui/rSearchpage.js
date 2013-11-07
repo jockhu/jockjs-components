@@ -83,6 +83,7 @@
 			if(v!='') setStorage(tag, v);
 		}
 		function bindEvent(){
+            window.scrollTo(0,1);
 			var cancelBtn = spId.s('a').eq(0), searchBtn = spId.s('i').eq(0);
 			cancelBtn.on('click',function(){
 	            hidePage();
