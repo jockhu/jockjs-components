@@ -64,7 +64,6 @@
                             v.attr("pos",v.offset().y)
                     })();
                 }),taskAdd());
-                console.log(cache);
             }
             function remove(dom){
                 dom && J.each(dom, function(i, v){
