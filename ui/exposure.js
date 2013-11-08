@@ -18,6 +18,7 @@
      */
     var defaultOpts = {
         trackTag:"data-trace",
+        trackType:'',
         pageName:null,
         site:null,
         autoStart:true//是否页面加载全局搜索A
@@ -34,6 +35,7 @@
             opts = J.mix(defaultOpts, options || {},true);
             traceTag = opts.trackTag;
             tracker = new J.logger.Tracker(opts.site, opts.pageName);
+            opts.trackType && tracker.setSendType(opts.trackType);
             tasker = new Tasker(opts);
             disPatch =  new Dispatch();
         })();
@@ -55,13 +57,12 @@
              * @param doms
              */
             function add(doms){
-                doms&&doms.each(function(k,v){
+                (doms&&doms.length)&&(doms.each(function(k,v){
                     v.attr(traceTag)&&(function(){
                             cache.push({y:v.offset().y,elm:v,trace: v.attr(traceTag)})
                         v.attr("pos",v.offset().y)
                     })();
-                });
-                taskAdd();
+                }),taskAdd());
             }
             function remove(dom){
                 dom && J.each(dom, function(i, v){
