@@ -59,10 +59,12 @@
             function add(doms){
                 (doms&&doms.length)&&(doms.each(function(k,v){
                     v.attr(traceTag)&&(function(){
-                            cache.push({y:v.offset().y,elm:v,trace: v.attr(traceTag)})
-                        v.attr("pos",v.offset().y)
+                            var tmpY = v.offset().y;
+                            tmpY&&cache.push({y:tmpY,elm:v,trace: v.attr(traceTag)})
+                            v.attr("pos",v.offset().y)
                     })();
                 }),taskAdd());
+                console.log(cache);
             }
             function remove(dom){
                 dom && J.each(dom, function(i, v){
