@@ -19,7 +19,8 @@
     var defaultOpts = {
         trackTag:"data-trace",
         pageName:null,
-        site:null
+        site:null,
+        autoStart:true//是否页面加载全局搜索A
     }, data = 0;
 
     /**
@@ -40,7 +41,7 @@
             var timer = null,cache=[],botY,topY,pageW,pageH,delay = 50,Ret={};
             function init(){
                resize();
-               add(J.s("a"));
+               opts.autoStart&&add(J.s("a"));
                eventBind();
             }
             function eventBind(){
@@ -48,6 +49,11 @@
                 J.on(window,"scroll",taskAdd);
                 J.on(window,"resize",resize);
             }
+
+            /**
+             *
+             * @param doms
+             */
             function add(doms){
                 doms&&doms.each(function(k,v){
                     v.attr(traceTag)&&(function(){
