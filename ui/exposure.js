@@ -47,7 +47,7 @@
                eventBind();
             }
             function eventBind(){
-               window.onscroll = taskAdd;
+                J.ready(taskAdd);
                 J.on(window,"scroll",taskAdd);
                 J.on(window,"resize",resize);
             }
