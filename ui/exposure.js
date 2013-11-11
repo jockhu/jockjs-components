@@ -58,9 +58,9 @@
              */
             function add(doms){
                 (doms&&doms.length)&&(doms.each(function(k,v){
-                    v.attr(traceTag)&&(function(){
+                    v&&v.attr(traceTag)&&(function(){
                             var tmpY = v.offset().y;
-                            cache.push({y:tmpY,elm:v,trace: v.attr(traceTag)})
+                            cache.push({elm:v,trace: v.attr(traceTag)})
                             v.attr("pos",v.offset().y)
                     })();
                 }),taskAdd());
@@ -76,7 +76,12 @@
                     topY = page.scrollTop(),botY=topY+ pageH;
                     var ret= [];
                     for(var i in cache){
-                        var tmp = cache[i], offsetY =  tmp.elm.offset().y;
+                        var tmp = cache[i];
+                        if(!tmp.elm){
+                            delete cache[i];
+                            continue;
+                        }
+                        var offsetY =  tmp.elm.offset().y;
                         if(tmp && (offsetY>topY && offsetY < botY)){
                             ret.push(tmp.trace);
                             delete cache[i];
