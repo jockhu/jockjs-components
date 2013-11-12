@@ -108,6 +108,9 @@
             if(ua.match(/UCBrowser/i)){ //is UC
                 return ua.match(/(?:Android)|(?:iPhone)/)+'UC'+ ua.match(/UCBrowser\/(\d)/)[1];
             }
+            else if(ua.match(/10A523/i)){ //is UC8.9
+                return 'iPhoneUC9';
+            }
             //QQ android/ios
             else if(ua.match(/MQQBrowser/i)){
                 return 'QQBrowser';
