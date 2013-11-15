@@ -28,7 +28,7 @@
             cityAlias:J.site.info.cityAlias,
             onComplete:null,
             onShow:null
-        }, opts, pageIndex = 0;
+        }, opts, pageIndex = 0,fetchEnd=false;
 
         (function () {
             opts = J.mix(defaultOptions, options || {}, true);
@@ -129,15 +129,16 @@
         }
 
         function showInfor() {
-            if(opts.total>opts.firstpage){
-                J.g(opts.elem).show();
-            }else{
-                J.g(opts.elem).hide();
-            }
-            if(pageIndex==9){
-                J.g(opts.elem).hide();
-            }
-
+          if(opts.type=='home'||opts.type=='view'){
+              if(opts.total>opts.firstpage){
+                  J.g(opts.elem).show();
+              }else{
+                  J.g(opts.elem).hide();
+              }
+              if(pageIndex==9){
+                  J.g(opts.elem).hide();
+              }
+          }
         }
 
         function showMore(data) {
