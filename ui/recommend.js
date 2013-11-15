@@ -1,17 +1,16 @@
-/*业务层调用*/
-/*var tui=new J.ui.recommend({
-    elem:'recMore',
-    box:'recContent',
-    type:'home',
-    showbox:function(){
-        T.lazyload();
-    },
- onComplete:function(){
-    //发送soj
- }
-})*/
-/**/
+/**
+ * Aifang Javascript Framework.
+ * Copyright 2013 ANJUKE Inc. All rights reserved.
+ *
+ * @path: ui/recommend.js
+ * @author: QingliPan
+ * @version: 1.0.0
+ * @date: 2013/11/15
+ *
+ */
 
+/// require('ui.ui');
+/// require('page');
 (function (J) {
     function Recommend(options) {
         var defaultOptions = {
@@ -24,7 +23,6 @@
             total:100,
             elem:'',
             propId:'',
-            inforEle:'',
             cityAlias:J.site.info.cityAlias,
             onComplete:null,
             onShow:null
@@ -43,20 +41,24 @@
                      if(opts.type=='home'){
                          J.g(opts.elem).s('span').eq(0).addClass('loading').html('加载中');
                      }
-                     if (pageIndex<9){
-                         pageIndex++;
-                     }else{
-                         return;
-                     }
-                     getData();
+                     pageAdd();
                  });
              }
              if(opts.type=='list'){
                  window.onscroll=function(){
-                     if (pageIndex<10) pageIndex++;
-                     getData();
+                     opts.onComplete && opts.onComplete();
+                     pageAdd();
+
                  };
              }
+            function pageAdd(){
+                if (pageIndex<9){
+                    pageIndex++;
+                }else{
+                    return;
+                }
+                getData();
+            }
         }
 
         function getData() {
@@ -72,12 +74,7 @@
                     if(data!=''){
                         if(pageIndex==0){
                             showBox(data);
-                            if(opts.total>opts.firstpage){
-                                bindEvent();
-                                J.g(opts.elem).show();
-                            }else{
-                                J.g(opts.elem).hide();
-                            }
+                            bindEvent();
                         }else{
                             showMore(data);
                             showLoading();
@@ -121,7 +118,6 @@
         }
 
         function showBox(data) {
-
             J.g(opts.cont).html(data);
             opts.onShow&&opts.onShow();
             showInfor();
@@ -147,6 +143,9 @@
                 div.html(data).appendTo(opts.cont);
             }else if(opts.type=='view'){
                 showBox(data);
+            }
+            if(opts.type=='list'){
+                opts.onComplete && opts.onComplete(div);
             }
             opts.onShow&&opts.onShow();
             showInfor();
@@ -177,11 +176,11 @@
                 }
             }
             if(opts.type=='list'){
-               if(J.g(opts.box).s('.Gb').eq(0).attr('count')<9){
-                   J.g('list_lookmore').hide();
+               if(pageIndex<9){
+                   J.g('list_lookmore').show();
                }else{
                    fetchEnd=true;
-                   J.g('list_lookmore').show();
+                   J.g(opts.elem).hide();
                }
             }
 
