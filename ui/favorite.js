@@ -62,6 +62,11 @@
                 title:'收藏安居客',
                 content:'添加书签',
                 class:'baidubox'
+            },
+            BaiduSearch:{
+                title:'收藏安居客',
+                content:'添加书签',
+                class:'baiduSearch'
             }
         };
         (function(){
@@ -125,7 +130,9 @@
             }
             //baidu
             else if(ua.match(/iPhone.*baidubox/i)){
-                return 'Baidu';
+                var reg = /anjuke/;
+                if(reg.test(document.referrer)) return 'Baidu';
+                else return 'BaiduSearch';
             }
             //safari 6.x
             else if(ua.match(/Mac.*OS.*Version\/[456].*Mobile/i)){
