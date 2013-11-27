@@ -129,9 +129,9 @@
                 return false; //for qq
             }
             //baidu
-            else if(ua.match(/iPhone.*baidubox/i)){
+            else if(ua.match(/[(?:Android)|(?:iPhone)].*baidubox/i)){
                 var reg = /anjuke/;
-                if(reg.test(document.referrer)) return 'Baidu';
+                if(!document.referrer) return 'Baidu';
                 else return 'BaiduSearch';
             }
             //safari 6.x
