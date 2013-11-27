@@ -57,6 +57,16 @@
                 title:'收藏安居客',
                 content:'添加书签',
                 class:'miui'
+            },
+            Baidu:{
+                title:'收藏安居客',
+                content:'添加书签',
+                class:'baidubox'
+            },
+            BaiduSearch:{
+                title:'收藏安居客',
+                content:'添加书签',
+                class:'baiduSearch'
             }
         };
         (function(){
@@ -117,6 +127,12 @@
             }
             else if(ua.match(/qq/i)){
                 return false; //for qq
+            }
+            //baidu
+            else if(ua.match(/[(?:Android)|(?:iPhone)].*baidubox/i)){
+                var reg = /anjuke/;
+                if(!document.referrer) return 'Baidu';
+                else return 'BaiduSearch';
             }
             //safari 6.x
             else if(ua.match(/Mac.*OS.*Version\/[456].*Mobile/i)){
