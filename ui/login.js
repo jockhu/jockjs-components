@@ -135,7 +135,6 @@
             }).on("mouseleave",function(){
                     J.g("login_l").removeClass("over");
                 })
-
             J.g("login_r")&& J.g("login_r").on("mouseenter",function(){
                 J.g("login_r").addClass("over");
                 !isgetFav&&(getMyFavorites(),isgetFav=true);
@@ -259,13 +258,16 @@
             if(!data){
                 isgetFav = true;
                 var url = baseUrl+'ajax/favorite/list_4_favorite';
-                J.get({url:url,type:'jsonp',data:{r:Math.random()},callback:' loginObj.getFavorite'});
+                J.get({
+                    url:url,
+                    type:'jsonp',
+                    data:{r:Math.random()},callback:' loginObj.getFavorite'});
                 return;
             }
             var countDom = J.g("login_r").s(".my").eq(0);
             var delUrl = baseUrl+'ajax/favorite/del_favorite';
             var content = J.g("login_r")&&J.g("login_r").s("ul").eq(0);
-            if(data.code&&data.val.length){
+            if(!data.code&&data.val.length){
                 var isLogin = J.getCookie('aQQ_ajkauthinfos');
                 var loginStr = isLogin?'':'<li style="border: 1px solid #fc6;background-color: #fefded;padding: 0;text-indent: 10px;line-height: 34px;margin: 10px 0;">该收藏仅在本设备暂时保存，若需永久保存并同步请<a style="display: inline" href="'+loginUrl+'">登陆</a>。</li>';
                 var arr = data.val,html='<li class="t">最近加入的房子</li>'+loginStr;
