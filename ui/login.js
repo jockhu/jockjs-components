@@ -271,7 +271,7 @@
                 var isLogin = J.getCookie('aQQ_ajkauthinfos');
                 var loginStr = isLogin?'':'<li style="border: 1px solid #fc6;background-color: #fefded;padding: 0;text-indent: 10px;line-height: 34px;margin: 10px 0;">该收藏仅在本设备暂时保存，若需永久保存并同步请<a style="display: inline" href="'+loginUrl+'">登陆</a>。</li>';
                 var arr = data.val,html='<li class="t">最近加入的房子</li>'+loginStr;
-                countDom.html(countDom.html().replace(/\d+/,data.num));
+                countDom.html(countDom.html().replace(/\d+/,data.num.num));
                 for(var i=0,len=arr.length;i<len;i++){
                     var str = '<li><a href="'+arr[i].link+'" class="li_a"><img src="'+arr[i].image+'" alt=""/></a>'+
                         '<div class="li_c"><a href="'+arr[i].link+'">['+arr[i].category+']'+arr[i].title+'</a><div>'+arr[i].info+'</div></div>'+
@@ -334,7 +334,7 @@
                 return;
             }
             !data.code&&data.num&&(function(){
-                J.g("login_r")&&J.g("login_r").s(".my").eq(0).html("收藏夹（"+data.num.num+"）");
+                J.g("login_r")&&J.g("login_r").s(".my").eq(0).html("收藏夹（"+data.num+"）");
                 var count = content.s(".nav_count").length;
                 if(count){
                     var dom = content.s(".nav_count").eq(0);
