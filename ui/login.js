@@ -334,7 +334,7 @@
                 return;
             }
             !data.code&&data.num&&(function(){
-                J.g("login_r")&&J.g("login_r").s(".my").eq(0).html("收藏夹（"+data.num+"）");
+                J.g("login_r")&&J.g("login_r").s(".my").eq(0).html("收藏夹（"+data.num.num+"）");
                 var count = content.s(".nav_count").length;
                 if(count){
                     var dom = content.s(".nav_count").eq(0);
