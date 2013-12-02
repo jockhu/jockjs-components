@@ -359,5 +359,5 @@
         }
     }
     (function(){}.require([''], ['ui.login'], true))
-    J.ui.panel = LoginPanel;
+    J.ui.login = LoginPanel;
 })(J, document);
