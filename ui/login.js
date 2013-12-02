@@ -177,7 +177,6 @@
          * 初始化发送AJAX确定是否登录
 
          */
-
         function sendAjax(){
             J.get({
                 url: baseUrl + 'ajax/checklogin/'+'?r='+Math.random(),
