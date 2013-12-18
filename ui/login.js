@@ -10,7 +10,7 @@
         function init(){
             eleBroker = J.s(".glbR").length&&J.s(".glbR").eq(0)||false;
             content = J.s(".R_user").length&&J.s(".R_user").eq(0)||false;
-            if(!eleBroker && !content){
+            if(!eleBroker || !content){
                 return false;
             }
             baseUrl = content.attr("url");
