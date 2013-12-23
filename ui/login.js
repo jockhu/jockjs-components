@@ -40,9 +40,8 @@
                 '<li><a href="'+config.my_ask+'">我的问答</a></li>'+
                 '<li style="text-align: left;padding-left: 27px;"><a href="'+config.my_msg+'">我的消息'+ msgHTML+'</a></li>'+
                 '<li class="sep"></li>'+
-                (config.publish_sell=='#'? '':'<li><a href="'+config.publish_sell+'">发布出售</a></li>')+
-                '<li><a href="'+config.publish_rent+'">发布出租</a></li>'+
-                (config.publish_shop=='#'? '':'<li><a href="'+config.publish_shop+'">发布商铺</a></li>')+
+                '<li><a href="'+config.publish_sell+'">我要发布</a></li>'+
+                '<li><a target="_blank" href="'+config.my_house+'">我的房源</a></li>'+
                 '<li class="sep"></li>'+
                 '<li class="exit"><a class="exit" href="'+config.exit+'">退出</a></li>'+
                 '</ul></div>  '+
@@ -210,7 +209,8 @@
                         publish_shop:data.righturl.links.publish_shop || '#',//发布商铺
                         exit:data.lefturl.logouturl,
                         expert_home:data.righturl.links.expert_home || '#',
-                        ask_center:data.righturl.links.ask_center || '#'
+                        ask_center:data.righturl.links.ask_center || '#',
+                        my_house:data.common.my_house||'#'
                     }
                     this.my_favorite = loginData.my_favorite;
                     html = getGeneralHTML(loginData);
@@ -221,6 +221,7 @@
                         myanjuke:data.righturl.myanjuke||'#',
                         msgUrl:data.lefturl.pmurl ||'#',
                         msgCount:data.common.totalUnreadCount,
+                        my_house:data.common.my_house||'#',
                         developUrl:data.common.developUrl|| false//新房分销平台
                     };
                     html = getBrokerHTML(data);
