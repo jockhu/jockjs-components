@@ -112,7 +112,7 @@
 	    function showPage(){
 	    	opts.onShow && opts.onShow();
 	    	isFocus();
-	    	input.val('');
+//	    	input.val('');
 	    }
 	    function hidePage(){
 	    	opts.onHide && opts.onHide();
