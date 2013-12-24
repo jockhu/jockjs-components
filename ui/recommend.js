@@ -31,6 +31,7 @@
         (function () {
             opts = J.mix(defaultOptions, options || {}, true);
             getData();
+            bindEvent();
         })();
 
 
@@ -46,9 +47,15 @@
              }
              if(opts.type=='list'){
                  window.onscroll=function(){
+                     var scroll_top = window.pageYOffset;
+                     var screen_hei = window.innerHeight;
+                     var page_hei = document.body.scrollHeight;
                      opts.onComplete && opts.onComplete();
-                     pageAdd();
-
+                     setTimeout(function(){
+                         if((page_hei-(scroll_top+screen_hei)<100)){
+                             pageAdd();
+                         }
+                     },50)
                  };
              }
             function pageAdd(){
@@ -74,7 +81,6 @@
                     if(data!=''){
                         if(pageIndex==0){
                             showBox(data);
-                            bindEvent();
                         }else{
                             showMore(data);
                             showLoading();
@@ -118,7 +124,12 @@
         }
 
         function showBox(data) {
-            J.g(opts.cont).html(data);
+            if(opts.type=='list'){
+                var div= J.create('div');
+                div.html(data).appendTo(opts.cont);
+            }else{
+                J.g(opts.cont).html(data);
+            }
             opts.onShow&&opts.onShow();
             showInfor();
 
@@ -134,11 +145,17 @@
               if(pageIndex==9){
                   J.g(opts.elem).hide();
               }
+          }else if(opts.type=='list'){
+
           }
         }
 
         function showMore(data) {
-            if(opts.type=='home' || opts.type=='list'){
+            if(opts.type=='home'){
+                var div =J.g(opts.cont),divHtml= div.html();
+                div.html(divHtml+data);
+            }
+            else if(opts.type=='list'){
                 var div= J.create('div');
                 div.html(data).appendTo(opts.cont);
             }else if(opts.type=='view'){
