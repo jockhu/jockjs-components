@@ -47,7 +47,7 @@
                     + '"w":"'+ W.screen.width +'"'
                     + ',"h":"'+ W.screen.height +'"'
                     + ',"r":"'+(W.devicePixelRatio >= 2 ? 1 : 0)+'"'
-                + '}',
+                    + '}',
                 site:o.site || '',
                 guid:getCookie(o.nGuid || 'aQQ_ajkguid') || '',
                 ctid:getCookie(o.nCtid || 'ctid') || '',
@@ -66,7 +66,11 @@
         function track(url) {
             var P = buildParams(), sojUrl = url || Logger.sojUrl;
             try{
-                o.sendType === 'get' ? (new Image().src = sojUrl + '?' + param(P)) : J.post({url:sojUrl, type:'jsonp', data:P});
+                if(!o.sendType){
+                    var src =sojUrl + '?' + param(P);
+                    o.sendType = src.length<2000 ? "get" : "post";
+                }
+                o.sendType === 'get' ? (new Image().src = (src||(sojUrl + '?' + param(P)))) : J.post({url:sojUrl, type:'jsonp', data:P});
             }catch(e){
                 Logger.log(e,'TrackError')
             }
