@@ -22,10 +22,12 @@
             nextpage:10,
             total:100,
             elem:'',
+            link:'',
             propId:'',
             cityAlias:J.site.info.cityAlias,
             onComplete:null,
-            onShow:null
+            onShow:null,
+            textShow:null
         }, opts, pageIndex = 0,fetchEnd=false;
 
         (function () {
@@ -59,10 +61,14 @@
                  };
              }
             function pageAdd(){
-                if (pageIndex<9){
-                    pageIndex++;
+                if (opts.type=='home' || opts.type=='list'){
+                    if (pageIndex<9){
+                        pageIndex++;
+                    }else{
+                        return;
+                    }
                 }else{
-                    return;
+                    pageIndex++;
                 }
                 getData();
             }
@@ -113,8 +119,12 @@
             } else if (opts.type == 'view') {
                 url += '/' + opts.propId;
             }
-            if (pageIndex > 0) {
-                url += getUrlChar(url)+'page=' + pageIndex;
+            if (pageIndex > 0){
+                if(opts.type == 'view'){
+                    url += getUrlChar(url)+'change=' + pageIndex;
+                }else{
+                    url += getUrlChar(url)+'page=' + pageIndex;
+                }
             }
             return url;
         }
@@ -130,6 +140,7 @@
             }else{
                 J.g(opts.cont).html(data);
             }
+            opts.total=J.g(opts.cont).s('a').eq(0).attr('count');
             opts.onShow&&opts.onShow();
             showInfor();
 
@@ -142,11 +153,13 @@
               }else{
                   J.g(opts.elem).hide();
               }
-              if(pageIndex==9){
-                  J.g(opts.elem).hide();
+          }
+          if(opts.type=='view'){
+              if(opts.total>=5){
+                  J.g(opts.link).show();
+              }else{
+                  J.g(opts.link).hide();
               }
-          }else if(opts.type=='list'){
-
           }
         }
 
@@ -165,7 +178,6 @@
                 opts.onComplete && opts.onComplete(div);
             }
             opts.onShow&&opts.onShow();
-            showInfor();
         }
 
         function showLoading() {
@@ -200,7 +212,12 @@
                    J.g(opts.elem).hide();
                }
             }
-
+            if(opts.type=='home' || opts.type=='list'){
+                if(pageIndex==9){
+                    J.g(opts.elem).hide();
+                    opts.textShow&&opts.textShow();
+                }
+            }
         }
 
         return {
