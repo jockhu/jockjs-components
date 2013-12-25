@@ -22,7 +22,7 @@
             nextpage:10,
             total:100,
             elem:'',
-            link:'',
+            entry:'',
             propId:'',
             cityAlias:J.site.info.cityAlias,
             onComplete:null,
@@ -141,7 +141,7 @@
                 J.g(opts.cont).html(data);
             }
             opts.total=J.g(opts.cont).s('a').eq(0).attr('count');
-            opts.onShow&&opts.onShow();
+            opts.onShow&&opts.onShow();//异步加载图片
             showInfor();
 
         }
@@ -154,11 +154,11 @@
                   J.g(opts.elem).hide();
               }
           }
-          if(opts.type=='view'){
+          if(opts.type=='view'){//单页是否显示查看更多推荐
               if(opts.total>=5){
-                  J.g(opts.link).show();
+                  J.g(opts.entry).show();
               }else{
-                  J.g(opts.link).hide();
+                  J.g(opts.entry).hide();
               }
           }
         }
@@ -173,9 +173,6 @@
                 div.html(data).appendTo(opts.cont);
             }else if(opts.type=='view'){
                 showBox(data);
-            }
-            if(opts.type=='list'){
-                opts.onComplete && opts.onComplete(div);
             }
             opts.onShow&&opts.onShow();
         }
