@@ -143,9 +143,9 @@
             var closeDom = J.s(".login_close").length?J.s(".login_close").eq(0):false;
             closeDom&& closeDom.on('click',function(){
                 var url = baseUrl +'ajax/usersetting/?key=shutNotify&value=1&_r='+Math.random();
-                J.get({url:url,onSuccess:function(){
-                    closeDom.up(0).remove();
-                }});//发送ａｊａｘ清楚ｃｏｏｋｉｅ
+                (new Image()).src= url;
+                closeDom.up(0).remove();
+                //发送ａｊａｘ清楚ｃｏｏｋｉｅ
             });
             var view = closeDom&&closeDom.prev();
             view && view.on('click',function(){
