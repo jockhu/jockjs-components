@@ -67,7 +67,7 @@
             var P = buildParams(), sojUrl = url || Logger.sojUrl;
             try{
                 if(!o.sendType){
-                    var src =sojUrl + '?' + param(P);
+                    var src =sojUrl + (sojUrl.indexOf('?')>-1?'':'?')+ param(P);
                     o.sendType = src.length<2000 ? "get" : "post";
                 }
                 o.sendType === 'get' ? (new Image().src = (src||(sojUrl + '?' + param(P)))) : J.post({url:sojUrl, type:'jsonp', data:P});
