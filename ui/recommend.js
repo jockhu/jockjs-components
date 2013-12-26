@@ -22,7 +22,6 @@
             nextpage:10,
             total:100,
             elem:'',
-            entry:'',
             propId:'',
             cityAlias:J.site.info.cityAlias,
             onComplete:null,
@@ -38,11 +37,12 @@
 
 
         function bindEvent() {
+            var elem=opts.elem
              if(opts.type=='home' || opts.type=='view'){
-                 J.g(opts.elem).on('click',function(){
+                 elem&&elem.on('click',function(){
                      opts.onComplete && opts.onComplete();
                      if(opts.type=='home'){
-                         J.g(opts.elem).s('span').eq(0).addClass('loading').html('加载中');
+                         elem.s('span').eq(0).addClass('loading').html('加载中');
                      }
                      pageAdd();
                  });
@@ -75,18 +75,16 @@
         }
 
         function getData() {
-            var url = bindUrl();
+            var url = bindUrl(),box=J.g(opts.box);
             J.get({
                 url:url,
                 timeout: 15000,
                 header:{'X-TW-HAR': 'HTML'},
                 onSuccess:function(data){
-                    if(J.g(opts.box).getStyle('display')=='none'){
-                        J.g(opts.box).setStyle({'display':'block'});
-                    }
                     if(data!=''){
+                        box&&box.show();
                         if(pageIndex==0){
-                            showBox(data);
+                           showBox(data);
                         }else{
                             showMore(data);
                             showLoading();
@@ -148,17 +146,19 @@
 
         function showInfor() {
           if(opts.type=='home'||opts.type=='view'){
+              var elem=J.g(opts.elem);
               if(opts.total>opts.firstpage){
-                  J.g(opts.elem).show();
+                  elem&&elem.show();
               }else{
-                  J.g(opts.elem).hide();
+                  elem&&elem.hide();
               }
           }
           if(opts.type=='view'){//单页是否显示查看更多推荐
+              var cont=J.g(opts.cont);
               if(opts.total>=5){
-                  J.g(opts.entry).show();
+                  cont.next().show();
               }else{
-                  J.g(opts.entry).hide();
+                  cont.next().hide();
               }
           }
         }
