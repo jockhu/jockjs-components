@@ -40,7 +40,6 @@
             var elem= J.g(opts.elem);
              if(opts.type=='home' || opts.type=='view'){
                  elem&&elem.on('click',function(){
-                     opts.onComplete && opts.onComplete();
                      if(opts.type=='home'){
                          elem.s('span').eq(0).addClass('loading').html('加载中');
                      }
@@ -138,8 +137,9 @@
 
         function showBox(data) {
             if(opts.type=='list'){
-                var div= J.create('div');
+                var div= J.create('div'),cont= J.g(opts.cont);;
                 div.html(data).appendTo(opts.cont);
+                opts.onexposure&&opts.onexposure(cont);
             }else{
                 J.g(opts.cont).html(data);
             }
