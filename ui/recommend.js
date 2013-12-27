@@ -26,7 +26,7 @@
             cityAlias:J.site.info.cityAlias,
             onComplete:null,
             onShow:null,
-            textShow:null
+            onexposure:null
         }, opts, pageIndex = 0,fetchEnd=false;
 
         (function () {
@@ -37,7 +37,7 @@
 
 
         function bindEvent() {
-            var elem=opts.elem
+            var elem= J.g(opts.elem);
              if(opts.type=='home' || opts.type=='view'){
                  elem&&elem.on('click',function(){
                      opts.onComplete && opts.onComplete();
@@ -54,7 +54,7 @@
                      var page_hei = document.body.scrollHeight;
                      opts.onComplete && opts.onComplete();
                      setTimeout(function(){
-                         if((page_hei-(scroll_top+screen_hei)<100)){
+                         if((page_hei-(scroll_top+screen_hei)<100) && fetchEnd){
                              pageAdd();
                          }
                      },50)
@@ -62,10 +62,13 @@
              }
             function pageAdd(){
                 if (opts.type=='home' || opts.type=='list'){
+                    if(opts.type=='list'){
+                        showLoading();
+                    }
                     if (pageIndex<9){
                         pageIndex++;
                     }else{
-                        return;
+                        return false;
                     }
                 }else{
                     pageIndex++;
@@ -87,9 +90,11 @@
                            showBox(data);
                         }else{
                             showMore(data);
-                            showLoading();
+                            if (opts.type=='home' || opts.type=='view'){
+                                showLoading();
+                            }
                         }
-
+                        fetchEnd=true;
                     }
                 },
                 onFailure:function(e){
@@ -164,6 +169,7 @@
         }
 
         function showMore(data) {
+            var cont= J.g(opts.cont);
             if(opts.type=='home'){
                 var div =J.g(opts.cont),divHtml= div.html();
                 div.html(divHtml+data);
@@ -175,18 +181,12 @@
                 showBox(data);
             }
             opts.onShow&&opts.onShow();
+            opts.onexposure&&opts.onexposure(cont);
         }
 
         function showLoading() {
             if(opts.type=='home'){
-                var recomm_more=J.g(opts.elem),recomm_text=recomm_more.s('span').eq(0),temp= J.g(opts.cont).s('.Ra'),x;
-                temp.each(function(i,v){
-                    var t= v.attr('href');
-                    if(!t.match(/show=1/)){
-                        v.attr('href',t+'&show=1');
-                    }
-                });
-
+                var elem=J.g(opts.elem),elem_text=elem.s('span').eq(0),x;
                 if(opts.total%10 == 0 && opts.total > 10){
                     x = opts.total/10;
                 }else if(opts.total%10 == 0 && opts.total <= 10) {
@@ -196,24 +196,24 @@
                     x = parseInt(opts.total/10) + 1;
                 }
                 if(pageIndex <= x){
-                    recomm_text.removeClass('loading').html('更多推荐');
+                    elem_text.removeClass('loading').html('更多推荐');
                 }else if(l > x){
-                    recomm_more.hide();
+                    elem.hide();
+                }
+                if(pageIndex==9){
+                    elem.hide();
                 }
             }
             if(opts.type=='list'){
+               var elem=J.g(opts.elem);
                if(pageIndex<9){
-                   J.g('list_lookmore').show();
+                   elem.show();
+                   fetchEnd=false
                }else{
                    fetchEnd=true;
-                   J.g(opts.elem).hide();
+                   elem.hide();
+                   elem.prev().show();
                }
-            }
-            if(opts.type=='home' || opts.type=='list'){
-                if(pageIndex==9){
-                    J.g(opts.elem).hide();
-                    opts.textShow&&opts.textShow();
-                }
             }
         }
 
