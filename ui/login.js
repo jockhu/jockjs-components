@@ -41,7 +41,7 @@
                 '<li style="text-align: left;padding-left: 27px;"><a href="'+config.my_msg+'">我的消息'+ msgHTML+'</a></li>'+
                 '<li class="sep"></li>'+
                 '<li><a target="_blank" href="'+config.publish_sell+'">我要发房</a></li>'+
-                '<li><a target="_blank" href="'+config.my_house+'">我的房源</a></li>'+
+                '<li><a target="_blank" href="'+config.my_house+'?from=i_userctr">我的房源</a></li>'+
                 '<li class="sep"></li>'+
                 '<li class="exit"><a class="exit" href="'+config.exit+'">退出</a></li>'+
                 '</ul></div>  '+
