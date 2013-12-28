@@ -40,6 +40,7 @@
             var elem= J.g(opts.elem);
              if(opts.type=='home' || opts.type=='view'){
                  elem&&elem.on('click',function(){
+                     opts.onComplete && opts.onComplete();
                      if(opts.type=='home'){
                          elem.s('span').eq(0).addClass('loading').html('加载中');
                      }
@@ -51,7 +52,6 @@
                      var scroll_top = window.pageYOffset;
                      var screen_hei = window.innerHeight;
                      var page_hei = document.body.scrollHeight;
-                     opts.onComplete && opts.onComplete();
                      setTimeout(function(){
                          if((page_hei-(scroll_top+screen_hei)<100) && fetchEnd){
                              pageAdd();
@@ -136,13 +136,13 @@
         }
 
         function showBox(data) {
+            var div= J.create('div'),cont= J.g(opts.cont);
             if(opts.type=='list'){
-                var div= J.create('div'),cont= J.g(opts.cont);;
                 div.html(data).appendTo(opts.cont);
-                opts.onexposure&&opts.onexposure(cont);
             }else{
-                J.g(opts.cont).html(data);
+                cont.html(data);
             }
+            opts.onexposure&&opts.onexposure(cont);
             opts.total=J.g(opts.cont).s('a').eq(0).attr('count');
             opts.onShow&&opts.onShow();//异步加载图片
             showInfor();
