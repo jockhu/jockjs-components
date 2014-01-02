@@ -52,6 +52,12 @@
 	        p1.innerHTML = this.data[0].title;
 	        this.setTabs();     //设置和绑定tab切换动作
 	        this.setActionButton(); //设置和绑定焦点图上左右切换动作
+	        if(this.config.auto){
+	        	var _this = this;
+	        	window.setInterval(function(){
+	        		J.g(_this.config.right).get().click();
+	        	},2000);
+	        }
 	    },
 	    setTabs: function(){
 	        var _html = "<ul>", _this = this;
@@ -176,6 +182,8 @@
 	    }
 	}
 
-    J.ui.slide = Slide;
+    J.ui.slide = function(target, config){
+    	return new Slide(target, config);
+    }
 
  })(J, document);
