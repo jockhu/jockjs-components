@@ -32,6 +32,7 @@
 	        left:"focusLeftBtn",    //轮播图上左切换的按钮的id
 	        right:"focusRightBtn", //轮播图上右切换的按钮的id
 	        auto: false,            //是否自动播放
+	        autoSpeed: 3000,		//自动播放速度
 	        speed: 10                //播放速度
 	    },
 	    init: function(target,config){
@@ -53,11 +54,14 @@
 	        this.setTabs();     //设置和绑定tab切换动作
 	        this.setActionButton(); //设置和绑定焦点图上左右切换动作
 	        if(this.config.auto){
-	        	var _this = this;
-	        	window.setInterval(function(){
-	        		J.g(_this.config.right).get().click();
-	        	},2000);
+	        	this.autoPlay();
 	        }
+	    },
+	    autoPlay: function(){
+	    	var _this = this;
+        	this.loop = window.setInterval(function(){
+        		J.g(_this.config.right).get().click();
+        	},_this.config.autoSpeed);
 	    },
 	    setTabs: function(){
 	        var _html = "<ul>", _this = this;
@@ -124,10 +128,14 @@
 	        this.target.get().parentNode.onmouseover = function(){
 	            J.g(_left).show();
 	            J.g(_right).show();
+	            window.clearInterval(_this.loop);
 	        };
 	        this.target.get().parentNode.onmouseout = function(){
 	            J.g(_left).hide();
 	            J.g(_right).hide();
+	            if(_this.config.auto){
+		        	_this.autoPlay();
+		        }
 	        };
 	        J.g(_left).on("click", function(){
 	            var _index = parseInt(_this.target.attr("currentIndex")), _last = _this.data.length - 1;
