@@ -27,7 +27,7 @@
             onComplete:null,
             onShow:null,
             onexposure:null
-        }, opts, pageIndex = 0,fetchEnd=false;
+        }, opts, pageIndex = 1,fetchEnd=false;
 
         (function () {
             opts = J.mix(defaultOptions, options || {}, true);
@@ -64,7 +64,7 @@
                     if(opts.type=='list'){
                         showLoading();
                     }
-                    if (pageIndex<9){
+                    if (pageIndex<10){
                         pageIndex++;
                     }else{
                         return false;
@@ -85,7 +85,7 @@
                 onSuccess:function(data){
                     if(data!=''){
                         box&&box.show();
-                        if(pageIndex==0){
+                        if(pageIndex==1){
                            showBox(data);
                         }else{
                             showMore(data);
@@ -97,7 +97,7 @@
                     }
                 },
                 onFailure:function(e){
-                    if(pageIndex==0){
+                    if(pageIndex==1){
                         J.logger.log(e);
                     }else{
                         if(opts.type=='home'){
@@ -121,7 +121,7 @@
             } else if (opts.type == 'view') {
                 url += '/' + opts.propId;
             }
-            if (pageIndex > 0){
+            if (pageIndex > 1){
                 if(opts.type == 'view'){
                     url += getUrlChar(url)+'change=' + pageIndex;
                 }else{
@@ -200,13 +200,13 @@
                 }else if(l > x){
                     elem.hide();
                 }
-                if(pageIndex==9){
+                if(pageIndex==10){
                     elem.hide();
                 }
             }
             if(opts.type=='list'){
                var elem=J.g(opts.elem);
-               if(pageIndex<9){
+               if(pageIndex<10){
                    elem.show();
                    fetchEnd=false
                }else{
