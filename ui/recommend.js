@@ -171,8 +171,14 @@
         function showMore(data) {
             var cont= J.g(opts.cont);
             if(opts.type=='home'){
-                var div =J.g(opts.cont),divHtml= div.html();
+                var div =J.g(opts.cont),divHtml= div.html(),i;
                 div.html(divHtml+data);
+                if(pageIndex==2){
+                    i=4;
+                }else{
+                    i=pageIndex*10-15;
+                }
+                opts.total=J.g(opts.cont).s('a').eq(i).attr('count');
             }
             else if(opts.type=='list'){
                 var div= J.create('div');
@@ -195,9 +201,9 @@
                 else{
                     x = parseInt(opts.total/10) + 1;
                 }
-                if(pageIndex <= x){
+                if(pageIndex < x){
                     elem_text.removeClass('loading').html('更多推荐');
-                }else if(l > x){
+                }else if(pageIndex >= x){
                     elem.hide();
                 }
                 if(pageIndex==10){
