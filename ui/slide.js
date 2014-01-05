@@ -33,7 +33,7 @@
 	        right:"focusRightBtn", //轮播图上右切换的按钮的id
 	        auto: false,            //是否自动播放
 	        autoSpeed: 3000,		//自动播放速度
-	        speed: 10                //播放速度
+	        speed: 70                //播放速度
 	    },
 	    init: function(target,config){
 	        //判断target参数类型是否是dom，不是终止
@@ -76,7 +76,12 @@
 	        J.g(this.config.tab).html(_html);
 	        J.g("topic_focus_tab").s("li").each(function(i,v){
 	            v.on("click", function(){
-	                var _index = parseInt(v.attr("index"));
+	                var _index = parseInt(v.attr("index")), _currentIndex = parseInt(_this.target.attr("currentIndex"));
+	                if(_currentIndex > _index){
+	                	_this.derection = "left";
+	                }else{
+	                	_this.derection = "right";
+	                }
 	                _this.setImgs(_index);
 	            });
 	        });
@@ -94,18 +99,31 @@
 	        }else{
 	            this.target.attr("currentIndex",i);
 	        }
-	        if(i > _currentIndex){
-	            this.derection = "right";
-	            _c = _currentIndex;
-	            _p = i;
-	            this.target.get().style.marginLeft = "0%";
+	        if(this.derection == "right"){
+	        	if(i > _currentIndex || i == 0){
+	        		this.derection = "right";
+		            _c = _currentIndex;
+		            _p = i;
+		            this.target.get().style.marginLeft = "0%";
+	        	}
 	        }else{
-	            this.derection = "left";
+	        	if(i < _currentIndex || i == this.data.length - 1){
+	        		this.derection = "left";
 	                _c = i;
 	                _p = _currentIndex;
 
-	            this.target.get().style.marginLeft = "-100%";
+	            	this.target.get().style.marginLeft = "-100%";
+	        	}
 	        }
+	        // if(i > _currentIndex || (this.derection == "right" && i == 0)){
+	            
+	        // }else if(i < _currentIndex || (this.derection == "left" && i == this.data.length - 1)){
+	        //     this.derection = "left";
+	        //         _c = i;
+	        //         _p = _currentIndex;
+
+	        //     this.target.get().style.marginLeft = "-100%";
+	        // }
 	        var a1 = J.g("slidePanel1").get().getElementsByTagName("a")[0];
 	        var i1 = J.g("slidePanel1").get().getElementsByTagName("img")[0];
 	        var p1 = J.g("slidePanel1").get().getElementsByTagName("p")[0];
