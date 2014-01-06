@@ -25,8 +25,8 @@
             propId:'',
             cityAlias:J.site.info.cityAlias,
             onComplete:null,
-            onShow:null,
-            onexposure:null
+            onShow:null,//异步加载图片
+            onexposure:null//增加曝光亮
         }, opts, pageIndex = 1,fetchEnd=false;
 
         (function () {
@@ -35,7 +35,9 @@
             bindEvent();
         })();
 
-
+        /**
+         * 绑定事件
+         */
         function bindEvent() {
             var elem= J.g(opts.elem);
              if(opts.type=='home' || opts.type=='view'){
@@ -59,6 +61,10 @@
                      },50)
                  };
              }
+            /**
+             * pageIndex++
+             * @return {Boolean}
+             */
             function pageAdd(){
                 if (opts.type=='home' || opts.type=='list'){
                     if(opts.type=='list'){
@@ -76,6 +82,9 @@
             }
         }
 
+        /**
+         * 获取数据
+         */
         function getData() {
             var url = bindUrl(),box=J.g(opts.box);
             J.get({
@@ -114,6 +123,10 @@
 
         }
 
+        /**
+         * 请求URL地址
+         * @return {String}
+         */
         function bindUrl() {
             var url = '/' + opts.cityAlias + '/' + opts.channel + '/recommend';
             if (opts.type == "list") {
@@ -131,10 +144,19 @@
             return url;
         }
 
+        /**
+         * URL匹配
+         * @param url
+         * @return {String}
+         */
         function getUrlChar(url){
             return url.indexOf('?') != -1 ? '&' : '?';
         }
 
+        /**
+         * 第一次数据请求成功，并渲染到容器里。
+         * @param data
+         */
         function showBox(data) {
             var div= J.create('div'),cont= J.g(opts.cont);
             if(opts.type=='list'){
@@ -144,11 +166,14 @@
             }
             opts.onexposure&&opts.onexposure(cont);
             opts.total=J.g(opts.cont).s('a').eq(0).attr('count');
-            opts.onShow&&opts.onShow();//异步加载图片
+            opts.onShow&&opts.onShow();
             showInfor();
 
         }
 
+        /**
+         *第一次请求成功时的提示交互。
+         */
         function showInfor() {
           if(opts.type=='home'||opts.type=='view'){
               var elem=J.g(opts.elem);
@@ -168,16 +193,16 @@
           }
         }
 
+        /**
+         * 第N+1次数据请求成功，并渲染到容器里。
+         * @param data
+         */
         function showMore(data) {
             var cont= J.g(opts.cont);
             if(opts.type=='home'){
                 var div =J.g(opts.cont),divHtml= div.html(),i;
                 div.html(divHtml+data);
-                if(pageIndex==2){
-                    i=4;
-                }else{
-                    i=pageIndex*10-15;
-                }
+                i=pageIndex*10-16;
                 opts.total=J.g(opts.cont).s('a').eq(i).attr('count');
             }
             else if(opts.type=='list'){
@@ -190,6 +215,9 @@
             opts.onexposure&&opts.onexposure(cont);
         }
 
+        /**
+         * 第N+2次数据请求成功时的交互状态。
+         */
         function showLoading() {
             if(opts.type=='home'){
                 var elem=J.g(opts.elem),elem_text=elem.s('span').eq(0),x;
