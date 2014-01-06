@@ -92,7 +92,7 @@
                 timeout: 15000,
                 header:{'X-TW-HAR': 'HTML'},
                 onSuccess:function(data){
-                    if(data!=''&&!data){
+                    if(data.replace(/\s/ig,"")!=""){
                         box&&box.show();
                         if(pageIndex==1){
                            showBox(data);
