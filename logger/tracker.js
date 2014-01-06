@@ -53,7 +53,7 @@
                 ctid:getCookie(o.nCtid || 'ctid') || '',
                 luid:getCookie(o.nLiu || 'lui') || '',
                 ssid:getCookie(o.nSessid || 'sessid') || '',
-                uid:u || getCookie(o.nUid) || '0',
+                uid:u || getCookie(o.nUid || 'ajk_member_id') || '0',
                 t:+new Date()
             };
             o.method && (ret.m = o.method);
