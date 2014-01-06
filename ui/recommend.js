@@ -216,7 +216,7 @@
         }
 
         /**
-         * 第N+2次数据请求成功时的交互状态。
+         * 第N+1次数据请求成功时的交互状态。
          */
         function showLoading() {
             if(opts.type=='home'){
