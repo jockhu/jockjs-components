@@ -92,7 +92,7 @@
                 timeout: 15000,
                 header:{'X-TW-HAR': 'HTML'},
                 onSuccess:function(data){
-                    if(data!=''){
+                    if(data!=''&&!data){
                         box&&box.show();
                         if(pageIndex==1){
                            showBox(data);
