@@ -98,7 +98,7 @@
                            showBox(data);
                         }else{
                             showMore(data);
-                            if (opts.type=='home' || opts.type=='view'){
+                            if (opts.type=='home'){
                                 showLoading();
                             }
                         }
@@ -206,8 +206,10 @@
                 opts.total=J.g(opts.cont).s('a').eq(i).attr('count');
             }
             else if(opts.type=='list'){
-                var div= J.create('div');
+                var div= J.create('div'),i;
                 div.html(data).appendTo(opts.cont);
+                i=pageIndex*10-12;
+                opts.total=J.g(opts.cont).s('a').eq(i).attr('count');
             }else if(opts.type=='view'){
                 showBox(data);
             }
@@ -219,35 +221,36 @@
          * 第N+1次数据请求成功时的交互状态。
          */
         function showLoading() {
+            var x;
+            if(opts.total%10 == 0 && opts.total > 10){
+                x = opts.total/10;
+            }else if(opts.total%10 == 0 && opts.total <= 10) {
+                x = 0;
+            }
+            else{
+                x = parseInt(opts.total/10) + 1;
+            }
             if(opts.type=='home'){
-                var elem=J.g(opts.elem),elem_text=elem.s('span').eq(0),x;
-                if(opts.total%10 == 0 && opts.total > 10){
-                    x = opts.total/10;
-                }else if(opts.total%10 == 0 && opts.total <= 10) {
-                    x = 0;
-                }
-                else{
-                    x = parseInt(opts.total/10) + 1;
-                }
+                var elem=J.g(opts.elem),elem_text=elem.s('span').eq(0);
                 if(pageIndex < x){
                     elem_text.removeClass('loading').html('更多推荐');
                 }else if(pageIndex >= x){
                     elem.hide();
                 }
-                if(pageIndex==10){
-                    elem.hide();
-                }
             }
             if(opts.type=='list'){
                var elem=J.g(opts.elem);
-               if(pageIndex<10){
+               if(pageIndex<x){
                    elem.show();
-                   fetchEnd=false
-               }else{
                    fetchEnd=true;
+               }else if(pageIndex >= x){
+                   fetchEnd=false;
                    elem.hide();
                    elem.prev().show();
                }
+            }
+            if(pageIndex==10){
+                elem.hide();
             }
         }
 
