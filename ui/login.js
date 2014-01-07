@@ -268,7 +268,7 @@
             var content = J.g("login_r")&&J.g("login_r").s("ul").eq(0);
             if(!data.code&&data.val.length){
                 var isLogin = J.getCookie('aQQ_ajkauthinfos');
-                var loginStr = isLogin?'':'<li style="border: 1px solid #fc6;background-color: #fefded;padding: 0;text-indent: 10px;line-height: 34px;margin: 10px 0;">该收藏仅在本设备暂时保存，若需永久保存并同步请<a style="display: inline" _target="blank" href="'+loginUrl+'&from=collectionheadertop">登录</a>。</li>';
+                var loginStr = isLogin?'':'<li style="border: 1px solid #fc6;background-color: #fefded;padding: 0;text-indent: 10px;line-height: 34px;margin: 10px 0;">该收藏仅在本设备暂时保存，若需永久保存并同步请<a style="display: inline" _target="blank" href="'+loginUrl+'">登录</a>。</li>';
                 var arr = data.val,html='<li class="t">最近加入的房子</li>'+loginStr;
                 countDom.html(countDom.html().replace(/\d+/,data.num.num));
                 for(var i=0,len=arr.length;i<len;i++){
