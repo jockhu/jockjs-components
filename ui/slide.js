@@ -22,8 +22,8 @@
      * @param options 扩展选项
      * @constructor
      */
-	function Slide(target,config){
-	    this.init(target,config);
+	function Slide(target,config,modalID){
+	    this.init(target,config,modalID);
 	}
 
 	Slide.prototype = {
@@ -33,29 +33,41 @@
 	        right:"focusRightBtn", //轮播图上右切换的按钮的id
 	        auto: false,            //是否自动播放
 	        autoSpeed: 3000,		//自动播放速度
-	        speed: 70                //播放速度
+	        speed: 70,              //播放速度
+	        hasTab: true            //是否需要tab切换按钮
 	    },
-	    init: function(target,config){
+	    init: function(target,config,modalID){
 	        //判断target参数类型是否是dom，不是终止
 	        if(target.length < 1){
 	            return;
 	        }
 	        this.target = target;
+	        this.Div = [this.target.s(".topic_focus_div").eq(0).get(), this.target.s(".topic_focus_div").eq(1).get()];
 	        this.customConfig = config || {};
 	        this.data = focusPic;
 	        this.derection = "right";
 	        this.config = this.extend(this.config,config);
-	        var a1 = J.g("slidePanel1").get().getElementsByTagName("a")[0];
-	        var i1 = J.g("slidePanel1").get().getElementsByTagName("img")[0];
-	        var p1 = J.g("slidePanel1").get().getElementsByTagName("p")[0];
-	        a1.href = this.data[0].link;
-	        i1.src = this.data[0].src;
-	        p1.innerHTML = this.data[0].title;
-	        this.setTabs();     //设置和绑定tab切换动作
+	        this.modalHtml = J.g(modalID).get().innerHTML;
+	        this.initHtml();
+	        this.initData();
+	        if(!!this.config.hasTab){
+	        	this.setTabs();     //设置和绑定tab切换动作
+	        }
+	        
 	        this.setActionButton(); //设置和绑定焦点图上左右切换动作
 	        if(this.config.auto){
 	        	this.autoPlay();
 	        }
+	    },
+	    initHtml: function(){
+	    	var _copy = this.modalHtml;
+	    	for(var _p in this.data[0]){
+	    		_copy = _copy.replace('|' + _p + '|', this.data[0][_p]);
+	    	}
+	    	this.Div[0].innerHTML = _copy;
+	    },
+	    initData: function(){
+
 	    },
 	    autoPlay: function(){
 	    	var _this = this;
@@ -115,30 +127,27 @@
 	            	this.target.get().style.marginLeft = "-100%";
 	        	}
 	        }
-	        // if(i > _currentIndex || (this.derection == "right" && i == 0)){
-	            
-	        // }else if(i < _currentIndex || (this.derection == "left" && i == this.data.length - 1)){
-	        //     this.derection = "left";
-	        //         _c = i;
-	        //         _p = _currentIndex;
-
-	        //     this.target.get().style.marginLeft = "-100%";
-	        // }
-	        var a1 = J.g("slidePanel1").get().getElementsByTagName("a")[0];
-	        var i1 = J.g("slidePanel1").get().getElementsByTagName("img")[0];
-	        var p1 = J.g("slidePanel1").get().getElementsByTagName("p")[0];
-	        a1.href = this.data[_c].link;
-	        i1.src = this.data[_c].src;
-	        p1.innerHTML = this.data[_c].title;
-
-	        var a2 = J.g("slidePanel2").get().getElementsByTagName("a")[0];
-	        var i2 = J.g("slidePanel2").get().getElementsByTagName("img")[0];
-	        var p2 = J.g("slidePanel2").get().getElementsByTagName("p")[0];
-	        a2.href = this.data[_p].link;
-	        i2.src = this.data[_p].src;
-	        p2.innerHTML = this.data[_p].title;
-	        this.sync(i);
+	        this.setData(_c, _p);
+	        if(!!this.config.hasTab){
+		        this.sync(i);
+		    }
 	        this.animate(this);
+	    },
+	    setData: function(_c, _p){
+	    	var _index = 0;
+	    	for(var i = 0; i < 2; i++){
+	    		if(i == 0){
+	    			_index = _c;
+	    		}else{
+	    			_index = _p;
+	    		}
+	    		var _copy = this.modalHtml;
+		    	for(var _pram in this.data[_index]){
+		    		var _copy = _copy.replace('|' + _pram + '|', this.data[_index][_pram]);
+		    	}
+		    	this.Div[i].innerHTML = _copy;
+	    	}
+	    	
 	    },
 	    setActionButton: function(){
 	        var _left = this.config.left, _right = this.config.right, _this = this;
@@ -208,8 +217,8 @@
 	    }
 	}
 
-    J.ui.slide = function(target, config){
-    	return new Slide(target, config);
+    J.ui.slide = function(target, config, modalID){
+    	return new Slide(target, config, modalID);
     }
 
  })(J, document);
