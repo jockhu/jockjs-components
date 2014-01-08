@@ -22,8 +22,8 @@
      * @param options 扩展选项
      * @constructor
      */
-	function Slide(target,config,modalID){
-	    this.init(target,config,modalID);
+	function Slide(data, target,config,modalID){
+	    this.init(data, target,config,modalID);
 	}
 
 	Slide.prototype = {
@@ -36,7 +36,7 @@
 	        speed: 70,              //播放速度
 	        hasTab: true            //是否需要tab切换按钮
 	    },
-	    init: function(target,config,modalID){
+	    init: function(data, target,config,modalID){
 	        //判断target参数类型是否是dom，不是终止
 	        if(target.length < 1){
 	            return;
@@ -44,7 +44,7 @@
 	        this.target = target;
 	        this.Div = [this.target.s(".topic_focus_div").eq(0).get(), this.target.s(".topic_focus_div").eq(1).get()];
 	        this.customConfig = config || {};
-	        this.data = focusPic;
+	        this.data = data;
 	        this.derection = "right";
 	        this.config = this.extend(this.config,config);
 	        this.modalHtml = J.g(modalID).get().innerHTML;
@@ -217,8 +217,8 @@
 	    }
 	}
 
-    J.ui.slide = function(target, config, modalID){
-    	return new Slide(target, config, modalID);
+    J.ui.slide = function(data, target, config, modalID){
+    	return new Slide(data, target, config, modalID);
     }
 
  })(J, document);
