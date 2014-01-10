@@ -51,7 +51,7 @@
             this.config = this.extend(this.config,config);
             this.pages = Math.ceil(this.data.length / this.config.count) - 1;
             this.modalHtml = J.g(modalID).get().innerHTML;
-            this.initHtml();
+            this.initHtml(); 
             this.initData();
             if(!!this.config.hasTab){
                 this.setTabs();     //设置和绑定tab切换动作
@@ -67,7 +67,14 @@
             for(var i = 0; i < this.config.count; i++){
                 var _copy = this.modalHtml;
                 for(var _p in this.data[i]){
-                    _copy = _copy.replace('|' + _p + '|', this.data[i][_p]);
+                    
+                    if(_p == "vip" || _p == "recommend"){
+                    	if(this.data[i][_p] == 0){
+                    		_copy = _copy.replace('|' + _p + '|', "display:none");
+                    	}
+                    }else{
+                    	_copy = _copy.replace('|' + _p + '|', this.data[i][_p]);
+                    }
                 }
                 this.Div[0].innerHTML += _copy;
             }
@@ -152,7 +159,13 @@
                 for(var x = 0; x < this.config.count; x++){
                     var _copy = this.modalHtml;
                     for(var _pram in this.data[_index+x]){
-                        var _copy = _copy.replace('|' + _pram + '|', this.data[_index+x][_pram]);
+                        if(_p == "vip" || _p == "recommend"){
+	                    	if(this.data[_index+x][_pram] == 0){
+	                    		_copy = _copy.replace('|' + _pram + '|', "display:none");
+	                    	}
+	                    }else{
+	                    	_copy = _copy.replace('|' + _pram + '|', this.data[_index+x][_pram]);
+	                    }
                     }
                     this.Div[i].innerHTML += _copy;
                 }
@@ -177,27 +190,32 @@
                     }
                 };
             }
+            if(J.g(_left)){
+            	J.g(_left).on("click", function(){
+	                var _index = parseInt(_this.target.attr("currentIndex")), _last = _this.pages;
+	                _this.target.attr("currentIndex", _index);
+	                _this.derection = "left";
+	                _index--;
+	                if(_index < 0){
+	                    _index = _last;
+	                }
+	                _this.setImgs(_index);
+	            });
+            }
+
+            if(J.g(_right)){
+            	J.g(_right).on("click", function(){
+	                var _index = parseInt(_this.target.attr("currentIndex")), _last = _this.pages;
+	                _this.target.attr("currentIndex", _index);
+	                _this.derection = "right";
+	                _index++;
+	                if(_index > _last){
+	                    _index = 0;
+	                }
+	                _this.setImgs(_index);
+	            });
+            }
             
-            J.g(_left).on("click", function(){
-                var _index = parseInt(_this.target.attr("currentIndex")), _last = _this.pages;
-                _this.target.attr("currentIndex", _index);
-                _this.derection = "left";
-                _index--;
-                if(_index < 0){
-                    _index = _last;
-                }
-                _this.setImgs(_index);
-            });
-            J.g(_right).on("click", function(){
-                var _index = parseInt(_this.target.attr("currentIndex")), _last = _this.pages;
-                _this.target.attr("currentIndex", _index);
-                _this.derection = "right";
-                _index++;
-                if(_index > _last){
-                    _index = 0;
-                }
-                _this.setImgs(_index);
-            });
         },
         animate: function(_this){
             var movePecent = 20, currentPecent, _de = _this.derection == "right" ? 1 : 0, _goal = 0, _st;
