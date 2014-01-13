@@ -203,7 +203,7 @@
 	            });
             }
 
-            if(J.g(_right)){
+            if(J.g(_right)){discounts
             	J.g(_right).on("click", function(){
 	                var _index = parseInt(_this.target.attr("currentIndex")), _last = _this.pages;
 	                _this.target.attr("currentIndex", _index);
