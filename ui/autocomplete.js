@@ -227,6 +227,7 @@
         function getData(){
             sendedStr= opts.params[opts.query] = currentValue.trim();
             var a;
+           // hide();
             if(opts.cache && (a = CACHED[getCacheKey()])) return suggest(a,'c');
             if(opts.source){
                 if(J.isFunction(opts.source)) opts.source(opts.params, suggest);
@@ -280,7 +281,9 @@
             }
 
             cached || (CACHED[getCacheKey()] = DATA);
-
+            container.s("div").each(function(k,v){
+                v.un();
+            })
             container.empty();
 
             J.each(DATA, function(i, v){
@@ -300,7 +303,6 @@
                     i = i -skipedNum;
                     v.l && (div = J.create('div', {"class": selectedIndex === i ? 'ui_item ui_sel':'ui_item', title:t}).html(v.l).appendTo(container)).on('mouseover', activate, i).on('click', function(e, i){
                         if(opts.onItemClick && opts.onItemClick(i, v, div) === false){
-
                             return
                         }
                         select(e, i);
@@ -357,6 +359,9 @@
         }
 
         function moveUp(){
+            if(!isShow){
+                return;
+            }
             if (selectedIndex <= 0){
                 divs.eq(selectedIndex).removeClass("ui_sel");
                 selectedIndex = divs.length;
@@ -369,24 +374,27 @@
                 div.removeClass('ui_sel')
             });
             el.val( currentValue = getValue((div = divs.eq(--selectedIndex).addClass('ui_sel')).html()) );
-            //  div.next()&&div.next().removeClass('ui_sel')||divs.eq(0).removeClass("ui_sel");
             onChange(selectedIndex);
         }
 
         function moveDown(){
-            if (!isShow || selectedIndex === divs.length-1){
+            if(!isShow){
+                return
+            }
+            if (selectedIndex === divs.length-1){
                 divs.eq(selectedIndex).removeClass("ui_sel");
                 selectedIndex = -1;
                 el.val(sendedStr);
                 return;
             }
-            if (!isShow || selectedIndex === divs.length){
-                selectedIndex = -1;
-            }
             var div;
             ignoreValueChange = true;
             divs.each(function(i, div){
-                div.removeClass('ui_sel')
+                if(div.hasClass('ui_sel')){
+                    div.removeClass('ui_sel')
+                    return false;
+                }
+
             });
             el.val( currentValue = getValue((div = divs.eq(++selectedIndex).addClass('ui_sel')).html()) );
             onChange(selectedIndex);

@@ -230,6 +230,7 @@
         function getData(){
             sendedStr= opts.params[opts.query] = currentValue.trim();
             var a;
+            //hide();
             if(opts.source){
                 if(J.isFunction(opts.source)) opts.source(opts.params, suggest,sendData);
                 else suggest(opts.source);
@@ -329,6 +330,9 @@
                 return;
             }
             cached || (CACHED[getCacheKey()] = DATA);
+            container.s("div").each(function(k,v){
+                v.un();
+            })
             container.empty();
 
             J.each(DATA, function(i, v){
@@ -404,6 +408,9 @@
         }
 
         function moveUp(){
+            if(!isShow){
+                return;
+            }
             if (selectedIndex <= 0){
                 divs.eq(selectedIndex).removeClass("ui_sel");
                 selectedIndex = divs.length;
@@ -413,26 +420,34 @@
             var div;
             ignoreValueChange = true;
             divs.each(function(i, div){
-                div.removeClass('ui_sel')
+                if(div.hasClass('ui_sel')){
+                    div.removeClass('ui_sel')
+                    return false;
+                }
+
             });
             el.val( currentValue = getValue((div = divs.eq(--selectedIndex).addClass('ui_sel')).html()) );
             onChange(selectedIndex);
         }
 
         function moveDown(){
-            if (!isShow || selectedIndex === divs.length-1){
+            if(!isShow){
+                return
+            }
+            if (selectedIndex === divs.length-1){
                 divs.eq(selectedIndex).removeClass("ui_sel");
                 selectedIndex = -1;
                 el.val(sendedStr);
                 return;
             }
-            if (!isShow || selectedIndex === divs.length){
-                selectedIndex = -1;
-            }
             var div;
             ignoreValueChange = true;
             divs.each(function(i, div){
-                div.removeClass('ui_sel')
+                if(div.hasClass('ui_sel')){
+                    div.removeClass('ui_sel')
+                    return false;
+                }
+
             });
             el.val( currentValue = getValue((div = divs.eq(++selectedIndex).addClass('ui_sel')).html()) );
             onChange(selectedIndex);
