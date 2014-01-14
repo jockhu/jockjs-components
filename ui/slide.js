@@ -128,7 +128,7 @@
             if(this.derection == "right"){
                 if(i > _currentIndex || i == 0){
                     this.derection = "right";
-                    _c = _currentIndex * this.config.count;
+                    _c = _currentIndex;
                     _p = i;
                     this.target.get().style.marginLeft = "0%";
                 }
