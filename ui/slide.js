@@ -22,8 +22,8 @@
      * @param options 扩展选项
      * @constructor
      */
-    function Slide(data, target,config,modalID){
-        this.init(data, target,config,modalID);
+    function Slide(data, target,config,modal){
+        this.init(data, target,config,modal);
     }
 
     Slide.prototype = {
@@ -33,12 +33,12 @@
             right:"focusRightBtn", //轮播图上右切换的按钮的id
             auto: false,            //是否自动播放
             autoSpeed: 3000,        //自动播放速度
-            speed: 70,              //播放速度
+            speed: 10,              //播放速度
             hasTab: true,           //是否需要tab切换按钮
             showLRButton: true,      //
             count: 1
         },
-        init: function(data, target,config,modalID){
+        init: function(data, target,config,modal){
             //判断target参数类型是否是dom，不是终止
             if(target.length < 1){
                 return;
@@ -50,7 +50,7 @@
             this.derection = "right";
             this.config = this.extend(this.config,config);
             this.pages = Math.ceil(this.data.length / this.config.count) - 1;
-            this.modalHtml = J.g(modalID).get().innerHTML;
+            this.modalHtml = modal;
             this.initHtml(); 
             this.initData();
             if(!!this.config.hasTab){
@@ -218,7 +218,7 @@
             
         },
         animate: function(_this){
-            var movePecent = 20, currentPecent, _de = _this.derection == "right" ? 1 : 0, _goal = 0, _st;
+            var movePecent = 5, currentPecent, _de = _this.derection == "right" ? 1 : 0, _goal = 0, _st;
 
             if(_de){
 
@@ -249,8 +249,8 @@
         }
     }
 
-    J.ui.slide = function(data, target, config, modalID){
-        return new Slide(data, target, config, modalID);
+    J.ui.slide = function(data, target, config, modal){
+        return new Slide(data, target, config, modal);
     }
 
  })(J, document);
