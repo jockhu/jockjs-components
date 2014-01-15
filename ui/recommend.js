@@ -145,6 +145,7 @@
             var flow = "";
             if (rent_flow=="new") {
                 flow = "/?flow=new";
+                url += flow;
             }
             return url;
         }
