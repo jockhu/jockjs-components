@@ -144,7 +144,11 @@
             var rent_flow = document.getElementsByTagName( "head" )[0].getAttribute('data-flow');
             var flow = "";
             if (rent_flow=="new") {
-                flow = "/?flow=new";
+                if (url.indexOf("?")!=-1) {
+                    flow = "&flow=new";
+                } else {
+                    flow = "/?flow=new";
+                }
                 url += flow;
             }
             return url;
