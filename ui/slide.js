@@ -158,15 +158,10 @@
                 this.Div[i].innerHTML = "";
                 for(var x = 0; x < this.config.count; x++){
                     var _copy = this.modalHtml;
+                    var _indexCount = _index+x;
                     if(this.data[_index+x]){
-	                    for(var _pram in this.data[_index+x]){
-	                        if(_p == "vip" || _p == "recommend"){
-		                    	if(this.data[_index+x][_pram] == 0){
-		                    		_copy = _copy.replace('|' + _pram + '|', "display:none");
-		                    	}
-		                    }else{
-		                    	_copy = _copy.replace('|' + _pram + '|', this.data[_index+x][_pram]);
-		                    }
+	                    for(var _pram in this.data[_indexCount]){
+		                    _copy = _copy.replace('|' + _pram + '|', this.data[_indexCount][_pram]);  
 	                    }
 	                    this.Div[i].innerHTML += _copy;
                     }
