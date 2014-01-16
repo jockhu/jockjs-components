@@ -141,6 +141,12 @@
                     url += getUrlChar(url)+'page=' + pageIndex;
                 }
             }
+            var rent_flow = document.getElementsByTagName( "head" )[0].getAttribute('data-flow');
+            var flow = "";
+            if (rent_flow=="new") {
+                flow = "/?flow=new";
+                url += flow;
+            }
             return url;
         }
 
