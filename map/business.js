@@ -170,11 +170,11 @@ getLoupanList:function(){
             for(i=0,n=0;i<num;i++){
                 var r = jsonOverlays[i],key = parseInt(r.lpID);
                 if(!overlays || !overlays[key]){
-                    ~function(r, key){
+                    (function(r, key){
                         setTimeout(function(){
                             M.showLoupanBar(r, key);
                         },n++*10);
-                    }(r, key);
+                    })(r, key);
                 }
             }
             this.status = null;
