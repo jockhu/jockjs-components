@@ -57,7 +57,7 @@
             },_this.config.autoSpeed);
         },
         setActionButton: function(){
-            var _left = this.config.left, _right = this.config.right, _this = this;
+            var _left = this.config.left, _right = this.config.right, _this = this, _stop = true;
             if(this.config.showLRButton){
                 //绑定左右切换按钮的mouseover显示和mouseout隐藏
                 this.target.get().parentNode.onmouseover = function(){
@@ -73,58 +73,75 @@
                     }
                 };
             }
+
             if(J.g(_left)){
             	J.g(_left).on("click", function(){
-	                var _left_ = -100, i;
-                    _this.derection = "left";
-                    _this.target.setStyle({marginLeft:_left_ + "px"});
-                    for(i = 0; i < _this.config.count; i++){
-                        var _cloneNode_ = _this.target.s("li").eq(_this.target.s("li").length -1).get().cloneNode(true);
-                        //设置移动框切换到第二页的位置(left);
-                        
-                        //把克隆的最后一个节点插入到第一个节点前，作为第一个节点显示
-                        _this.target.get().insertBefore(_cloneNode_, _this.target.first().get());
-                        //
-                        _this.target.last().remove();
+                    if(!!_stop){ //防止快速点击 切换太快
+                        _stop = false;
+                        var _left_ = -100, i;
+                        _this.derection = "left";
+                        _this.target.setStyle({marginLeft:_left_ + "px"});
+                        for(i = 0; i < _this.config.count; i++){
+                            var _cloneNode_ = _this.target.s("li").eq(_this.target.s("li").length -1).get().cloneNode(true);
+                            //设置移动框切换到第二页的位置(left);
+                            
+                            //把克隆的最后一个节点插入到第一个节点前，作为第一个节点显示
+                            _this.target.get().insertBefore(_cloneNode_, _this.target.first().get());
+                            //
+                            _this.target.last().remove();
+                        }
+                        //调用动画函数 默认marginLeft -100% -> 0% 
+                        _this.animate(_this, function(){
+                            setTimeout(function(){_stop = true;},100);
+                        });
                     }
-                    _this.animate(_this);
+	                
 	            });
             }
 
             if(J.g(_right)){
             	J.g(_right).on("click", function(){
-	                var _left_ = 0, i;
-                    _this.derection = "right";
-                    _this.animate(_this,function(){
-                        for(i = 0; i < _this.config.count; i++){
-                            var _cloneNode_ = _this.target.s("li").eq(0).get().cloneNode(true);
-                            //设置移动框切换到第二页的位置(left);
-                            
-                            //把克隆的最后一个节点插入到第一个节点前，作为第一个节点显示
-                            _this.target.append(_cloneNode_);
-                            //
-                            _this.target.first().remove();
-                        }
-                        _this.target.setStyle({marginLeft:_left_ + "px"});
-                    });
+                    if(!!_stop){ //防止快速点击 切换太快
+                        _stop = false;
+    	                var _left_ = 0, i;
+                        _this.derection = "right";
+                        //调用动画函数 默认marginLeft 0% -> -100%
+                        _this.animate(_this,function(){
+                            for(i = 0; i < _this.config.count; i++){
+                                var _cloneNode_ = _this.target.s("li").eq(0).get().cloneNode(true);
+                                //设置移动框切换到第二页的位置(left);
+                                
+                                //把克隆的最后一个节点插入到第一个节点前，作为第一个节点显示
+                                _this.target.append(_cloneNode_);
+                                //
+                                _this.target.first().remove();
+                            }
+                            _this.target.setStyle({marginLeft:_left_ + "px"});
+                            setTimeout(function(){_stop = true;},100);
+                        });
+                    }
 	            });
             }
             
         },
+        /*动画函数 默认marginLeft 0% -> -100% -> 0% 
+        * @parm1 loopSlide *必需 组件对象
+        * @parm2 callback 函数 animate 结束后调用
+        */
         animate: function(_this, fn){
             var movePecent = 5, currentPecent, _de = _this.derection == "right" ? 1 : 0, _goal = 0, _st;
 
             if(_de){
-
+                //往右切换为-100% -> 0%
                 _goal = -100;
             }else{
-
+                //往左切换为0% -> -100%
                 _goal = 0;
             }
             currentPecent = parseInt(_this.target.getStyle("marginLeft"));
             if(currentPecent == _goal){
                 if(fn){
-                    fn();
+                    fn(); //animate 结束后调用callback function
                 }
                 return;
             }
@@ -133,7 +150,7 @@
             }else{
                 _this.target.get().style.marginLeft = (currentPecent + movePecent) + "%";
             }
-
+            //循环调用自身知道满足退出条件, speed 缺省 10ms
              _st = setTimeout(function(){_this.animate(_this, fn)},_this.config.speed);
 
         },
