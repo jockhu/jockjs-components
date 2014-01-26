@@ -42,7 +42,7 @@
                 return;
             }
             this.target = target;
-            this.customConfig = config || {};
+            this.config = config || {};
             this.derection = "right";
             this.config = this.extend(this.config,config);
             this.setActionButton(); //设置和绑定焦点图上左右切换动作
@@ -78,9 +78,9 @@
             	J.g(_left).on("click", function(){
                     if(!!_stop){ //防止快速点击 切换太快
                         _stop = false;
-                        var _left_ = -100, i;
+                        var _left_ = -100, i, _list = _this.target.s("li");
                         _this.derection = "left";
-                        _this.target.setStyle({marginLeft:_left_ + "px"});
+                        _this.target.setStyle({marginLeft:_left_ + "%"});
                         for(i = 0; i < _this.config.count; i++){
                             var _cloneNode_ = _this.target.s("li").eq(_this.target.s("li").length -1).get().cloneNode(true);
                             //设置移动框切换到第二页的位置(left);
@@ -90,10 +90,18 @@
                             //
                             _this.target.last().remove();
                         }
+                        if(_list.length == 3){
+                            var _fake_cloneNode_ = _this.target.s("li").eq(1).get().cloneNode(true);
+                            _this.target.append(_fake_cloneNode_);
+                        }
                         //调用动画函数 默认marginLeft -100% -> 0% 
                         _this.animate(_this, function(){
                             setTimeout(function(){_stop = true;},100);
+                            if(_list.length == 3){
+                                _this.target.s("li").eq(3).remove();
+                            }
                         });
+                        
                     }
 	                
 	            });
@@ -103,10 +111,17 @@
             	J.g(_right).on("click", function(){
                     if(!!_stop){ //防止快速点击 切换太快
                         _stop = false;
-    	                var _left_ = 0, i;
+    	                var _left_ = 0, i, _list = _this.target.s("li");
                         _this.derection = "right";
                         //调用动画函数 默认marginLeft 0% -> -100%
+                        if(_list.length == 3){
+                            var _fake_cloneNode_ = _this.target.s("li").eq(0).get().cloneNode(true);
+                            _this.target.append(_fake_cloneNode_);
+                        }
                         _this.animate(_this,function(){
+                            if(_list.length == 3){
+                                _this.target.s("li").eq(3).remove();
+                            }
                             for(i = 0; i < _this.config.count; i++){
                                 var _cloneNode_ = _this.target.s("li").eq(0).get().cloneNode(true);
                                 //设置移动框切换到第二页的位置(left);
@@ -116,7 +131,8 @@
                                 //
                                 _this.target.first().remove();
                             }
-                            _this.target.setStyle({marginLeft:_left_ + "px"});
+
+                            _this.target.setStyle({marginLeft:_left_ + "%"});
                             setTimeout(function(){_stop = true;},100);
                         });
                     }
