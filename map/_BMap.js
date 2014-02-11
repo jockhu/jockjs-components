@@ -364,11 +364,13 @@ JMap = function(options){
                 }
                 return copy;
             },
-            addOverlay : function(param, overlayType, key) {
+            userOverlay:function(){
+
+
+            },
+            addOverlay : function(param) {
                 var p = fn.clone(param);
                 p.latlng = p.latlng ? p.latlng : fn.getLatLng(p);
-                var _key = key||fn.buildOverlayKey(p.latlng), _type = overlayType || fn.overlaysType.overlay,
-                    me;
                 function userOverlay(p){
                     var defOpts = {
                         onClick:null,
@@ -388,8 +390,6 @@ JMap = function(options){
                     this.opts= J.mix(defOpts,p,true);
                 }
                 var overlay =  new BMap.Overlay();
-                overlay.key = _key;
-                overlay.type=_type;
                 J.mix(overlay,{
                     initialize: function (map) {
                         this._map = map;
@@ -454,7 +454,7 @@ JMap = function(options){
                     },
                     removeOverlay:function(){
                         J.un(this._div);
-                        J.fire(document,'overlayremove',me.opts,true);
+                        J.fire(document,'overlayremove',this.opts,true);
                         map.removeOverlay(this)
                     }
 
@@ -462,8 +462,7 @@ JMap = function(options){
                 );
                 userOverlay.prototype = overlay;
                 var uO = new userOverlay(p);
-                map.addOverlay(uO);
-               // fn.pushOverlayList(_type,_key,uO);
+
                 return uO;
             },
             addPloyline:function(path, PloylineOptions, overlayType, key){
