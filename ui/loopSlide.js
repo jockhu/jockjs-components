@@ -38,7 +38,7 @@
         },
         init: function(target,config){
             //判断target参数类型是否是dom，不是终止
-            if(target.length < 1){
+            if(!target){
                 return;
             }
             this.target = target;
