@@ -148,7 +148,7 @@
 			}
 			gEvent.trigger("nativefail",{error:{code:6}});
 		}
-		get("http://" + obj._config.host + ":6259/getapn?",callback);
+		get("http://" + this._config.host + ":6259/getapn?",callback);
 		obj.checkApnTimeout(2);
 	}
 	nativeGeo.prototype.checkApnTimeout = function(second){
@@ -170,7 +170,7 @@
 				gEvent.trigger("nativefail",{error:{code:data.error}});
 			}
 		}
-		get("http://" + obj._config.host + ":6259/geolocation?timeout=10000", callback);
+		get("http://" + this._config.host + ":6259/geolocation?timeout=10000", callback);
 		obj.checkNativeTimeout(10);
 	}
 	nativeGeo.prototype.checkNativeTimeout = function(second){
@@ -316,7 +316,7 @@
         var addComponent = data.addressComponent, address = data.address;
         x = data.coords.x, y = data.coords.y;
         var convert = Convert.pixelToLngLat(x, y, 18);
-        return {crd: x + "_" + y + "_" + convert[0] + "_" + convert[1] + "_" + (data.coords && data.coords.accuracy),cc: addressComponent.cityCode,addr: address,tp: "gl",city: addComponent.city,district: addComponent.district,street: addComponent.street,t: data.timestamp};
+        return {crd: x + "_" + y + "_" + convert[0] + "_" + convert[1] + "_" + (data.coords && data.coords.accuracy),cc: addComponent.cityCode,addr: address,tp: "gl",city: addComponent.city,district: addComponent.district,street: addComponent.street,t: data.timestamp};
     }
 	//get请求
 	function get(url, fun) {
@@ -345,8 +345,8 @@
     function latlngInfo(lat, lng) {
         get("http://loc.map.baidu.com/wloc?x=" + lng + "&y=" + lat + "&r=41&prod=geoapi&addr=city|district|street|city_code&fn=_callback&t=" + (new Date).getTime());
     }
-    window.touchWeb = window.touchWeb || {};
-    window.touchWeb._callback = function(data) {
+    window.baidu = window.baidu || {};
+    window.baidu._callback = function(data) {
         gEvent.trigger("addresssuccess", {result: data});
     };
     //位置信息
