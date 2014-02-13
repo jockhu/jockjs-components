@@ -191,7 +191,7 @@
                 if(userType ==1){
                     var loginData={
                         my_anjuke:data.righturl.myanjuke,
-                        showNotiy:!parseInt(data.shutNotify),
+                        showNotiy:true||!parseInt(data.shutNotify),
                         isExpert:data.qamember.cons> -1 ||0,
                         isMananer:data.qamember.admin|| false,
                         msgCount:data.common.totalUnreadCount,
@@ -203,7 +203,7 @@
                         my_ask:data.righturl.links.my_ask,
                         my_msg:data.lefturl.pmurl,
                         qa_url:data.lefturl.qaurl,
-                        msg_title:data.lefturl.title,
+                        msg_title:data.lefturl.title||'中国',
                         publish_sell:data.righturl.links.publish_sell || '#',
                         publish_rent:data.righturl.links.publish_rent || '#',
                         publish_shop:data.righturl.links.publish_shop || '#',//发布商铺

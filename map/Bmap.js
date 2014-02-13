@@ -1,16 +1,3 @@
-/**
- * Aifang Javascript Framework.
- * Copyright 2012 ANJUKE Inc. All rights reserved.
- *
- * 表单验证组件
- *
- * @path: map/core.js
- * @author: lunjiang
- * @version: 1.0
- * @date: 2014/02/08
- *
- */
-
 
 /// require('map.Bload');
 /// require('page.page');
@@ -39,8 +26,9 @@
             onMoveStart:null,
             onMoveEnd:null,
             onZoomStart:null,
-            onZoomEnd:null
-        };
+            onZoomEnd:null,
+            target:document//自定主事件触对的对象
+        },elm,isLoaded;
 
         var io = {
                 title: '',
@@ -62,23 +50,23 @@
             map,
             skipOvList = [];
 
-        (function(){
-           /* window.mapData = {};
-            window.mapData.base = {};
-            window.mapData.entity = {};
-            window.mapData.sign = {};
-            window.map = {};*/
+        function init(){
             opts = J.mix( defOpts,opption || {});
             opts.latlng = getLatLng(opts);
             if (!opts.id || typeof BMap!=='object') return;
-            opts.elm=J.g(opts.id);
-            opts.elm.setStyle({background:'none'});
+            var elem = J.g(opts.id);
+            if(!elem){
+                alert('文档中未找到id：'+opts.id+'对像');
+                return false;
+            }
+            opts.elm=elem;
+            //opts.elm.setStyle({background:'none'});
             createMap();
-        })();
-
+        }
+        J.map.Bload(init);//加载完百度地图后自动实例化地图对像
 
         function createMap(){
-            map = new BMap.Map(opts.elm.get(), {
+            map = new BMap.Map(opts.id, {
                 mapType: !!opts.u3d && opts.city != '' ? BMAP_PERSPECTIVE_MAP : BMAP_NORMAL_MAP,
                 minZoom: opts.minz ? opts.minz : 3,
                 maxZoom: opts.maxz ? opts.maxz : 18
@@ -101,13 +89,14 @@
                 type: !!opts.ctype ? BMAP_NAVIGATION_CONTROL_LARGE : BMAP_NAVIGATION_CONTROL_ZOOM
             });
             map.addControl(ctrl_nav);
-
             if(!!opts.scale){
                 var ctrl_scale = new BMap.ScaleControl({
                     anchor: BMAP_ANCHOR_BOTTOM_LEFT
                 });
                 map.addControl(ctrl_scale);
             }
+            J.fire(opts.target,'mapLoaded',map,true);//地图实例化完毕发
+
         }
         function setOverlaysVisible(t, visible, skip){
             var ovs = OVERLAYS[t];
@@ -397,13 +386,13 @@
             setCenter:setCenter,
             getGeocoder:getGeocoder,
             addMarker:addMarker,
-            getOverlays:getOverlays
+            getOverlays:getOverlays,
+            getMap:getMap
 
         }
 
 
     }
-
 
     J.map.bmap = Bmap;
 
