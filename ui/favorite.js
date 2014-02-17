@@ -163,6 +163,13 @@
                     tip.hide();
                     opts.onClose && opts.onClose();
                     if(i==0) setStorage((new Date()).valueOf(),true);
+
+                    //首页app浮动框是否显示
+                    var app_down_new = J.g("app_down_new");
+                    if (app_down_new) {
+                        T.trackEvent("track_down_fixed_show");
+                        app_down_new.show();
+                    }
                 });
             });
         }
