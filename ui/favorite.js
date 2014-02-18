@@ -165,29 +165,7 @@
                     if(i==0) setStorage((new Date()).valueOf(),true);
 
                     //首页app浮动框是否显示
-                    var app_down_new = J.g("app_down_new");
-                    if (app_down_new) {
-                        document.addEventListener("touchmove",function(event){
-                            T.trackEvent("track_down_fixed_show");
-                            app_down_new.show();
-                            var app_down = J.g("app_down");
-                            var app_fork = J.g("app_fork");
-                            app_down&&app_down.on("click", function(e){
-                                T.trackEvent(app_down.attr("data-track"));
-                                setTimeout(function(){
-                                    location.href = app_down.attr("data-link");
-                                }, 200);
-                            });
-                            app_fork&&app_fork.on("click", function(e){
-                                e.stop();
-                                app_down_new.setStyle({"display":"none"});
-                                var nowDate = new Date();
-                                var now = nowDate.getFullYear() + "-" + (nowDate.getMonth()+1) + "-" + nowDate.getDate();
-                                J.setCookie("app_download_date", now, "1");
-                                T.trackEvent("track_down_fixed_close");
-                            });
-                        });
-                    }
+                    T.appDownloadFixedEvent(false, true);
                 });
             });
         }
