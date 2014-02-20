@@ -191,7 +191,7 @@
                 if(userType ==1){
                     var loginData={
                         my_anjuke:data.righturl.myanjuke,
-                        showNotiy:true||!parseInt(data.shutNotify),
+                        showNotiy:!parseInt(data.shutNotify),
                         isExpert:data.qamember.cons> -1 ||0,
                         isMananer:data.qamember.admin|| false,
                         msgCount:data.common.totalUnreadCount,
@@ -203,7 +203,7 @@
                         my_ask:data.righturl.links.my_ask,
                         my_msg:data.lefturl.pmurl,
                         qa_url:data.lefturl.qaurl,
-                        msg_title:data.lefturl.title||'中国',
+                        msg_title:data.lefturl.title,
                         publish_sell:data.righturl.links.publish_sell || '#',
                         publish_rent:data.righturl.links.publish_rent || '#',
                         publish_shop:data.righturl.links.publish_shop || '#',//发布商铺
@@ -254,6 +254,7 @@
             bindEvent();
         }
         function getMyFavorites(data){
+            var str='';
             if(!data){
                 isgetFav = true;
                 var url = baseUrl+'ajax/favorite/list_4_favorite';
@@ -272,7 +273,14 @@
                 var arr = data.val,html='<li class="t">最近加入的房子</li>'+loginStr;
                 countDom.html(countDom.html().replace(/\d+/,data.num.num));
                 for(var i=0,len=arr.length;i<len;i++){
-                    var str = '<li><a href="'+arr[i].link+'" class="li_a"><img src="'+arr[i].image+'" alt=""/></a>'+
+                    if(arr[i].is_invalid){
+                        str ='<li style="padding: 0;cursor: default">'+
+                            '<span style="color: #999;padding: 0;line-height: 34px;">本房源已失效，您可以从列表中删除</span>'+
+                            '<div class="li_r" style="top:0" ><a style="line-height: 34px;" onclick="return false;" href="javascript:void(0)" data-cids="'+arr[i].id+'">删除</a></div></li>';
+                        html=html+str;
+                        continue;
+                    }
+                     str = '<li><a href="'+arr[i].link+'" class="li_a"><img src="'+arr[i].image+'" alt=""/></a>'+
                         '<div class="li_c"><a href="'+arr[i].link+'">['+arr[i].category+']'+arr[i].title+'</a><div>'+arr[i].info+'</div></div>'+
                         '<div class="li_r"><em>'+arr[i].price+'</em><a onclick="return false;" href="javascript:void(0)" data-cids="'+arr[i].id+'">删除</a></div></li>';
                     html=html+str;
@@ -298,7 +306,7 @@
                         v.on('click',function(e){
                             if(e&& e.stopPropagation){ e.stopPropagation()}else{
                                 window.event.cancelBubble = true;
-                            };
+                            }
                             if(v.html()==='删除'){
                                 //删除收藏的房源操作。
                                 J.get({url:delUrl,callback:' loginObj.delFavorite',type:"jsonp",data:{cids: v.attr("data-cids")}});
