@@ -27,7 +27,8 @@
             onMoveEnd:null,
             onZoomStart:null,
             onZoomEnd:null,
-            target:document//自定主事件触对的对象
+            target:document,//自定主事件触对的对象
+            callback:null
         },elm,isLoaded;
 
         var io = {
@@ -63,7 +64,8 @@
             //opts.elm.setStyle({background:'none'});
             createMap();
         }
-        J.map.Bload(init);//加载完百度地图后自动实例化地图对像
+        init();
+        //J.map.Bload(init);//加载完百度地图后自动实例化地图对像
 
         function createMap(){
             map = new BMap.Map(opts.id, {
@@ -95,8 +97,7 @@
                 });
                 map.addControl(ctrl_scale);
             }
-            J.fire(opts.target,'mapLoaded',map,true);//地图实例化完毕发
-
+            opts.callback&&opts.callback();
         }
         function setOverlaysVisible(t, visible, skip){
             var ovs = OVERLAYS[t];
@@ -204,20 +205,12 @@
             openWindow(p)
         }
 
-        function clone (obj) {
-            if (null == obj || "object" != typeof obj) return obj;
-            var copy = obj.constructor();
-            for (var attr in obj) {
-                if (obj.hasOwnProperty(attr)) copy[attr] = obj[attr];
-            }
-            return copy;
-        }
         function userOverlay(){
-
-
         }
         function addOverlay(param, overlayType, key) {
-            var p = fn.clone(param);
+            var p = param
+            J.mix(p,param);
+            console.log(p)
             p.latlng = p.latlng ? p.latlng : getLatLng(p);
             var _key = key||buildOverlayKey(p.latlng),
                 _type = overlayType,
@@ -248,11 +241,10 @@
                 div.innerHTML = this.p.html;
                 div.title = !!this.p.title ? this.p.title : '';
 
-                if(this.p.showInfo){
-                    J.on(div,'click',function(){
-                        fn.openOverlayWindow(me.p, me)
-                    });
-                }
+                J.on(div,'click',function(){
+                    me.onClick&&me.onClick();
+                    me.p.showInfo&&openOverlayWindow(me.p, me)
+                });
                 J.on(div,"mouseover", function(){
                     me.setOver();
                 });
@@ -262,6 +254,8 @@
                 map.getPanes().labelPane.appendChild(div);
                 this._div = div;
                 return div
+            }
+            userOverlay.prototype.onClick = function(){
             }
             userOverlay.prototype.setOver = function(){
                 if(!this._locked){
@@ -286,6 +280,7 @@
             userOverlay.prototype.draw = function(){
                 var map = this._map;
                 var pixel = map.pointToOverlayPixel(this.p.latlng);
+                console.log(this._barOffsetX)
                 this._div.style.left = pixel.x + this._barOffsetX + "px";
                 this._div.style.top  = pixel.y + this._barOffsetY + "px";
             }
@@ -301,7 +296,7 @@
             var uO = new userOverlay(p);
             uO.key = _key;
             map.addOverlay(uO);
-            fn.pushOverlayList(_type,_key,uO);
+            pushOverlayList(_type,_key,uO);
             return uO;
         }
         function addPloyline(path, PloylineOptions, overlayType, key){
@@ -379,6 +374,9 @@
                     callback.call(obj, result.point)
             });
         }
+        function getZoom(){
+            return map.getZoom();
+        }
 
         return {
             addOverlay:addOverlay,
@@ -387,7 +385,8 @@
             getGeocoder:getGeocoder,
             addMarker:addMarker,
             getOverlays:getOverlays,
-            getMap:getMap
+            getMap:getMap,
+            getZoom:getZoom
 
         }
 
