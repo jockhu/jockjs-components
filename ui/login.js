@@ -10,7 +10,7 @@
         function init(){
             eleBroker = J.s(".glbR").length&&J.s(".glbR").eq(0)||false;
             content = J.s(".R_user").length&&J.s(".R_user").eq(0)||false;
-            if(!eleBroker || !content){
+            if(!content){
                 return false;
             }
             baseUrl = content.attr("url");
@@ -49,8 +49,9 @@
                 '<div class="r" id="login_r"><a class="my" href="'+config.my_favorite+'">收藏夹（0）</a><ul class="m_l" style="display: none">'+
                 '<li class="empty"><span>您的收藏夹是空的，赶紧收藏吧！</span></li>'+
                 '</ul></div></div>';
-            content&&content.html(html);
-            eleBroker&&eleBroker.html(notifyHTML);
+            setContainerHtml(html,notifyHTML);
+          /*  content&&content.html(html);
+            eleBroker&&eleBroker.html(notifyHTML);*/
         }
         /**
          * 简头
@@ -73,7 +74,9 @@
                 '<div class="r" id="login_r"><a class="my" href="'+config.my_favorite+'">收藏夹（0）</a><ul class="m_l" style="display: none">'+
                 '<li class="empty"><span>您的收藏夹是空的，赶紧收藏吧！</span></li>'+
                 '</ul></div></div>';
-            eleBroker&&eleBroker.html(notifyHTML);
+
+            setContainerHtml(html,notifyHTML);
+
             return html;
         }
         /**
@@ -84,16 +87,21 @@
 
         function getBrokerHTML(data){
             var msgHTMl = getMessageHTML(data.msgCount);
-            var html='<div class="broker_info">' +
+            var html='<span class="broker_info">' +
                 '<span style="margin-right: 8px;">您好，'+data.userName+'</span>'+
                 '[<a class="a_logoout" href="'+data.exit+'" style="margin:0 2px;">退出</a>]&nbsp;&nbsp;'+
                 '<a href="'+data.msgUrl+'" class="a_logoout">消息&nbsp;'+msgHTMl+'</a>'+
                 '<span class="sep_l"></span><a href="'+data.myanjuke+'">中国网络经纪人</a>'+
                 '<span class="sep_l"></span><a href="'+data.developUrl+'">新房分销平台</a>'+
-                '</div>';
-            content&&content.html('');
-            eleBroker&&eleBroker.html(html);
+                '</span>';
+            setContainerHtml('',html);
+
+            /* content&&content.html('');
+            eleBroker&&eleBroker.html(html);*/
         }
+
+
+
         /**
          * 开发商
          * @param data
@@ -104,14 +112,30 @@
             var msgHTMl = getMessageHTML(data.msgCount);
             var fytStr = data.fytUrl?'<span class="sep_l"></span><a href="'+data.fytUrl+'">房易通</a>':'';
             var fxsStr = data.developUrl ?'<span class="sep_l"></span><a href="'+data.developUrl+'">新房分销平台</a>':'';
-            var html='<div class="broker_info">' +
+            var html='<span class="broker_info">' +
                 '<span style="margin-right: 8px;">您好，'+data.userName+'</span>'+
                 '[<a class="a_logoout" href="'+data.exit+'" style="margin:0 2px;">退出</a>]'+
                 '<a href="'+data.msgUrl+'" style="margin-left:8px;" class="a_logoout">消息&nbsp;'+msgHTMl+'</a>'+
-                fytStr+fxsStr+ '</div>';
-            content&&content.html('');
-            eleBroker&&eleBroker.html(html);
+                fytStr+fxsStr+ '</span>';
+            setContainerHtml('',html);
+           /* content&&content.html('');
+            eleBroker&&eleBroker.html(html);*/
         }
+
+
+        function setContainerHtml(clientHtml,brokerHtml){
+            if(content){
+                content.html(clientHtml);
+            }
+            if(eleBroker){
+                eleBroker.html(brokerHtml);
+            }else{
+                content.setStyle({width:'auto'});
+                J.create('span',{className:'glbR'}).appendTo(content).html(brokerHtml);
+            }
+
+        }
+
         /*
          *
          * 获各消息HTML
@@ -249,7 +273,6 @@
                     };
                     html = getDeveloperHTML(data);
                 }
-            }else{
             }
             bindEvent();
         }
