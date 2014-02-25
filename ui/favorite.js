@@ -163,9 +163,6 @@
                     tip.hide();
                     opts.onClose && opts.onClose();
                     if(i==0) setStorage((new Date()).valueOf(),true);
-
-                    //首页app浮动框是否显示
-                    T.appDownloadFixedEvent(false, true);
                 });
             });
         }
