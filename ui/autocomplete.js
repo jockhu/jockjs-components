@@ -265,7 +265,7 @@
         }
 
         function suggest(a, cached){
-            var div, t, val, elVal = el.val();
+            var div, t, val, elVal = el.val(), item_count=0;
             equaled = -1;
             if(cached){
                 DATA = a
@@ -309,10 +309,10 @@
                         select(e, i);
                     }, i, true, true);
                 }
+                item_count = i;
             });
-
             //添加关闭按钮--by lyj--date 2014-02-24
-            if (close) {
+            if (close&&item_count!=0) {
                 var close_btn = "<i id='item_close' class='ui_close'>关闭</i>"
                 J.create('div', {
                     "class": "ui_item ui_cb"
