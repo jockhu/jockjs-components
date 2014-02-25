@@ -309,11 +309,16 @@
                         select(e, i);
                     }, i, true, true);
                 }
-                //添加关闭按钮--by lyj--date 2014-02-24
-                if (close) {
-
-                }
             });
+
+            //添加关闭按钮--by lyj--date 2014-02-24
+            if (close) {
+                var close_btn = "<i id='item_close' class='ui_close'>关闭</i>"
+                J.create('div', {
+                    "class": "ui_item ui_cb"
+                }).html(close_btn).appendTo(container);
+            }
+
             skipedNum =0;
             J.each(DATA,function(k,v){
                 !v&&DATA.splice(k,1);
@@ -446,8 +451,8 @@
             show:show
         };
     }
-    J.dom.fn.autocomplete = function(options){
-        return new Autocomplete(this.get(), options)
+    J.dom.fn.autocomplete = function(options, close){
+        return new Autocomplete(this.get(), options, close)
     };
     J.ui.autocomplete = Autocomplete;
 })(J, document);
