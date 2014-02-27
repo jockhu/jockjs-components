@@ -82,6 +82,7 @@
         },
         initData: function(){
 
+<<<<<<< Updated upstream
         },
         autoPlay: function(){
             var _this = this;
@@ -196,9 +197,6 @@
 	                if(_index < 0){
 	                    _index = _last;
 	                }
-	                _this.setImgs(_index);
-	            });
-            }
 
             if(J.g(_right)){
             	J.g(_right).on("click", function(){
