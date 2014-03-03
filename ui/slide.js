@@ -196,7 +196,9 @@
 	                if(_index < 0){
 	                    _index = _last;
 	                }
-
+                    _this.setImgs(_index);
+                });
+            }
             if(J.g(_right)){
             	J.g(_right).on("click", function(){
 	                var _index = parseInt(_this.target.attr("currentIndex")), _last = _this.pages;
