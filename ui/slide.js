@@ -82,7 +82,6 @@
         },
         initData: function(){
 
-<<<<<<< Updated upstream
         },
         autoPlay: function(){
             var _this = this;
