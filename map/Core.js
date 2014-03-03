@@ -16,8 +16,11 @@
             onBeforeRequest:null,//取数据之前的操作　
             onResult:null,//数据返回的操作
             callback:null,
-            target:document//自定义事件触发的对象
-        }, BMap, opts, MSG, context, dataCenter,overlayCenter, map, isLoaded = false,stack;
+            classHover:'',
+            target:document,//自定义事件触发的对象
+            zoomEnd:null,//缩放结束事件
+            moveEnd:null//地图移动结事事件
+        }, BMap, opts, MSG, context, dataCenter,overlayCenter, map,lockCenter,moveStart,moveEnd;
 
         (function() {
             opts = J.mix(defOpts, opption);
@@ -25,9 +28,9 @@
             context = new J.map.bmap(opts);
             dataCenter = DataCenter(opts);
             MSG = new MessageCenter(opts);
+            lockCenter = new LockCenter();
+
             eventBind();
-
-
             overlayCenter = new OverlayCenter(opts);
         })();
 
@@ -37,15 +40,12 @@
 
 
         function eventBind(){
-            isLoaded = true;
             map = context.getMap();
             dataCenter = new DataCenter(opts);
             map = context.getMap();
             dataCenter.getData();
           //  var event = ['click','dbclick','rightclick','rightdblclick','maptypechange','maptypechange'];
-            map.addEventListener('click',function(){
-                //map click
-            });
+
             map.addEventListener('dbclick',function(){
                 //map click
             });
@@ -68,31 +68,53 @@
                 //map click
             });
             map.addEventListener('movestart', function () {
+                moveStart = context.getCenter();
+
                 //map click
             });
-            map.addEventListener('moveend', function () {
-               // dataCenter.getData();
+            map.addEventListener('moveend', function (e) {
+                moveEnd = context.getCenter();
+                /**
+                 * 把移动的长度添加的事件属性当中去。
+                 * @type {*}
+                 */
+                e.moveLenth = moveLength(moveStart,moveEnd);
+                opts.moveEnd&&opts.moveEnd.call(this,e);
             });
             map.addEventListener('zoomstart', function () {
                 //map click
             });
-            map.addEventListener('zoomend', function () {
-                dataCenter.getData();
-
+            map.addEventListener('zoomend', function (e) {
+                 opts.zoomEnd&&opts.zoomEnd.call(this,e);
                 //map click
             });
             map.addEventListener('touchstart', function () {
                 //map click
+              //  alert("touchstart ")
             });
             map.addEventListener('touchmove', function () {
                 //map click
             });
             map.addEventListener('touchend', function () {
-                dataCenter.getData();
+                //dataCenter.getData();
+            });
+            //click 执行操作就行了。
+            map.addEventListener('click',function(e){
+
             });
             map.addEventListener('longpress', function () {
                 //map click
             });
+
+            function moveLength(moveStart,moveEnd){
+                if(!moveEnd || !moveStart) return 0;
+                var start ,end ;
+                end = map.pointToOverlayPixel(moveEnd);
+                start = map.pointToOverlayPixel(moveStart);
+                 return Math.sqrt((end.x-start.x)*(end.x-start.x)+(end.y-start.y)*(end.y-start.y));
+            }
+
+
 
 
         }
@@ -146,59 +168,68 @@
             /**
              * 防止用户频繁操作，用setTimeout解决
              * 发送ajax请求数据
-             * sendImmediately 是送立即取数据
+             * sendData　自定义发数的数据　用于用户主动发送的数据
+             * immediately true 忽略lock
+             * isLock 右边不变化,适用于翻页
              */
-            function getData(sendImmediately){
-                if(!isLoaded || isLocked){
-                    stack.push(getData);
-                    return false;
+            function getData(sendData,isLock){
+                var sendData =  sendData || {};
+                if(!isLock&&lockCenter.isLock()){
+                    return;
                 }
-
                 var ajaxSetting={
                     url:opts.url,
                     type:opts.type,
-                    onSuccess: null
-                },params = beforeRequest(),data;
-                if(!params){
+                    onSuccess: null,
+                    timeout:20000
+                };
+                var params = beforeRequest(sendData),data;
+                if(params === false){
                     return false;
                 }
-                data = CACHE[ key = getCacheKey(params)];
+              /*  data = CACHE[ key = getCacheKey(params)];
 
                 if(data){
                     onResult(data);
                     return true;
-                }
+                }*/
                 callback[guid]&&(callback[guid]=J.map.bmap['callback'+guid]=function(){});
                 guid++;
-
                 ajaxSetting.onSuccess = callback[guid]=J.map.bmap['callback'+guid] = onResult;
-                //ajaxSetting.callback = 'J.map.bmap.callback'+guid;
-                ajaxSetting.data = params;
+                onResult.isLock = isLock;
+                ajaxSetting.data = J.mix(params,sendData);
                 J.get(ajaxSetting);
+
+            }
+            function getStaticData(sendData){
+                getData(sendData,true);
             }
 
             /**
              * 发送ajax请求之前所需要的参数
              * @returns {ajaxsetting} or {ajaxsetting.data}
              */
-            function beforeRequest(){
+            function beforeRequest(data){
                 var params = getBoundsWE(),clientData;
+                params = J.mix(params,data);
                 params.zoom =map.getZoom();
+
                 clientData =  opts.onBeforeRequest&&opts.onBeforeRequest(params,map);
                 return clientData ?  J.mix(params,clientData):false;
             }
 
             /**
-             * ajax数据回来　，创建Ｏverlay 并发现消息
+             * ajax数据回来　，创建Ｏverlay 并发送消息
              * @param data
              */
             function onResult(data){
+                delete callback[guid];
+                delete J.map.bmap['callback'+guid];
                 data.zoom = context.getZoom();
                 var clientData = opts.onResult&&opts.onResult(data);
-                if(Object.prototype.toString.call(clientData) === "[object Array]"){
-                    if(clientData&&!CACHE[key])CACHE[key] = clientData;
+                if(Object.prototype.toString.call(clientData) == "[object Array]"){
                     MSG.ajaxChange(data);//通过消息中心发送消息
-                    overlayCenter.addOverLays(clientData);
+                    !onResult.isLock&&overlayCenter.addOverLays(clientData);
                 }
 
             }
@@ -215,17 +246,12 @@
                 return searchRet.length === opts.cacheKey.length ? searchRet.join('') :totalRet.join('') ;
             }
 
-            /**
-             *
-             * @param ret
-             */
-            function setLocked(ret){
-               isLocked = !!ret;
-            }
+
 
             return {
                 getData:getData,
-                getCacheKey:getCacheKey
+                getCacheKey:getCacheKey,
+                onResult:onResult
             }
         }
 
@@ -245,28 +271,68 @@
                 overlaysType:'overlays',//标点的类型
                 showInfo:'',//点击要展示的文本,
                 className:'',//默认展示的Class
-                classHover:'',//鼠标放上去展示的样式
+                classHover:'hover',//鼠标放上去展示的样式
                 x:0,//x轴要偏移的像素
                 y:0//y轴要偏 移的像素
-            },opts,preCache={};
+            },opts,preCache={},zIndex =1;//点击后加１;
             (function(){
                 opts= J.mix(defOpts,option);
-
-
             })();
-            function addOverlay(data){
-
-            }
             function onClick(elm,data){
+                elm._div.setStyle({
+                    zIndex:zIndex++
+                });
+
+                var WH = context.getMapWH(),
+                    position = context.pointToPixel(data.latlng),
+                    y = parseInt( position.y),
+                    x = parseInt( position.x);
+                x = x+data.x;
+                y= y+data.y;
+                var w = elm.get().width();
+                var h = elm.get().height();
+                var panX =0 ;
+                var panY = 0;
+                var tmp =0;
+                if(x<0){
+                    panX = x;
+                }
+                if( (tmp = (x+w-WH.width)) > 0 ){
+                    panX = tmp;
+                }
+                if(y <0 ) {
+                    panY =y;
+                }
+                if((tmp =(y+h-WH.height))>0){
+                    panY = tmp;
+                }
+                if(panX || panY )map.panBy(-panX,-panY);
                 data.target = elm;
                 MSG.overlayClick(data);
             }
-            function onMouseOver(elm,data){
-                data.target = elm;
+            function onMouseOver(data){
+
+                this.prevZindex = this._div.getStyle('zIndex');
+                this._div.setStyle({
+                    zIndex:zIndex
+                });
+                this.classHover&&this._div.first().addClass(this.classHover);
+
+
+
+                data.target = this;
+
+
                 MSG.overlayMouseOver(data);
             }
-            function onMouseOut(elm,data){
-                data.target = elm;
+            function onMouseOut(data){
+                if(zIndex == this._div.getStyle('zIndex')){
+                    this._div.setStyle({
+                        zIndex:this.prevZindex
+                    });
+                }
+                this.classHover&& this._div.first().removeClass(this.classHover);
+                data.target = this;
                 MSG.overlayMouseOut(data);
             }
             function remove(data){
@@ -279,49 +345,54 @@
              * @param data array
              */
             function addOverlays(data){
-                var i,len=data.length,itemOpts,item,key,tmpObj={},removeHandler, j,zoom=context.getZoom();
-
+                var i,len=data.length,key,tmpObj={},removeHandler, j,zoom=context.getZoom();
                 for(i=0;i<len;i++){
-
                     (function(itemOpts){
-                        itemOpts = data[i];
-                        itemOpts.zoom = zoom;
-                        itemOpts = onItemBuild(data[i]);
-                        if(!itemOpts.html) return;
+                        if(!itemOpts.key){
+                            itemOpts = J.mix(itemOpts,{
+                                className:opts.className,
+                                classHover:opts.classHover,
+                                zoom:zoom
+                            });
+                            itemOpts = onItemBuild(itemOpts);
+                            if(!itemOpts || !itemOpts.html) return;
 
-                        //itemOpts = J.mix(defOpts,itemOpts,true);
-                        key = dataCenter.getCacheKey(itemOpts);
-                        itemOpts.key = key;
+                            key = itemOpts.key || dataCenter.getCacheKey(itemOpts);
+                            itemOpts.key = key;
+                        }else{
+                            key = itemOpts.key;
+                        }
+
                         /**
                          * 不在ｃａｃｈｅ里，需要创建，同时创建缓存
                          */
+
                         if(!preCache[key]){
-                            item =  context.addOverlay(itemOpts,itemOpts.overlaysType,key);
+                           var item =  context.addOverlay(itemOpts,itemOpts.overlaysType);
                             item.onClick = function(){
                                 var ret = itemOpts.onClick&&itemOpts.onClick.call(this);
                                 if(ret === false) return;
                                 onClick(item,itemOpts);
                             };
                             item.onMouseOver = function(){
-                                var ret = onMouseOver.call(this);
-                                if(ret === false) return;
-                                onMouseOver(item,itemOpts);
+                                onMouseOver.call(this,itemOpts);
+                                return itemOpts.onMouseOver&& itemOpts.onMouseOver.call(this);
                             };
                             item.onMouseOut = function(){
-                                var ret = onMouseOver.call(this);
-                                if(ret === false) return;
-                                onMouseOut(item,itemOpts);
+                                onMouseOut.call(item,itemOpts);
+                                return itemOpts.onMouseOut&& itemOpts.onMouseOut.call(item);
                             }
                             item.onRemove = function(){
                                 itemOpts.remove&&itemOpts.remove(item,itemOpts);
-                                remove(item,itemOpts);
+                                remove(item);
                             }
                             tmpObj[key] = item;
                             return;
                         }
                         tmpObj[key] = preCache[key];
                         delete  preCache[key];
-                    })(itemOpts);
+                    })(data[i]);
+
 
                 }
                 /**
@@ -331,16 +402,23 @@
                     remove(preCache[j]);
                 }
                 preCache = tmpObj;
-
             }
 
             /**
              * 为创建的Overlay创建参数
              */
             function onItemBuild(data){
-                opts.onItemBuild&&opts.onItemBuild(data);
-                return data;
+                var ret = opts.onItemBuild&&opts.onItemBuild(data);
+                return ret === false? false :data;
             }
+
+            /**
+             * 得到当前在地图上显上的ｏｖｅｒｌａｙｓ
+             */
+            function getCurrentOverlays(){
+                return preCache;
+            }
+
 
             /**
              * 移除上次ajax所添加的数据，并移除不应该显示的点
@@ -357,12 +435,9 @@
 
             }
             return {
+                getCurrentOverlays:getCurrentOverlays,
                 addOverLays:addOverlays
             }
-
-
-
-
         }
 
         /**
@@ -379,7 +454,9 @@
                 click:'map:overlayClick',
                 mouseOver:'overlayMouseOver',
                 mouseOut:'overlayMouseOut',
-                remove:'overlayRemove'
+                remove:'overlayRemove',
+                loading:'map:loading',
+                listItemClick:'list:itemClick'
             };
 
             (function(){
@@ -418,9 +495,24 @@
             function zoomChange(data){
                 sendMessage('zoomChange',data);
             }
+            function loading(data){
+               sendMessage(overlayEventType.loading,data);
+            }
             function sendMessage(eventName,data){
                 J.fire(opts.target,eventName,data,true);
             }
+
+            /**
+             * 列表页被点击
+             */
+            function listItemClick(data){
+                sendMessage(overlayEventType.listItemClick,data);
+            }
+
+
+
+
+
             return {
                 ajaxChange:ajaxChange,
                 overlayRemove:overlayRemove,
@@ -430,6 +522,7 @@
                 mapMoveStart:mapMoveStart,
                 mapMoveStop:mapMoveStop,
                 zoomChange:zoomChange,
+                loading:loading,
                 eventType:{
                     overlay:overlayEventType//overlay事件类型
                 }
@@ -437,9 +530,55 @@
 
             }
         }
+
+        /**
+         * 事件锁
+         * @return {Object}
+         * @constructor
+         */
+
+        function LockCenter(){
+            var task = [];
+            function run(){
+                var curTask, i,len = task.length;
+                for(i=0;i<len;i++){
+                    if(task[i]()===false)return true;
+                }
+           /*     while((curTask=task.shift())&&(curTask()=== false)){
+                       return true;
+                }*/
+            }
+            function addLockTask (fn){
+                task.push(fn)
+            }
+            function removeLockTask(fn){
+                var i= 0,len= task.length;
+                for(;i<len;i++){
+                    if(task[i] === fn){
+                        task.splice(i,1);
+                        console.dir(task)
+
+                        i--;
+                    }
+                }
+
+            }
+            return {
+                addLockTask:addLockTask,
+                removeLockTask:removeLockTask,
+                isLock:run
+            }
+        }
+
         return J.mix({
             getData:dataCenter.getData,
-            eventType:MSG.eventType
+            onResult:dataCenter.onResult,
+            eventType:MSG.eventType,
+            getCurrentOverlays:overlayCenter.getCurrentOverlays,
+            addOverLays:overlayCenter.addOverLays,
+            addLockTask:lockCenter.addLockTask,
+            removeLockTask:lockCenter.removeLockTask
+
         },context);
     }
     J.map.core =core;

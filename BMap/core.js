@@ -58,7 +58,7 @@
     }
     userOverlay.prototype.setOver = function(){
         if(!this._locked){
-            this._div.style.zIndex = 1;
+            this._div.style.zIndex = zIndex;
             if(this._CName && this._CHover){
                 this._div.className = this._CName+' '+this._CHover;
             }

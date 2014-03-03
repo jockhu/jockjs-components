@@ -69,6 +69,7 @@
 
         function createMap(){
             map = new BMap.Map(opts.id, {
+                enableMapClick:false,
                 mapType: !!opts.u3d && opts.city != '' ? BMAP_PERSPECTIVE_MAP : BMAP_NORMAL_MAP,
                 minZoom: opts.minz ? opts.minz : 3,
                 maxZoom: opts.maxz ? opts.maxz : 18
@@ -210,13 +211,12 @@
         function addOverlay(param, overlayType, key) {
             var p = param
             J.mix(p,param);
-            console.log(p)
             p.latlng = p.latlng ? p.latlng : getLatLng(p);
             var _key = key||buildOverlayKey(p.latlng),
-                _type = overlayType,
-                oldOverlay = getOverlay(_type,_key),
+           /*     _type = overlayType,
+                oldOverlay = getOverlay(_type,_key),*/
                 me;
-            if(oldOverlay) return oldOverlay;
+            //if(oldOverlay) return oldOverlay;
 
             function userOverlay(p){
                 this.p = p;
@@ -225,53 +225,46 @@
             userOverlay.prototype.initialize = function(map){
                 this._map = map;
                 this._locked = false;
-                this._CName = !!this.p.className ? this.p.className : '';
-                this._CHover = !!this.p.classHover ? this.p.classHover : '';
+                this.className =  this.p.className || '';
+                this.classHover =  this.p.classHover ||'';
                 this._barOffsetX = this.p.x || 0;
                 this._barOffsetY = this.p.y || 0;
+
                 me = this;
-                var div = document.createElement("DIV");
-                div.style.position = "absolute";
-                div.style.cursor = "pointer";
-                div.style.zIndex = 0;
 
-                if(this._CName){
-                    div.className = me._CName;
-                }
-                div.innerHTML = this.p.html;
-                div.title = !!this.p.title ? this.p.title : '';
+                var div = J.create('div',{
+                    style:"position:absolute;cursor:pointer;z-index:0",
+                    className:me.p.className||'',
+                    title:me.p.title||''
+                }).html(this.p.html);
 
-                J.on(div,'click',function(){
+
+                div.on('click',function(){
+
                     me.onClick&&me.onClick();
                     me.p.showInfo&&openOverlayWindow(me.p, me)
                 });
-                J.on(div,"mouseover", function(){
-                    me.setOver();
+                div.on('touchend',function(){
+                    me.onClick&&me.onClick();
+                    me.p.showInfo&&openOverlayWindow(me.p, me)
                 });
-                J.on(div,"mouseout", function(){
-                    me.setOut();
-                });
-                map.getPanes().labelPane.appendChild(div);
+                div.on("mouseover", function(){
+                    me.onMouseOver();
+                 });
+                div.on("mouseout", function(){
+                    me.onMouseOut();
+                 });
+                map.getPanes().labelPane.appendChild(div.get());
                 this._div = div;
-                return div
+                return div.get()
             }
             userOverlay.prototype.onClick = function(){
             }
-            userOverlay.prototype.setOver = function(){
-                if(!this._locked){
-                    this._div.style.zIndex = 1;
-                    if(this._CName && this._CHover){
-                        this._div.className = this._CName+' '+this._CHover;
-                    }
-                }
+            userOverlay.prototype.onMouseOver = function(){
+
             }
-            userOverlay.prototype.setOut = function(){
-                if(!this._locked){
-                    this._div.style.zIndex = 0;
-                    if(this._CName){
-                        this._div.className = this._CName;
-                    }
-                }
+            userOverlay.prototype.onMouseOut = function(){
+
             }
             userOverlay.prototype.setLock = function(isLocked){
                 if(isLocked) this._locked = true;
@@ -280,23 +273,27 @@
             userOverlay.prototype.draw = function(){
                 var map = this._map;
                 var pixel = map.pointToOverlayPixel(this.p.latlng);
-                console.log(this._barOffsetX)
-                this._div.style.left = pixel.x + this._barOffsetX + "px";
-                this._div.style.top  = pixel.y + this._barOffsetY + "px";
+                this._div.setStyle({
+                    left:pixel.x + this._barOffsetX + "px",
+                    top:pixel.y + this._barOffsetY + "px"
+                })
             }
             userOverlay.prototype.setVisible = function(b){
-                if (this._div) {
-                    this._div.style.visibility = (b) ? "visible" : "hidden";
-                }
+                this._div.setStyle({
+                    visibility:b
+                })
             }
             userOverlay.prototype.removeOverlay=function(){
                 J.un(this._div);
                 map.removeOverlay(this)
+            },
+            userOverlay.prototype.get=function(){
+                return this._div;
             }
             var uO = new userOverlay(p);
             uO.key = _key;
             map.addOverlay(uO);
-            pushOverlayList(_type,_key,uO);
+           // pushOverlayList(_type,_key,uO);
             return uO;
         }
         function addPloyline(path, PloylineOptions, overlayType, key){
@@ -318,6 +315,11 @@
         function getGeocoder(address,callback,city){
             var geo = new BMap.Geocoder();
             geo.getPoint(address,callback,city);
+        }
+
+
+        function getMapWH(){
+            return map.getSize();
         }
 
         function localSearch(keyword, obj, callback, args){
@@ -377,6 +379,33 @@
         function getZoom(){
             return map.getZoom();
         }
+        function getCenter(){
+            return map.getCenter();
+        }
+
+        /**
+         * 获得地铁线路
+         * @param subwayLineName　１号线
+         */
+        function addSubwayLine(subwayLineName){
+            var busline = new BMap.BusLineSearch(map,{
+                renderOptions:{
+                    autoViewport:false,
+                    map:map
+                },
+                onGetBusListComplete: function(result){
+                    if(result) {
+                        var fstLine = result.getBusListItem(0);//获取第一个公交列表显示到map上
+                        busline.getBusLine(fstLine);
+                    }
+                }
+            });
+            setTimeout(function(){
+                busline.getBusList(subwayLineName);
+            },0);
+            //this._busLine = busline;
+        }
+
 
         return {
             addOverlay:addOverlay,
@@ -386,8 +415,11 @@
             addMarker:addMarker,
             getOverlays:getOverlays,
             getMap:getMap,
-            getZoom:getZoom
-
+            getZoom:getZoom,
+            pointToPixel:pointToPixel,//latlng translate to px;
+            getMapWH:getMapWH,
+            getCenter:getCenter,
+            addSubwayLine:addSubwayLine
         }
 
 
