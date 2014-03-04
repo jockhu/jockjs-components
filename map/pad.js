@@ -191,7 +191,7 @@
            }
            buildListItem(data&&data.props&&data.props.list);
            //修改翻页
-           buildNextPage(data.curPage,data.propNum,data.comms);
+           buildNextPage(data.curPage,data.propNum,data.comms,!!data.props.iscommid);
            if(data.zoom >12 ){
                comms_ids = data.props.commids;
                return  data.comms&&data.comms.length?data.comms : false;
@@ -311,7 +311,7 @@
         * countNumber 总共房源套数
         * comms 小区
         */
-       function buildNextPage(currentPage,countNumber,comms){
+       function buildNextPage(currentPage,countNumber,comms,isComm){
            var args = Array.prototype.slice.call(arguments,0);
            var page = J.g("listPager").s(".sp_curr").eq(0),html;
            var str =page.html().replace(/\d+/g,function(){
@@ -326,7 +326,7 @@
            if(!comms || !comms.length){
                 return;
            }
-           if(comms.length>1){
+           if(!isComm){
                html='地图内找到房源&nbsp;'
            }else{
               html = comms[0].commname+'&nbsp;';
