@@ -20,7 +20,10 @@
             target:document,//自定义事件触发的对象
             zoomEnd:null,//缩放结束事件
             moveEnd:null//地图移动结事事件
-        }, BMap, opts, MSG, context, dataCenter,overlayCenter, map,lockCenter,moveStart,moveEnd;
+        }, BMap, opts, MSG, context, dataCenter,overlayCenter, map,lockCenter,moveStart,
+            moveEnd,
+            timer,
+            overLayTimer;
 
         (function() {
             opts = J.mix(defOpts, opption);
@@ -30,6 +33,7 @@
             MSG = new MessageCenter(opts);
             lockCenter = new LockCenter();
 
+            var _pro = window.setTimeout;
             eventBind();
             overlayCenter = new OverlayCenter(opts);
         })();
@@ -73,6 +77,11 @@
                 //map click
             });
             map.addEventListener('moveend', function (e) {
+                console.log(overLayTimer,'overtimer over')
+                if(overLayTimer){
+                    //如果是overlay click触发的,则跳出。
+                    return;
+                }
                 moveEnd = context.getCenter();
                 /**
                  * 把移动的长度添加的事件属性当中去。
@@ -85,6 +94,8 @@
                 //map click
             });
             map.addEventListener('zoomend', function (e) {
+
+               // overlayCenter.removeCurrentOverlays();
                  opts.zoomEnd&&opts.zoomEnd.call(this,e);
                 //map click
             });
@@ -149,11 +160,12 @@
             function getBoundsWE(zoom){
                 var b=map.getBounds(),w=b.getSouthWest(),e=b.getNorthEast();
                 if(zoom && typeof zoom == 'number'){
-                    var _w = map.pointToOverlayPixel(w),_e = map.pointToOverlayPixel(e);
-                    _w.x+=-zoom; // w.lng 横向
-                    _w.y+=zoom; // w.lat 纵向
-                    _e.x+=zoom-30;
-                    _e.y+=-(zoom-20);
+                    var _w = map.pointToOverlayPixel(w),//左下角坐标
+                        _e = map.pointToOverlayPixel(e);//右上解坐标
+                    _w.x+=100; // w.lng 横向
+                    _w.y+=100; // w.lat 纵向
+                    _e.x+=zoom-100;
+                    _e.y+=-(zoom-100);
                     w=map.overlayPixelToPoint(new BMap.Pixel(_w.x,_w.y));
                     e=map.overlayPixelToPoint(new BMap.Pixel(_e.x,_e.y));
                 }
@@ -173,36 +185,32 @@
              * isLock 右边不变化,适用于翻页
              */
             function getData(sendData,isLock){
-                var sendData =  sendData || {};
-                if(!isLock&&lockCenter.isLock()){
-                    return;
-                }
-                var ajaxSetting={
-                    url:opts.url,
-                    type:opts.type,
-                    onSuccess: null,
-                    timeout:20000
-                };
-                var params = beforeRequest(sendData),data;
-                if(params === false){
-                    return false;
-                }
-              /*  data = CACHE[ key = getCacheKey(params)];
+                    var sendData =  sendData || {};
+                    if(!isLock&&lockCenter.isLock()){
+                        return;
+                    }
+                    var ajaxSetting={
+                        url:opts.url,
+                        type:opts.type,
+                        onSuccess: null,
+                        timeout:20000
+                    };
+                    var params = beforeRequest(sendData),data;
+                    if(params === false){
+                        return false;
+                    }
+                    /*  data = CACHE[ key = getCacheKey(params)];
 
-                if(data){
-                    onResult(data);
-                    return true;
-                }*/
-                callback[guid]&&(callback[guid]=J.map.bmap['callback'+guid]=function(){});
-                guid++;
-                ajaxSetting.onSuccess = callback[guid]=J.map.bmap['callback'+guid] = onResult;
-                onResult.isLock = isLock;
-                ajaxSetting.data = J.mix(params,sendData);
-                J.get(ajaxSetting);
-
-            }
-            function getStaticData(sendData){
-                getData(sendData,true);
+                     if(data){
+                     onResult(data);
+                     return true;
+                     }*/
+                    callback[guid]&&(callback[guid]=J.map.bmap['callback'+guid]=function(){});
+                    guid++;
+                    ajaxSetting.onSuccess = callback[guid]=J.map.bmap['callback'+guid] = onResult;
+                    onResult.isLock = isLock;
+                    ajaxSetting.data = J.mix(params,sendData);
+                    J.get(ajaxSetting);
             }
 
             /**
@@ -308,6 +316,11 @@
                 }
                 if(panX || panY )map.panBy(-panX,-panY);
                 data.target = elm;
+                overLayTimer = true;
+                //防止触发moveend 事件。
+                setTimeout(function(){
+                    overLayTimer = false;
+                },2000);
                 MSG.overlayClick(data);
             }
             function onMouseOver(data){
@@ -362,7 +375,6 @@
                         }else{
                             key = itemOpts.key;
                         }
-
                         /**
                          * 不在ｃａｃｈｅ里，需要创建，同时创建缓存
                          */
@@ -398,9 +410,7 @@
                 /**
                  * 删除本次请求与上次请求之外的点
                  */
-                for(j in preCache){
-                    remove(preCache[j]);
-                }
+                removeCurrentOverlays();
                 preCache = tmpObj;
             }
 
@@ -418,14 +428,21 @@
             function getCurrentOverlays(){
                 return preCache;
             }
+            function cleanCurrentOverlays(){
+                J.each(preCache,function(k,v){
+
+                })
+            }
 
 
             /**
              * 移除上次ajax所添加的数据，并移除不应该显示的点
              * data OverlaysArray
              */
-            function removeOverlays(data){
-
+            function removeCurrentOverlays(){
+                J.each(preCache,function(k,v){
+                    v.onRemove();
+                })
             }
             function buildOverlayKey(latlng){
                 return latlng.lat+'_'+latlng.lng;
@@ -435,6 +452,7 @@
 
             }
             return {
+                removeCurrentOverlays:removeCurrentOverlays,
                 getCurrentOverlays:getCurrentOverlays,
                 addOverLays:addOverlays
             }

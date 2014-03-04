@@ -22,11 +22,12 @@
            classHover:'hover',
            zoomEnd:zoomEnd,
            moveEnd:moveEnd,
-           moveLengthChange:50//移动的距离小于自定义距离，不去取数据
-
+           moveLengthChange:50,//移动的距离小于自定义距离，不去取数据
+           scrollBottom:5//离底部多少像素后马上加载
 
            },opts,map,preClickedOverlay,preClickedItem,
            elm,
+           preCommid,//用于单个小区点击
            CACHE= {},
            listContainer,
            currentPage= 1,
@@ -55,14 +56,21 @@
             * overlay click event
             */
            J.on(opts.target,map.eventType.overlay.click,function(event){
+               J.g("p_list").html('');
                var data = event.data;
-               if(data.zoom == 12 || data.zoom == 11){
+               if(data.zoom <13){
                    map.setCenter(data.lng,data.lat,14);
                    map.getData();
                     return
                }
+               //计录小区id,用来翻页
+               resetParams();
+               preCommid = data.commid;
+               preClickedOverlay&&preClickedOverlay.get().first().removeClass("f60bg");
+               preClickedOverlay = data.target;
+               data.target.get().first().addClass("f60bg");
                map.getData({
-                   commid:data.commid
+                   commid:preCommid
                },true);
 
 
@@ -77,24 +85,33 @@
                }
                listItemClick(J.g(target));
            })
-           /**
-            * 翻页事件
-            */
-           J.g("nextPage").on('click',function(){
-               var data = {};
-               //把上一　次点击的区域选中状态清掉
-               preClickedOverlay&&preClickedOverlay.onMouseOut();
 
-               data.p = ++currentPage;
-               if(map.getZoom()>12){
-                   data.commsids = comms_ids;
-               }
-               map.getData(data,true);
-
-           });
 
 
        }
+       /**
+        * 翻页事件
+        */
+       function nextPage(e){
+           var lis = document.getElementById("p_list"),wait=true;
+           if(wait&&(this.clientHeight+this.scrollTop+opts.scrollBottom >= this.scrollHeight)){
+               wait = false;
+               window.setTimeout(function(){wait = true},2000)
+               var data = {};
+               //把上一　次点击的区域选中状态清掉
+               data.p = ++currentPage;
+               if(map.getZoom()>12){
+                   data.commsids = comms_ids;
+                   //翻页把小区ｉｄ传过去
+                   data.commid =preCommid;
+               }
+               map.getData(data,true);
+           }
+
+
+
+       }
+
        function lockHandler(){
            var data = event.data;
            if(data.zoom == 12 || data.zoom == 11){
@@ -108,23 +125,35 @@
         * @return {Boolean}
         */
        function zoomEnd(e){
-           currentPage = 1;
+           resetParams();
            var zoom = map.getZoom();
            if(zoom >12){
+             map.getData();
              return true;
            }
-           map.addOverLays(zoneCache);
+          map.onResult(zoneCache);
 
        }
        function moveEnd(e){
-           currentPage = 1;//移动后翻页归为１，默认为第一页
-           comms_ids = null;
+           resetParams();
             if(map.getZoom() >12 && e.moveLenth > opts.moveLengthChange){
+                J.g("p_list").html('');
                 map.getData();
                 return;
             }
+       }
 
-
+       /**
+        * １.上一页所记录的comdms_ids
+        * 2.所点击的小区
+        * ３.当前翻页
+        *
+        * 地图移动后和缩放级别更改后，需要清空记录条件
+        */
+       function resetParams(){
+           currentPage = 1;//移动后翻页归为１，默认为第一页
+           comms_ids = null;//翻页的上一页记录清空
+           preCommid = 0;//点击小区的小区id清空
        }
 
        function beforeRequest(data){
@@ -134,7 +163,7 @@
                order:null,
                bounds:data.swlat + "," + data.nelat + "," + data.swlng + "," + data.nelng
            });
-           if(ret.zoom == 14){
+           if(ret.zoom > 12){
               ret.model = 2;
            }
            return ret;
@@ -162,15 +191,15 @@
            }
            buildListItem(data&&data.props&&data.props.list);
            //修改翻页
-           buildNextPage(data.curPage,data.propNum);
+           buildNextPage(data.curPage,data.propNum,data.comms);
            if(data.zoom >12 ){
                comms_ids = data.props.commids;
                return  data.comms&&data.comms.length?data.comms : false;
            }
             if(!zoneCache){
-                zoneCache = data.groups;
+                zoneCache =data;;
             }
-            return zoneCache;
+            return zoneCache.groups;
        }
 
        /**
@@ -200,27 +229,31 @@
            if(!data){
                return false;
            }
-            var html = [],tmp='',key = map.getZoom()>12? 'community_id':'area_id';
+            var html = [],str,tmp='',key = map.getZoom()>12? 'community_id':'area_id';
+         //  var oFragment = document.createDocumentFragment();
+   //         console.time("test");
+           var frag = document.createDocumentFragment();
            J.each(data,function(k,t){
-               tmp = '<li data-code="'+t[key]+'" class="">' +
-                   '<a href="'+t['prop_url']+'" class="pi_a_img" title="'+t['img_title']+'" alt="'+t['img_title']+'" target="_blank">'+
+               tmp = document.createElement("li");
+               tmp.setAttribute("data-code",t[key]);
+               str = '<a href="'+t['prop_url']+'" class="pi_a_img" title="'+t['img_title']+'" alt="'+t['img_title']+'" target="_blank">'+
                    '<img height="100" width="133" id="prop_2_a"  alt="'+t['img_title']+'" src="'+t['img_url']+'">'+
                    '</a>'+
                    '<div class="pi_info">'+
                    '<a data-soj="'+t["soj"]+'" href="'+t["prop_url"]+'" target="_blank">'+t["title"]+'</a>'+
                    '<div class="pi_address"><span>'+t['community_name']+'</span></div>'+
                    '<div class="pi_basic"><span>'+t['room_num']+'室'+t['hall_num']+'厅'+"</span></div>"+
-                   '<div class="pi_sub"><span class="pi_s_price">'+t['price']+'</span>元/月</div></li>';
-               html.push(tmp);
-           })
-           J.g("p_list").html(html.join(''));
+                   '<div class="pi_sub"><span class="pi_s_price">'+t['price']+'</span>元/月</div>';
+               tmp.innerHTML = str;
+               frag.appendChild(tmp);
+           });
+           J.g("p_list").get().appendChild(frag);
+          // console.timeEnd("test");
+
+
        }
 
-//       function overLayClick(data){
-//           map.getData({
-//               commid:this.p.commid
-//           });
-//       }
+
 
        /**
         * js动态添加ｃｏｎｔａｉｎｅｒ
@@ -254,14 +287,21 @@
        /**
         * 计算列表高度
         */
-       function buildList(id){
+       function buildList(id,nexpage){
            var pageHeight,listHeight;
+           if(!nexpage){
+               J.g("listPager").setStyle({
+                   display:'none'
+               })
+           }
+
            pageHeight= J.page.viewHeight();
-           listHeight = pageHeight - J.g("filter_condition").height()- J.g("p_header").height()- J.g('propBarLeft').height()- J.g("listPager").height();
+           listHeight = pageHeight - J.g("filter_condition").height()- J.g("p_header").height()- J.g('propBarLeft').height();
            listContainer = !listContainer ? J.g(id) :listContainer;
            listContainer.setStyle({
                height:listHeight+'px'
            })
+           listContainer.on('scroll',nextPage);
        }
 
 
@@ -269,18 +309,52 @@
         * 翻页ｈｔｍｌ
         * currentPage 当前页码
         * countNumber 总共房源套数
+        * comms 小区
         */
-       function buildNextPage(currentPage,countNumber){
+       function buildNextPage(currentPage,countNumber,comms){
            var args = Array.prototype.slice.call(arguments,0);
-           var page = J.g("listPager").s(".sp_curr").eq(0);
+           var page = J.g("listPager").s(".sp_curr").eq(0),html;
            var str =page.html().replace(/\d+/g,function(){
                return args.shift();
            })
-           var top = J.g('propBarLeft');
+           page.html(str);
+           var top = J.g('propBarLeft').s(".sort_sp").eq(0);
+           //如果返回的小区套数等于０或者大于１，则显示：地图内找到房源，否则直接显示该小区名字
            top.html(top.html().replace(/\d+/g,function(){
                return countNumber;
            }));
-           page.html(str);
+           if(!comms || !comms.length){
+                return;
+           }
+           if(comms.length>1){
+               html='地图内找到房源&nbsp;'
+           }else{
+              html = comms[0].commname+'&nbsp;';
+           }
+           top.html(html+'<b>'+countNumber+'</b>套');
+       }
+       function PageList(id){
+
+           (function(){
+
+           })();
+
+           function setContainer(){
+
+           }
+
+           function scrollEvent(){
+
+           }
+
+           function buildItem(){
+
+
+           }
+
+           function buildSeparate(){
+
+           }
        }
 
 
