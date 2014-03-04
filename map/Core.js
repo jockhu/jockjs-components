@@ -5,8 +5,8 @@
         var defOpts={
             url:'',
             id: "",
-            lat: "31.230246775887",
-            lng: "121.48246298372",
+            lat: "",
+            lng: "",
             mark: 0,
             zoom: 12,
             ezoom: 1,

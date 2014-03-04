@@ -3,12 +3,12 @@
 (function(){
    function pad(opption){
        var defOpts ={
-           url:'http://sh.lunjiang.zu.dev.anjuke.com/newmap/search2',
+           url:'/newmap/search2',
        //   url:'http://sh.release.lunjiang.dev.anjuke.com/newmap/search2',
           // url:'http://test.lunjiang.dev.aifang.com/map/index.php',
            id: "jmap_fill",
-           lat: "31.230246775887",
-           lng: "121.48246298372",
+           lat: "",
+           lng: "",
            mark: 0,
            zoom: 12,
            ezoom: 1,
@@ -175,6 +175,9 @@
             var code  =elm.attr('data-code');
             var zoom = map.getZoom();
            var key =code+'_'+zoom;
+
+
+           preClickedOverlay&&preClickedOverlay.get().first().removeClass("f60bg");
            preClickedOverlay&&preClickedOverlay.onMouseOut();
            preClickedItem&&preClickedItem.removeClass("on");
            elm.addClass("on");
@@ -364,5 +367,11 @@
 
 
    }
-    pad();
+    var content = J.g("p_filter_result");
+    var lat = content.attr("data-lat"),
+        lng =content.attr("data-lng");
+    pad({
+        lat:lat,
+        lng:lng
+    });
 })();

@@ -206,8 +206,7 @@
             openWindow(p)
         }
 
-        function userOverlay(){
-        }
+
         function addOverlay(param, overlayType, key) {
             var p = param
             J.mix(p,param);
