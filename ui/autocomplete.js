@@ -64,9 +64,10 @@
      * Auto Complete Function
      * @param el 需要绑定的输入框
      * @param options 扩展选项
+     * @param close 是否有关闭按钮
      * @constructor
      */
-    function Autocomplete(el, options) {
+    function Autocomplete(el, options, close) {
         var disabled = false, el = J.g(el), targetEl, equaled = -1, selectedIndex = -1, currentValue = el.val().trim(), CACHED = [], DATA = [], opts, aId, isShow = false, divs,
             mainContainer, container, valueChangeTimer = null, ignoreValueChange = false, intervalTimer = null,isFocusSupport=false,sendedStr='',skipedNum=0;
         (function(){
@@ -264,7 +265,7 @@
         }
 
         function suggest(a, cached){
-            var div, t, val, elVal = el.val();
+            var div, t, val, elVal = el.val(), item_count=0;
             equaled = -1;
             if(cached){
                 DATA = a
@@ -308,7 +309,19 @@
                         select(e, i);
                     }, i, true, true);
                 }
+                item_count = i;
             });
+            //添加关闭按钮--by lyj--date 2014-02-24
+            if (close&&item_count!=0) {
+                var close_btn = "<i id='item_close' class='ui_close'>关闭</i>"
+                J.create('div', {
+                    "class": "ui_item ui_cb"
+                }).html(close_btn).appendTo(container).on('click', function(e){
+                        e&& e.stop();
+                        hide();
+                    });
+            }
+
             skipedNum =0;
             J.each(DATA,function(k,v){
                 !v&&DATA.splice(k,1);
@@ -441,8 +454,8 @@
             show:show
         };
     }
-    J.dom.fn.autocomplete = function(options){
-        return new Autocomplete(this.get(), options)
+    J.dom.fn.autocomplete = function(options, close){
+        return new Autocomplete(this.get(), options, close)
     };
     J.ui.autocomplete = Autocomplete;
 })(J, document);
