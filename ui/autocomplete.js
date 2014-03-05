@@ -316,7 +316,9 @@
                 var close_btn = "<i id='item_close' class='ui_close'>关闭</i>"
                 J.create('div', {
                     "class": "ui_item ui_cb"
-                }).html(close_btn).appendTo(container);
+                }).html(close_btn).appendTo(container).on('click', function(e){
+                        e&& e.stop();
+                    });
             }
 
             skipedNum =0;
