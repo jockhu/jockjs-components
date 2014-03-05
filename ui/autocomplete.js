@@ -318,6 +318,7 @@
                     "class": "ui_item ui_cb"
                 }).html(close_btn).appendTo(container).on('click', function(e){
                         e&& e.stop();
+                        hide();
                     });
             }
 
