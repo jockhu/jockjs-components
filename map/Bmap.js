@@ -28,7 +28,8 @@
             onZoomStart:null,
             onZoomEnd:null,
             target:document,//自定主事件触对的对象
-            callback:null
+            callback:null,
+            progrss:'progrss'
         },elm,isLoaded;
 
         var io = {

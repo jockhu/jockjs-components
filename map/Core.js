@@ -19,10 +19,12 @@
             classHover:'',
             target:document,//自定义事件触发的对象
             zoomEnd:null,//缩放结束事件
-            moveEnd:null//地图移动结事事件
+            moveEnd:null,//地图移动结事事件
+            progress:'progress'
         }, BMap, opts, MSG, context, dataCenter,overlayCenter, map,lockCenter,moveStart,
             moveEnd,
             timer,
+            progress,
             overLayTimer;
 
         (function() {
@@ -32,9 +34,9 @@
             dataCenter = DataCenter(opts);
             MSG = new MessageCenter(opts);
             lockCenter = new LockCenter();
+            progress = J.g(opts.progress);
 
-            var _pro = window.setTimeout;
-            eventBind();
+                eventBind();
             overlayCenter = new OverlayCenter(opts);
         })();
 
@@ -185,6 +187,7 @@
              * isLock 右边不变化,适用于翻页
              */
             function getData(sendData,isLock){
+                    progress.show();
                     var sendData =  sendData || {};
                     if(!isLock&&lockCenter.isLock()){
                         return;
@@ -231,6 +234,7 @@
              * @param data
              */
             function onResult(data){
+                progress.hide();
                 delete callback[guid];
                 delete J.map.bmap['callback'+guid];
                 data.zoom = context.getZoom();
