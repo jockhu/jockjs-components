@@ -60,6 +60,9 @@
                J.g("p_list").html('');
                var data = event.data;
                if(data.zoom <13){
+                 /*  J.each(map.getCurrentOverlays(),function(k,v){
+                       v.remove();
+                   })*/
                    map.setCenter(data.lng,data.lat,14);
                    map.getData();
                     return
