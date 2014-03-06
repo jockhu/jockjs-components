@@ -185,7 +185,7 @@
 
            preClickedItem&&preClickedItem.removeClass("on");
            elm.addClass("on");
-           toggleClassOver(overlays[key],preClickedOverlay);
+           toggleClassOver(overlays[key],preClickedOverlay,true);
 
            preClickedOverlay= overlays[key];
            preClickedItem = elm;
@@ -197,9 +197,9 @@
         * @param current overlay
         * @param prev overlay
         */
-       function toggleClassOver(current,prev){
+       function toggleClassOver(current,prev,isskip){
            //J.g("p_list").html('');
-           J.g("propBarLeft").s("b").eq(0).html('0');
+           !isskip&&J.g("propBarLeft").s("b").eq(0).html('0');
            prev&&prev.get().first().removeClass("f60bg");
            prev&&prev.onMouseOut();
            current&&current.onMouseOver();
