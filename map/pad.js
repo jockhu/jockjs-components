@@ -1,21 +1,22 @@
 ;
 /// require('map.Core');
+/// require('map.list');
 (function(){
-   function pad(opption){
-       var defOpts ={
+   function pad(){
+       var opts ={
            url:'/newmap/search2',
        //   url:'http://sh.release.lunjiang.dev.anjuke.com/newmap/search2',
           // url:'http://test.lunjiang.dev.aifang.com/map/index.php',
            id: "jmap_fill",
-           lat: "",
-           lng: "",
+           lat:J.g("p_filter_result").attr("data-lat"),
+           lng:J.g("p_filter_result").attr("data-lng"),
            mark: 0,
            zoom: 12,
            ezoom: 1,
            minz: 11,//最小缩放等级
            maxz: 18,//最大缩放等级
            onBeforeRequest:beforeRequest,
-           onResult:onResult,
+           onResult:null,
            onItemBuild:onItemBuild,
            target:document,
            className:'',
@@ -25,29 +26,49 @@
            moveLengthChange:50,//移动的距离小于自定义距离，不去取数据
            scrollBottom:5//离底部多少像素后马上加载
 
-           },opts,map,preClickedOverlay,preClickedItem,
+           },map,preClickedOverlay,preClickedItem,
            elm,
+           zoomPrev,
            preCommid,//用于单个小区点击
            CACHE= {},
            listContainer,
            currentPage= 1,
+           D,
+           data={
+               model:1,//除区域外都是模式１
+               p:1,//页码
+               commids:'',//上一页的小区
+               commid:0,
+               zoom:12,
+               bounds:''
+           },
            comms_ids,wait =false,//点击下一页把现在展展的列表小区带过去
            zoneCache;//区域缓存
        function init(){
-           opts = J.mix(defOpts,opption);
            var listId,//列表id
                containerId;//地图容器ｉｄ
            listId = 'p_filter_result',
-               containerId=opts.id;
+               containerId=opts.id,
            progress = J.g("progrss");
            buildContainer(containerId);
            buildProgress();
            buildList(listId);
            map =  J.map.core(opts);
            bindEvent();
-           menu();//菜单筛选
+           new Menu();//菜单筛选
+           ListCenter.map = map;
+           ListCenter.opts = map.opts;
+           ListCenter.container = J.g("p_list");
+           ListCenter.CommnameContainer = J.g("propBarLeft").s(".comname").eq(0);
+           ListCenter.countNum = J.g("propBarLeft").s("b").eq(0);
+           ListCenter.getRankData();
        }
        init();
+
+
+
+
+
        function bindEvent(){
            J.on(window,'resize',function(){
                buildContainer();
@@ -57,23 +78,16 @@
             * overlay click event
             */
            J.on(opts.target,map.eventType.overlay.click,function(event){
-               J.g("p_list").html('');
                var data = event.data;
                if(data.zoom <13){
-                 /*  J.each(map.getCurrentOverlays(),function(k,v){
-                       v.remove();
-                   })*/
                    map.setCenter(data.lng,data.lat,14);
-                   map.getData();
                     return
                }
+               toggleClassOver(data.target,preClickedOverlay);
+               ListCenter.getCommData(data.commid,data.commname);
                //计录小区id,用来翻页
-               resetParams();
-               preCommid = data.commid;
-               toggleClassOver(data.target,preClickedOverlay,true);
-               map.getData({
-                   commid:preCommid
-               },true);
+
+
 
 
            });
@@ -87,26 +101,19 @@
                }
                listItemClick(J.g(target));
            })
-
-
-
        }
+
+
+
+
        /**
         * 翻页事件
         */
        function nextPage(e){
            var lis = document.getElementById("p_list");
-           if(!wait&&(this.clientHeight+this.scrollTop+opts.scrollBottom >= this.scrollHeight)){
-               wait =true;
-               var data = {};
+           if(this.clientHeight+this.scrollTop+opts.scrollBottom >= this.scrollHeight){
                //把上一　次点击的区域选中状态清掉
-               data.p = ++currentPage;
-               if(map.getZoom()>12){
-                   data.commids = comms_ids;
-                   //翻页把小区ｉｄ传过去
-                   data.commid =preCommid;
-               }
-               map.getData(data,true);
+               ListCenter.getNextPageData();
            }
 
        }
@@ -114,12 +121,7 @@
            customParam&&SentSoj("anjuke-pad", customParam); //第二个参数是anjax请求的
        }
 
-       function lockHandler(){
-           var data = event.data;
-           if(data.zoom == 12 || data.zoom == 11){
-               map.setCenter(data.lng,data.lat,14);
-           }
-       }
+
 
        /**
         * 如果缩放等级为１１　或１２不去取数据
@@ -127,27 +129,20 @@
         * @return {Boolean}
         */
        function zoomEnd(e){
-           resetParams();
-           J.g("p_list").html('');
-           toggleClassOver(null,preClickedOverlay);
-           preClickedItem&&preClickedItem.removeClass("on");
-
+           ListCenter.data.commids='';
+           ListCenter.data.commid = '';
            var zoom = map.getZoom();
            if(zoom >12){
-               map.getData();
-             return true;
+               ListCenter.getZoneData();
+               return true;
            }
-          map.onResult(zoneCache);
-
+           ListCenter.getRankData();
        }
+
        function moveEnd(e){
-           resetParams();
-            if(map.getZoom() >12 && e.moveLenth > opts.moveLengthChange){
-                toggleClassOver(null,preClickedOverlay);
-                J.g("p_list").html('');
-                map.getData();
-                return;
-            }
+           if(map.getZoom()>12){
+               ListCenter.getZoneData();
+           }
        }
 
        /**
@@ -157,14 +152,9 @@
         *
         * 地图移动后和缩放级别更改后，需要清空记录条件
         */
-       function resetParams(){
-           currentPage = 1;//移动后翻页归为１，默认为第一页
-           comms_ids = null;//翻页的上一页记录清空
-           preCommid = 0;//点击小区的小区id清空
-       }
+
 
        function beforeRequest(data){
-           //points.swlat + "," + points.nelat + "," + points.swlng + "," + points.nelng;
            var ret =J.mix(data,{
                model:1,
                order:null,
@@ -199,7 +189,6 @@
         */
        function toggleClassOver(current,prev,isskip){
            //J.g("p_list").html('');
-           !isskip&&J.g("propBarLeft").s("b").eq(0).html('0');
            prev&&prev.get().first().removeClass("f60bg");
            prev&&prev.onMouseOut();
            current&&current.onMouseOver();
@@ -208,32 +197,6 @@
        }
 
 
-       function onResult(data){
-           wait = false;
-           sendSoj(data.sojData);
-           if(Object.prototype.toString.call(data)== '[object Array]'){
-               return data;
-           }
-           //如果请求回来无小区，并且不是第一页，则都不展示　
-           if(data.comms&&!data.comms.length&&data.curPage==1){
-               J.g("p_list").html('');
-               buildNextPage(0,0,0,false);
-
-           }else{
-               buildListItem(data&&data.props&&data.props.list);
-               //修改翻页
-               buildNextPage(data.curPage,data.propNum,data.comms,!!data.props.iscommid);
-
-           }
-           if(data.zoom >12 ){
-               comms_ids = data.props.commids;
-               return  data.comms&&data.comms.length?data.comms : false;
-           }
-            if(!zoneCache){
-                zoneCache =data;;
-            }
-            return zoneCache.groups;
-       }
 
        /**
         * reutrn the overlay html
@@ -258,43 +221,6 @@
            item.y=-37.5;
            item.html =item.propCount ? '<div class="OverlayA"><div class="circle"></div><div class="txt"><b>'+item.areaName+'</b><br/><p>'+item.propCount+'</p></div></div>':false;
        }
-       function buildListItem(data){
-           if(!data || !data.length){
-               return false;
-           }
-            var html = [],str,tmp='',key = map.getZoom()>12? 'community_id':'area_id';
-         //  var oFragment = document.createDocumentFragment();
-   //         console.time("test");
-           var frag = document.createDocumentFragment();
-           var container = J.g("p_list");
-           var start =  container.s("li").length;
-           if(!!start){
-               var sep = document.createElement("li");
-               sep.className="sep";
-               sep.innerHTML =  start+ "-"+(start+data.length)+"条";
-               frag.appendChild(sep);
-           }
-           J.each(data,function(k,t){
-              var tmp = document.createElement("li");
-               tmp.setAttribute("data-code",t[key]);
-               str = '<a href="'+t['prop_url']+'" class="pi_a_img" title="'+t['img_title']+'" alt="'+t['img_title']+'" target="_blank">'+
-                   '<img height="100" width="133" id="prop_2_a"  alt="'+t['img_title']+'" src="'+t['img_url']+'">'+
-                   '</a>'+
-                   '<div class="pi_info">'+
-                   '<a data-soj="'+t["soj"]+'" href="'+t["prop_url"]+'" target="_blank">'+t["title"]+'</a>'+
-                   '<div class="pi_address"><span>'+t['community_name']+'</span></div>'+
-                   '<div class="pi_basic"><span>'+t['room_num']+'室'+t['hall_num']+'厅'+"</span></div></div>"+
-                   '<div class="pi_sub"><span class="pi_s_price">'+t['price']+'</span>元/月</div>';
-               tmp.innerHTML = str;
-               frag.appendChild(tmp);
-           });
-           container.get().appendChild(frag);
-
-
-       }
-
-
-
        /**
         * js动态添加ｃｏｎｔａｉｎｅｒ
         */
@@ -309,12 +235,8 @@
               height:'100%'
 
           });
-          // buildProgress();
-
            return elm;
        }
-
-
        function buildProgress(){
            var progress =J.create('div',{
                    id:'progress',
@@ -323,7 +245,6 @@
            var html ='<i class="loading_pic"></i>房源加载中...';
            progress.html(html);
        }
-
        /**
         * 计算列表高度
         */
@@ -341,63 +262,111 @@
            listContainer.setStyle({
                height:listHeight+'px'
            })
-           /*J.g("progress").setStyle({
-               J.g("filter_condition").width()+ J.g("filter_condition").height()
-           })*/
            listContainer.on('scroll',nextPage);
-       }
-
-
-       /**
-        * 翻页ｈｔｍｌ
-        * currentPage 当前页码
-        * countNumber 总共房源套数
-        * comms 小区
-        */
-       function buildNextPage(currentPage,countNumber,comms,isComm){
-           var args = Array.prototype.slice.call(arguments,0);
-          /* var page = J.g("listPager").s(".sp_curr").eq(0),html;
-           var str =page.html().replace(/\d+/g,function(){
-               return args.shift();
-           })
-           page.html(str);*/
-           var top = J.g('propBarLeft').s(".sort_sp").eq(0);
-           //如果返回的小区套数等于０或者大于１，则显示：地图内找到房源，否则直接显示该小区名字
-           top.html(top.html().replace(/\d+/g,function(){
-               return countNumber;
-           }));
-           if(!comms || !comms.length){
-                return;
-           }
-           if(!isComm){
-               html='地图内找到房源&nbsp;'
-           }else{
-              html = comms[0].commname+'&nbsp;';
-           }
-           top.html(html+'<b>'+countNumber+'</b>套');
        }
 
        /**
         * 菜单操作事件
         */
 
-       function menu(){
-           var zoneSelected =
+
+       function Menu(){
+           var MenuData = {
+               areaid:'',
+               blockid:'',
+               price:'',
+               room:''
+           }
+           var categorys = J.s('.category');
+           var zone = categorys.eq(0).first();
+           var price = categorys.eq(1).first();
+           var room = categorys.eq(2).first();
+
+           var preTarget =null;
+
            J.on(document,'select:selectedChange',function(e){
                var target = e.data.target;
-               target.html(target.html()+'　√');
+               var areaid = target.attr("areaid");
+               var blockid= target.attr("blockid");
+               var price = target.attr("price");
+               var room = target.attr('room');
+
+               var name = target.html().replace('　√','');
+               var p = {
+                   lng:target.attr("mapx"),
+                   lat:target.attr("mapy"),
+                   className:'areaMarkerMain',
+                   x:-18,
+                   y:-46,
+                   html:'<div><p>'+target.attr("typename")+'</p><i class="areaMarker"></i></div>'
+               }
+               if(areaid !== null){
+                    MenuData.areaid = areaid;
+                   setZone(target.attr("typename"));
+               }
+               if(blockid !== null){
+                   MenuData.blockid = blockid;
+                   setZone(target.attr("typename"));
+                   //是板块
+                   if(blockid !== ''){
+                       map.setCenter(p.lng, p.lat,16);
+                       map.addOverlay(p,'zoneMarker');
+
+                   }
+                   else
+                   {
+                       map.setCenter(p.lng, p.lat,14);
+                       map.addOverlay(p,'zoneMarker');
+                   }
+
+               }
+               if(price !== null){
+                   MenuData.price = price;
+                   setPrice(name);
+                   console.log(MenuData);
+                   ListCenter.getFilterData(MenuData);
+
+
+               }
+               if(room !== null){
+                   MenuData.room = room;
+                   setRoom(name);
+                   ListCenter.getFilterData(MenuData);
+
+               }
+               repaceHtml(target);
+              // ListCenter.getFilterData(MenuData);
+
            })
+
+           function getData(){
+               return MenuData;
+           }
+
+           function setZone(data){
+               zone.html(data||'区域不限');
+           }
+           function setPrice(data){
+                price.html(data);
+           }
+           function setRoom(data){
+                room.html(data);
+           }
+
+           function repaceHtml(target){
+               var html = target.html();
+               html = html + (html.indexOf('　√')>-1 ?'':'　√')
+               target.html(html);
+               preTarget&&preTarget.html(preTarget.html().replace('　√',''));
+               preTarget= target;
+           }
+
 
 
        }
 
 
    }
-    var content = J.g("p_filter_result");
-    var lat = content.attr("data-lat"),
-        lng =content.attr("data-lng");
-    pad({
-        lat:lat,
-        lng:lng
-    });
+
+    pad();
 })();

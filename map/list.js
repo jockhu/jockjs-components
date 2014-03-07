@@ -1,105 +1,151 @@
 /**
  * Created with JetBrains PhpStorm.
- * User: kathleen
+ * User: lunjiang
  * Date: 14-3-5
  * Time: 下午6:39
  * To change this template use File | Settings | File Templates.
  */
-var dataCenter = {
+var ListCenter = {
     url:'/newmap/search2',
-    container: J.g("p_list"),
+    container:null,
     data:{
         model:1,//除区域外都是模式１
         p:1,//页码
         commids:'',//上一页的小区
-        commid:0,
-        zoom:12,
-        bounds:''
+        commid:0
     },
+    map:null,
+    opts:null,
+    wait:false,
     //获得rank排序的数据
-    getRankData:function(){
+    //
+    getRankData:function(data,noCache){
         this.data.model =1;
-        this.sendAjax(this.onResultRandData);
+        this.opts.onItemBuild = this.onRankItemBuild;
+        var me = this;
+        if(!noCache){
+            this.opts.onResult =function(data){
+                !me.rankCache&&(me.rankCache = data);
+                return me.onResultRankData.call(me,me.rankCache);
+            }
+            !this.rankCache?this.map.getData(data):this.map.onResult(this.rankCache['groups']);
+        }else{
+            this.opts.onResult =function(data){
+                return me.onResultRankData(data);
+            }
+            console.log('getRankData',data)
+            this.map.getData(data);
+        }
+
     },
     //获得单个小区的数据
-    getCommData:function (commid){
+    getCommData:function (commid,commname){
         this.data.model =2;
-        this.commid = commid;
-        this.sendAjax(this.onResultCommData);
+        this.data.commid = commid;
+        this.data.commids='';
+        this.data.p = 1;
+        var me = this;
+        this.opts.onResult = function(data){
+             me.onResultCommData.call(me,data,commname);
+        }
+        this.map.getData(this.data,true);
 
     },
-    //获得下一页的数据
+    //普通获得下一页的数据
     getNextPageData:function (){
-        this.data.model =2;
+        if(this.wait){
+            return true;
+        }
         this.data.p++;
-        this.sendAjax();
-
+        this.opts.onItemBuild = this.data.model==1?this.onRankItemBuild:this.onCommItemBuild;
+        var me = this;
+        this.opts.onResult = function(data){
+            me.wait = false;
+            setTimeout(function(){
+              me.wait = false;
+            },10000)
+            me.onResultNextPageData.call(me,data);
+        }
+        this.map.getData(this.data,true);
     },
     //获得可视区域数据
     getZoneData:function(){
         this.data.model =2;
         this.data.commids = '';
         this.data.commid='';
-        this.sendAjax(this.onResultZoneData);
+        this.data.p = 1;
+
+        this.opts.onItemBuild = this.onCommItemBuild;
+        var me = this;
+        this.opts.onResult = function(data){
+           return me.onResultZoneData.call(me,data);
+        }
+        this.map.getData();
     },
 
-    sendAjax:function(fn){
-        var me = this;
-        J.get({
-            url:me.url,
-            data:me.data,
-            onSuccess:function(data){
-                //不是下一页的话要更新状态栏
-                if(fn !== me.onResultNextPageData){
-                    var commname = !!data.props.iscommid ?data.comms[0].commname:'地图内找到房源';
-                    var countNum = data.propNum;
-                    me.upDateStatusHtml(commname,countNum);
-                }
-                fn(data);
-            }
-        })
+    //获得筛选数据
+    getFilterData:function(data){
+        this.data = J.mix(this.data,data);
+        if(!(this.map.getZoom()>12)){
+            this.getRankData(data,true);
+            return;
+        }
+        this.getZoneData(data);
     },
+
+    onRankItemBuild:function(item){
+        if(!item.propCount){
+            return false;
+        }
+        item.key = item.id+'_'+item.zoom;
+        item.x=-37.5;
+        item.y=-37.5;
+        item.html =item.propCount ? '<div class="OverlayA"><div class="circle"></div><div class="txt"><b>'+item.areaName+'</b><br/><p>'+item.propCount+'</p></div></div>':false;
+    },
+    onCommItemBuild:function(item){
+        item.x=-8;
+        item.y=-45;
+        item.key = item.commid+'_'+item.zoom;
+        item.html='<div class="OverlayB"><b>'+item.propCount+'套｜</b>'+item.commname+'<span class="tip"></span></div>';
+        item.onClick= function(){
+        }
+    },
+
     onResultRankData:function(data){
         this.container.html('');
-
+        this.updateListHtml(data.props.list,'area_id');
+        this.upDateStatusHtml('地图内找到房源',data.propNum);
+        return data.groups;
     },
-    onResultCommData:function(data){
+    onResultCommData:function(data,commname){
         this.container.html('');
-
+        this.updateListHtml(data.props.list,'community_id');
+        this.upDateStatusHtml(commname,data.propNum);
+        return data.comms;
     },
     onResultNextPageData:function(data){
-        var frag = document.createDocumentFragment();
-        var start =  this.s("li").length;
-        if(!!start){
-            var sep = document.createElement("li");
-            sep.className="sep";
-            sep.innerHTML =  start+ "-"+(start+data.length)+"条";
-            frag.appendChild(sep);
+        //如果下一页的数据为空，则不进行任何操作
+        if(!data.props.list.length)return;
+        var commanme;
+        var key = this.data.model == 1 ?'area_id':'community_id';
+        if(data.curPage == 1){
+             commanme = !!data.props.iscommid ? data.comms[0].commname : '地图内找到房源';
+            this.upDateStatusHtml(commanme,data.propNum);
         }
-        var _container = this.container.get();
-        _container.appendChild(frag);
-        _container.appendChild(this.onBuildItem(data));
+        var start =  this.container.s("li").length;
+        var sep = document.createElement("li");
+        sep.className="sep";
+        sep.innerHTML =  start+ "-"+(start+data.props.list.length)+"条";
+        this.container.get().appendChild(sep);
+        this.updateListHtml(data.props.list,key);
+        this.data.commids = data.props.commids;
     },
     onResultZoneData:function(data){
         this.container.html('');
-    },
-    onBuildItem:function(data){
-        var frag = document.createDocumentFragment();
-        J.each(data,function(k,t){
-            var tmp = document.createElement("li");
-            tmp.setAttribute("data-code",t[key]);
-            var str = '<a href="'+t['prop_url']+'" class="pi_a_img" title="'+t['img_title']+'" alt="'+t['img_title']+'" target="_blank">'+
-                '<img height="100" width="133" id="prop_2_a"  alt="'+t['img_title']+'" src="'+t['img_url']+'">'+
-                '</a>'+
-                '<div class="pi_info">'+
-                '<a data-soj="'+t["soj"]+'" href="'+t["prop_url"]+'" target="_blank">'+t["title"]+'</a>'+
-                '<div class="pi_address"><span>'+t['community_name']+'</span></div>'+
-                '<div class="pi_basic"><span>'+t['room_num']+'室'+t['hall_num']+'厅'+"</span></div></div>"+
-                '<div class="pi_sub"><span class="pi_s_price">'+t['price']+'</span>元/月</div>';
-            tmp.innerHTML = str;
-            frag.appendChild(tmp);
-        });
-        return frag;
+        this.updateListHtml(data.props.list,'community_id');
+        this.upDateStatusHtml('地图内找到房源',data.propNum);
+        this.data.commids = data.props.commids;
+        return data.comms;
     },
     init:function(){
         this.bindEvent();
@@ -125,10 +171,30 @@ var dataCenter = {
         })
     },
     upDateStatusHtml:function(commname,countNum){
-        this.commnameContainer&&(this.CommnameContainer = J.g("propBarLeft").s(".comname"));
-        this.countNum&& (this.CommnameContainer = J.g("propBarLeft").s("b"));
-        this.commname.html(commname);
+        this.CommnameContainer.html(commname);
         this.countNum&&this.countNum.html(countNum);
+    },
+    /**
+     * 填充列表数据
+     * @param data
+     */
+    updateListHtml:function(data,key){
+        var frag = document.createDocumentFragment();
+        J.each(data,function(k,t){
+            var tmp = document.createElement("li");
+            tmp.setAttribute("data-code",t[key]);
+            var str = '<a href="'+t['prop_url']+'" class="pi_a_img" title="'+t['img_title']+'" alt="'+t['img_title']+'" target="_blank">'+
+                '<img height="100" width="133" id="prop_2_a"  alt="'+t['img_title']+'" src="'+t['img_url']+'">'+
+                '</a>'+
+                '<div class="pi_info">'+
+                '<a data-soj="'+t["soj"]+'" href="'+t["prop_url"]+'" target="_blank">'+t["title"]+'</a>'+
+                '<div class="pi_address"><span>'+t['community_name']+'</span></div>'+
+                '<div class="pi_basic"><span>'+t['room_num']+'室'+t['hall_num']+'厅'+"</span></div></div>"+
+                '<div class="pi_sub"><span class="pi_s_price">'+t['price']+'</span>元/月</div>';
+            tmp.innerHTML = str;
+            frag.appendChild(tmp);
+        });
+        this.container.get().appendChild(frag);
     }
 
 }

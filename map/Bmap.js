@@ -87,7 +87,6 @@
             map.enableKeyboard();         // 开启键盘控制
             map.enableContinuousZoom();   // 开启连续缩放效果
             map.enableInertialDragging(); // 开启惯性拖拽效果
-
             var ctrl_nav = new BMap.NavigationControl({
                 anchor: BMAP_ANCHOR_TOP_LEFT,
                 type: !!opts.ctype ? BMAP_NAVIGATION_CONTROL_LARGE : BMAP_NAVIGATION_CONTROL_ZOOM
@@ -168,11 +167,8 @@
         }
         function addMarker (p, overlayType, key) {
             p.latlng = p.latlng ? p.latlng : getLatLng(p);
-            var _key = key || buildOverlayKey(p.latlng), _type = overlayType || overlaysType.overlay;
-            if (getOverlay(_type, _key)) return;
-            var marker = new BMap.Marker(p.latlng, {
-                icon: getMarkerImage(J.mix(io, p, true))
-            });
+            var _key = key || buildOverlayKey(p.latlng), _type = overlayType;
+            var marker = new BMap.Marker(p.latlng);
             if (p.title) {
                 marker.setTitle(p.title)
             }
@@ -183,7 +179,7 @@
                 })
             }
             map.addOverlay(marker);
-            pushOverlayList(_type, _key, marker);
+           // pushOverlayList(_type, _key, marker);
             return marker;
         }
         function getMarkerImage(p){
@@ -293,6 +289,7 @@
             var uO = new userOverlay(p);
             uO.key = _key;
             map.addOverlay(uO);
+            console.log(uO)
            // pushOverlayList(_type,_key,uO);
             return uO;
         }
@@ -419,7 +416,8 @@
             pointToPixel:pointToPixel,//latlng translate to px;
             getMapWH:getMapWH,
             getCenter:getCenter,
-            addSubwayLine:addSubwayLine
+            addSubwayLine:addSubwayLine,
+            clearOverlays:clearOverlays
         }
 
 
