@@ -55,6 +55,8 @@
            progress = new Progress();
            buildList(listId);
            map =  J.map.core(opts);
+           map.getMap().addControl(new BMap.NavigationControl());
+
            bindEvent();
            new Menu();//菜单筛选
            ListCenter.map = map;
