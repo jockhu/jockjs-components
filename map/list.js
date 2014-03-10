@@ -134,12 +134,14 @@ var ListCenter = {
     },
     onResultRankData:function(data){
         this.container.html('');
+        J.g("p_filter_result").get().scrollTop=0;
         this.updateListHtml(data.props.list,'area_id');
         this.upDateStatusHtml('地图内找到房源',data.propNum);
         return data.groups;
     },
     onResultCommData:function(data,commname){
         this.container.html('');
+        J.g("p_filter_result").get().scrollTop=0;
         this.updateListHtml(data.props.list,'community_id');
         this.upDateStatusHtml(commname,data.propNum);
         return data.comms;
@@ -157,14 +159,18 @@ var ListCenter = {
         var sep = document.createElement("li");
         sep.className="sep";
         sep.innerHTML =  start+ "-"+(start+data.props.list.length)+"条";
+        var top = J.g("p_list").get().scrollHeight;
         this.container.get().appendChild(sep);
-        this.updateListHtml(data.props.list,key);
+        this.updateListHtml(data.props.list,key)
+        J.g("p_filter_result").get().scrollTop =top;
         this.data.commids = data.props.commids;
     },
     onResultSortData:function(data){
         //如果下一页的数据为空，则不进行任何操作
         if(!data.props.list.length)return;
         this.container.html('');
+        J.g("p_filter_result").get().scrollTop=0;
+
         var commanme;
         var key = this.data.model == 1 ?'area_id':'community_id';
         this.updateListHtml(data.props.list,key);
@@ -172,6 +178,7 @@ var ListCenter = {
     },
     onResultZoneData:function(data){
         this.container.html('');
+        J.g("p_filter_result").get().scrollTop=0;
         this.updateListHtml(data.props.list,'community_id');
         this.upDateStatusHtml('地图内找到房源',data.propNum);
         this.data.commids = data.props.commids;
@@ -226,5 +233,6 @@ var ListCenter = {
         });
         this.container.get().appendChild(frag);
     }
+
 
 }

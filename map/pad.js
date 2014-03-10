@@ -44,7 +44,8 @@
            },
            comms_ids,wait =false,//点击下一页把现在展展的列表小区带过去
            zoneCache,//区域缓存
-           progress;
+           progress,
+           nextPageTimer;
        function init(){
            var listId,//列表id
                containerId;//地图容器ｉｄ
@@ -137,17 +138,7 @@
 
 
 
-       /**
-        * 翻页事件
-        */
-       function nextPage(e){
-           var lis = document.getElementById("p_list");
-           if(this.clientHeight+this.scrollTop+opts.scrollBottom >= this.scrollHeight){
-               //把上一　次点击的区域选中状态清掉
-               ListCenter.getNextPageData();
-           }
 
-       }
        /**
         * 如果缩放等级为１１　或１２不去取数据
         * @param e
@@ -426,7 +417,16 @@
            listContainer.setStyle({
                height:listHeight+'px'
            })
-           listContainer.on('scroll',nextPage);
+           listContainer.on('scroll',function(){
+               var lis = document.getElementById("p_list");
+               if(this.clientHeight+this.scrollTop >= this.scrollHeight){
+                   //把上一　次点击的区域选中状态清掉
+                   nextPageTimer&&clearTimeout(nextPageTimer);
+                   nextPageTimer = setTimeout(function(){
+                       ListCenter.getNextPageData();
+                   },500)
+               }
+           });
        }
 
        /**
