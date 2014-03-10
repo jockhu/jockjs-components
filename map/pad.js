@@ -100,18 +100,35 @@
            })
            //价格排序
            J.g("sort_by_price_link").on('click',function(){
-               ListCenter.getSortData({
+               var target =J.g(this);
+               target.get().className="";
+               switch (ListCenter.data.px){
+                   case 0:
+                       target.addClass("up");
+                       ListCenter.data.px = 1;
+                       J.g("sort_by_time_link").removeClass("def");
+                       break;
+                   case 1:
+                       target.addClass("down");
+                       ListCenter.data.px = 2;
+                       J.g("sort_by_time_link").removeClass("def");
+                       break;
+                   case 2:
+                       target.get().className="";
+                       ListCenter.data.px = 0;
+                       J.g("sort_by_time_link").addClass("def");
+                       break;
+               }
 
-               });
-
-
+               ListCenter.getSortData();
            });
 
            //最新排序
            J.g("sort_by_time_link").on('click',function(){
-               ListCenter.getSortData({
-               });
-
+                ListCenter.data.px = 0;
+               J.g("sort_by_price_link").get().className='';
+               ListCenter.data.px = 0;
+               ListCenter.getSortData();
            });
 
 
@@ -131,12 +148,6 @@
            }
 
        }
-       function sendSoj(customParam){
-           customParam&&SentSoj("anjuke-pad", customParam); //第二个参数是anjax请求的
-       }
-
-
-
        /**
         * 如果缩放等级为１１　或１２不去取数据
         * @param e
@@ -374,7 +385,7 @@
                   mapTip.hide();
               }
                //列表数据为空
-              if(!listLen){
+              if(data.curPage==1&&!listLen){
                   zoom>14?showListChangeZoom():showListChangePosition()
 
               }else{

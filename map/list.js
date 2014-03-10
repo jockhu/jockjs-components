@@ -12,10 +12,12 @@ var ListCenter = {
         model:1,//除区域外都是模式１
         p:1,//页码
         commids:'',//上一页的小区
-        commid:0
+        commid:0,
+        px:0
     },
     map:null,
     opts:null,
+    px:0,
     wait:false,
     progress:null,
     //获得rank排序的数据
@@ -90,7 +92,6 @@ var ListCenter = {
     getSortData:function(data){
         this.data.p= 1;
         this.data.commids='';
-        this.data = J.mix(this.data,data);
         this.opts.onItemBuild = this.data.model==1?this.onRankItemBuild:this.onCommItemBuild;
         var me = this;
         this.opts.onResult =this.onResultCommon(function (data) {
