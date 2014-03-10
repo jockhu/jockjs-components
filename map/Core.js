@@ -20,11 +20,9 @@
             target:document,//自定义事件触发的对象
             zoomEnd:null,//缩放结束事件
             moveEnd:null,//地图移动结事事件
-            progress:'progress'
         }, BMap, opts, MSG, context, dataCenter,overlayCenter, map,lockCenter,moveStart,
             moveEnd,
             timer,
-            progress,
             overLayTimer,
             globaopts= {};
         (function() {
@@ -35,8 +33,6 @@
             dataCenter = DataCenter(opts);
             MSG = new MessageCenter(opts);
             lockCenter = new LockCenter();
-            progress = J.g(opts.progress);
-
             eventBind();
             overlayCenter = new OverlayCenter(opts);
             globaopts = J.mix(dataCenter.options,MSG.options);
@@ -95,8 +91,8 @@
             });
             map.addEventListener('zoomend', function (e) {
 
-               // overlayCenter.removeCurrentOverlays();
-                overlayCenter.removeCurrentOverlays();
+                overlayCenter.clearCache();
+                map.clearOverlays();
                  opts.zoomEnd&&opts.zoomEnd.call(this,e);
                 //map click
             });
@@ -185,7 +181,6 @@
              * isLock 右边不变化,适用于翻页
              */
             function getData(sendData,isLock){
-                    progress.show();
                     var paraCallback,paraSendData = {};
                     if(typeof  sendData == 'function'){
                         paraCallback = sendData;
@@ -233,11 +228,10 @@
              * @param data
              */
             function onResult(data){
-                progress.hide();
                 delete callback[guid];
                 delete J.map.bmap['callback'+guid];
                 data.zoom = context.getZoom();
-                onResult.callBack&&onResult.callBack(data);
+            //    onResult.callBack&&onResult.callBack(data);
                 var clientData = opts.onResult&&opts.onResult(data);
                 if(Object.prototype.toString.call(clientData) == "[object Array]"){
                     MSG.ajaxChange(data);//通过消息中心发送消息
@@ -288,7 +282,11 @@
                 classHover:'hover',//鼠标放上去展示的样式
                 x:0,//x轴要偏移的像素
                 y:0//y轴要偏 移的像素
-            },opts,preCache={},zIndex =1;//点击后加１;
+            },
+                opts,
+                preCache={},
+                zIndex =1;//点击后加１;
+
             (function(){
                 opts= J.mix(defOpts,option);
             })();
@@ -417,7 +415,7 @@
                 /**
                  * 删除本次请求与上次请求之外的点
                  */
-               // removeCurrentOverlays();
+                removeCurrentOverlays();
                 preCache = tmpObj;
             }
 
@@ -425,7 +423,7 @@
              * 为创建的Overlay创建参数
              */
             function onItemBuild(data){
-                var ret = opts.onItemBuild&&opts.onItemBuild(data);
+                var ret = globaopts.onItemBuild&&globaopts.onItemBuild(data);
                 return ret === false? false :data;
             }
 
@@ -441,9 +439,14 @@
              * data OverlaysArray
              */
             function removeCurrentOverlays(){
-               map.clearOverlays();
-               preCache = {};
+                J.each(preCache,function(k,v){
+                    v.remove();
+                })
             }
+            function clearCache(){
+                preCache = {};
+            }
+
             function buildOverlayKey(latlng){
                 return latlng.lat+'_'+latlng.lng;
             }
@@ -455,7 +458,8 @@
                 options:opts,
                 removeCurrentOverlays:removeCurrentOverlays,
                 getCurrentOverlays:getCurrentOverlays,
-                addOverLays:addOverlays
+                addOverLays:addOverlays,
+                clearCache:clearCache
             }
         }
 

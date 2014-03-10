@@ -213,7 +213,6 @@
                 oldOverlay = getOverlay(_type,_key),*/
                 me;
             //if(oldOverlay) return oldOverlay;
-
             function userOverlay(p){
                 this.p = p;
             }
@@ -289,7 +288,6 @@
             var uO = new userOverlay(p);
             uO.key = _key;
             map.addOverlay(uO);
-            console.log(uO)
            // pushOverlayList(_type,_key,uO);
             return uO;
         }
@@ -379,6 +377,9 @@
         function getCenter(){
             return map.getCenter();
         }
+        function zoomOut(){
+            map.zoomOut();
+        }
 
         /**
          * 获得地铁线路
@@ -417,7 +418,8 @@
             getMapWH:getMapWH,
             getCenter:getCenter,
             addSubwayLine:addSubwayLine,
-            clearOverlays:clearOverlays
+            clearOverlays:clearOverlays,
+            zoomOut:zoomOut
         }
 
 

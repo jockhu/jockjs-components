@@ -17,25 +17,17 @@ var ListCenter = {
     map:null,
     opts:null,
     wait:false,
+    progress:null,
     //获得rank排序的数据
     //
     getRankData:function(data,noCache){
-        this.data.model =1;
+        this.data.model = 1;
         this.opts.onItemBuild = this.onRankItemBuild;
         var me = this;
-        if(!noCache){
-            this.opts.onResult =function(data){
-                !me.rankCache&&(me.rankCache = data);
-                return me.onResultRankData.call(me,me.rankCache);
-            }
-            !this.rankCache?this.map.getData(data):this.map.onResult(this.rankCache['groups']);
-        }else{
-            this.opts.onResult =function(data){
-                return me.onResultRankData(data);
-            }
-            console.log('getRankData',data)
-            this.map.getData(data);
-        }
+        this.opts.onResult =this.onResultCommon(function (data) {
+            return me.onResultRankData(data);
+        });
+        this.map.getData(this.data);
 
     },
     //获得单个小区的数据
@@ -45,9 +37,9 @@ var ListCenter = {
         this.data.commids='';
         this.data.p = 1;
         var me = this;
-        this.opts.onResult = function(data){
-             me.onResultCommData.call(me,data,commname);
-        }
+        this.opts.onResult =this.onResultCommon(function (data) {
+            me.onResultCommData.call(me,data,commname);
+        });
         this.map.getData(this.data,true);
 
     },
@@ -56,16 +48,17 @@ var ListCenter = {
         if(this.wait){
             return true;
         }
+        this.wait = true;
         this.data.p++;
         this.opts.onItemBuild = this.data.model==1?this.onRankItemBuild:this.onCommItemBuild;
         var me = this;
-        this.opts.onResult = function(data){
+        this.opts.onResult =this.onResultCommon(function (data) {
             me.wait = false;
             setTimeout(function(){
               me.wait = false;
             },10000)
             me.onResultNextPageData.call(me,data);
-        }
+        });
         this.map.getData(this.data,true);
     },
     //获得可视区域数据
@@ -77,10 +70,10 @@ var ListCenter = {
 
         this.opts.onItemBuild = this.onCommItemBuild;
         var me = this;
-        this.opts.onResult = function(data){
-           return me.onResultZoneData.call(me,data);
-        }
-        this.map.getData();
+        this.opts.onResult =this.onResultCommon(function (data) {
+            return me.onResultZoneData.call(me,data);
+        });
+        this.map.getData(this.data);
     },
 
     //获得筛选数据
@@ -93,6 +86,20 @@ var ListCenter = {
         this.getZoneData(data);
     },
 
+    //获得排序数据
+    getSortData:function(data){
+        this.data.p= 1;
+        this.data.commids='';
+        this.data = J.mix(this.data,data);
+        this.opts.onItemBuild = this.data.model==1?this.onRankItemBuild:this.onCommItemBuild;
+        var me = this;
+        this.opts.onResult =this.onResultCommon(function (data) {
+            me.onResultSortData.call(me,data);
+        });
+        this.map.getData(this.data,true);
+    },
+
+
     onRankItemBuild:function(item){
         if(!item.propCount){
             return false;
@@ -101,6 +108,7 @@ var ListCenter = {
         item.x=-37.5;
         item.y=-37.5;
         item.html =item.propCount ? '<div class="OverlayA"><div class="circle"></div><div class="txt"><b>'+item.areaName+'</b><br/><p>'+item.propCount+'</p></div></div>':false;
+        return item;
     },
     onCommItemBuild:function(item){
         item.x=-8;
@@ -110,7 +118,19 @@ var ListCenter = {
         item.onClick= function(){
         }
     },
-
+    /**
+     * 所有ajax回调都会调用这个方法
+     * @param fn　回调方法
+     * @return {Function}
+     */
+    onResultCommon:function(fn){
+        var handler = this.progress.handler;
+        return function(data){
+            handler(data);
+            data.sojData&&SentSoj("anjuke-pad", data.sojData); //第二个参数是anjax请求的
+            return fn(data);
+        }
+    },
     onResultRankData:function(data){
         this.container.html('');
         this.updateListHtml(data.props.list,'area_id');
@@ -137,6 +157,15 @@ var ListCenter = {
         sep.className="sep";
         sep.innerHTML =  start+ "-"+(start+data.props.list.length)+"条";
         this.container.get().appendChild(sep);
+        this.updateListHtml(data.props.list,key);
+        this.data.commids = data.props.commids;
+    },
+    onResultSortData:function(data){
+        //如果下一页的数据为空，则不进行任何操作
+        if(!data.props.list.length)return;
+        this.container.html('');
+        var commanme;
+        var key = this.data.model == 1 ?'area_id':'community_id';
         this.updateListHtml(data.props.list,key);
         this.data.commids = data.props.commids;
     },
