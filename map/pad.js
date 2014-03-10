@@ -55,8 +55,6 @@
            progress = new Progress();
            buildList(listId);
            map =  J.map.core(opts);
-           map.getMap().addControl(new BMap.NavigationControl());
-
            bindEvent();
            new Menu();//菜单筛选
            ListCenter.map = map;
@@ -186,7 +184,7 @@
        }
 
        function listItemClick(elm){
-
+           J.g(elm).first().get().click();
             var overlays = map.getCurrentOverlays();
             var code  =elm.attr('data-code');
             var zoom = map.getZoom();

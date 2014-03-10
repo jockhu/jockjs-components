@@ -159,10 +159,10 @@ var ListCenter = {
         var sep = document.createElement("li");
         sep.className="sep";
         sep.innerHTML =  start+ "-"+(start+data.props.list.length)+"条";
-        var top = J.g("p_list").get().scrollHeight;
+        //var top = J.g("p_list").get().scrollHeight;
         this.container.get().appendChild(sep);
         this.updateListHtml(data.props.list,key)
-        J.g("p_filter_result").get().scrollTop =top;
+        //J.g("p_filter_result").get().scrollTop =top;
         this.data.commids = data.props.commids;
     },
     onResultSortData:function(data){
