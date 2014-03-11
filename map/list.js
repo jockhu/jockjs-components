@@ -229,6 +229,8 @@ var ListCenter = {
                 '<div class="pi_basic"><span>'+t['room_num']+'室'+t['hall_num']+'厅'+"</span></div></div>"+
                 '<div class="pi_sub"><span class="pi_s_price">'+t['price']+'</span>元/月</div>';
             tmp.innerHTML = str;
+            tmp.community_id = t['community_id'];
+            tmp.id = t['id'];
             frag.appendChild(tmp);
         });
         this.container.get().appendChild(frag);

@@ -184,7 +184,9 @@
        }
 
        function listItemClick(elm){
-           J.g(elm).first().get().click();
+           var url = '/xiaoqu/jingjiren/'+elm.get().community_id+'/?fromother='+elm.get().id+'&from=pad_zf_map';
+           window.open(url);
+           //J.g(elm).s("a").eq(0).get().click();
             var overlays = map.getCurrentOverlays();
             var code  =elm.attr('data-code');
             var zoom = map.getZoom();

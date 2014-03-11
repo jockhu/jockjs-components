@@ -19,7 +19,7 @@
             classHover:'',
             target:document,//自定义事件触发的对象
             zoomEnd:null,//缩放结束事件
-            moveEnd:null,//地图移动结事事件
+            moveEnd:null//地图移动结事事件
         }, BMap, opts, MSG, context, dataCenter,overlayCenter, map,lockCenter,moveStart,
             moveEnd,
             timer,
@@ -292,9 +292,10 @@
             })();
             function onClick(elm,data){
                 elm._div.setStyle({
-                    zIndex:zIndex++
+                    zIndex:elm.isClicked?0:zIndex++
                 });
-
+               // alert(elm.isClicked)
+                elm.isClicked = !elm.isClicked;
                 var WH = context.getMapWH(),
                     position = context.pointToPixel(data.latlng),
                     y = parseInt( position.y),
