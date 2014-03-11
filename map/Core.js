@@ -120,10 +120,6 @@
                 start = map.pointToOverlayPixel(moveStart);
                  return Math.sqrt((end.x-start.x)*(end.x-start.x)+(end.y-start.y)*(end.y-start.y));
             }
-
-
-
-
         }
 
 
