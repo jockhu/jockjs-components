@@ -26,7 +26,10 @@
            moveLengthChange:50,//移动的距离小于自定义距离，不去取数据
            scrollBottom:5//离底部多少像素后马上加载
 
-           },map,preClickedOverlay,preClickedItem,
+           },map,
+           preClickedOverlay,
+           preClickedItem,
+           moveEndTimer,
            elm,
            zoomPrev,
            preCommid,//用于单个小区点击
@@ -157,7 +160,10 @@
 
        function moveEnd(e){
            if(map.getZoom()>12){
-               ListCenter.getZoneData();
+               moveEndTimer&&clearTimeout(moveEndTimer);
+               moveEndTimer=setTimeout( function(){
+                   ListCenter.getZoneData.call(ListCenter);
+               },700);
            }
        }
 
@@ -184,7 +190,7 @@
        }
 
        function listItemClick(elm){
-           var url = '/xiaoqu/jingjiren/'+elm.get().community_id+'/?fromother='+elm.get().id+'&from=pad_zf_map';
+           var url = '/xiaoqu/jingjiren/'+elm.get().community_id+'/?fromother='+elm.attr("data-id")+'&from=pad_zf_map';
            window.open(url);
            //J.g(elm).s("a").eq(0).get().click();
             var overlays = map.getCurrentOverlays();

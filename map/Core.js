@@ -20,14 +20,12 @@
             target:document,//自定义事件触发的对象
             zoomEnd:null,//缩放结束事件
             moveEnd:null//地图移动结事事件
-        }, BMap, opts, MSG, context, dataCenter,overlayCenter, map,lockCenter,moveStart,
+        }, opts, MSG, context,poly,dataCenter,overlayCenter, map,lockCenter,moveStart,
             moveEnd,
             timer,
             overLayTimer,
             globaopts= {};
         (function() {
-
-
             opts = J.mix(defOpts, opption);
             context = new J.map.bmap(opts);
             dataCenter = DataCenter(opts);
@@ -37,8 +35,6 @@
             overlayCenter = new OverlayCenter(opts);
             globaopts = J.mix(dataCenter.options,MSG.options);
             globaopts = J.mix(globaopts,overlayCenter.options);
-
-
         })();
 
         function eventBind(){
@@ -149,24 +145,41 @@
              * 得到地图可视化区域坐标
              * @param zoom
              */
-            function getBoundsWE(zoom){
+            function getBoundsWE(zoom,debug){
                 var b=map.getBounds(),w=b.getSouthWest(),e=b.getNorthEast();
-                if(zoom && typeof zoom == 'number'){
+             /*   if(zoom && typeof zoom == 'number'){
                     var _w = map.pointToOverlayPixel(w),//左下角坐标
                         _e = map.pointToOverlayPixel(e);//右上解坐标
                     _w.x+=100; // w.lng 横向
                     _w.y+=100; // w.lat 纵向
-                    _e.x+=zoom-100;
-                    _e.y+=-(zoom-100);
+                    _e.x+=-100;
+                    _e.y+=-100;
                     w=map.overlayPixelToPoint(new BMap.Pixel(_w.x,_w.y));
                     e=map.overlayPixelToPoint(new BMap.Pixel(_e.x,_e.y));
+                }*/
+               /*if(true){
+                    var pStart = w;
+                    var pEnd = e;
+                    poly&&map.removeOverlay(poly);
+                    poly = new BMap.Polygon([
+                        new BMap.Point(pStart.lng,pStart.lat),
+                        new BMap.Point(pEnd.lng,pStart.lat),
+                        new BMap.Point(pEnd.lng,pEnd.lat),
+                        new BMap.Point(pStart.lng,pEnd.lat)
+                    ], {strokeColor:"red", strokeWeight:1, strokeOpacity:0});
+                    map.addOverlay(poly);
+
                 }
+*/
                 return {
                     swlat:w.lat,
                     nelat:e.lat,
                     swlng:w.lng,
                     nelng:e.lng
                 }
+
+
+
             }
 
             /**
@@ -197,13 +210,22 @@
                         return false;
                     }
 
-                    callback[guid]&&(callback[guid]=J.map.bmap['callback'+guid]=function(){});
-                    guid++;
-                    ajaxSetting.onSuccess = callback[guid]=J.map.bmap['callback'+guid] = onResult;
-                    onResult.isLock = isLock;
-                    onResult.callBack = paraCallback;
+
+
+
+                   deletePrevCallback();
+                    ++guid;
+                    callback[guid]=J.map['callback'+guid] = onResult;
+                    ajaxSetting.onSuccess = callback[guid];
                     ajaxSetting.data = J.mix(params,sendData);
                     J.get(ajaxSetting);
+            }
+            function deletePrevCallback(){
+                J.each(callback,function(k,v){
+                    J.map['callback'+guid]=v=null;
+                    delete callback[k];
+                    //v = null;
+                })
             }
 
             /**
@@ -224,8 +246,7 @@
              * @param data
              */
             function onResult(data){
-                delete callback[guid];
-                delete J.map.bmap['callback'+guid];
+                deletePrevCallback();
                 data.zoom = context.getZoom();
             //    onResult.callBack&&onResult.callBack(data);
                 var clientData = opts.onResult&&opts.onResult(data);

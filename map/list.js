@@ -220,17 +220,17 @@ var ListCenter = {
         J.each(data,function(k,t){
             var tmp = document.createElement("li");
             tmp.setAttribute("data-code",t[key]);
-            var str = '<a href="'+t['prop_url']+'" class="pi_a_img" title="'+t['img_title']+'" alt="'+t['img_title']+'" target="_blank">'+
+            var str = '<a onclick="return false;" href="'+t['prop_url']+'" class="pi_a_img" title="'+t['img_title']+'" alt="'+t['img_title']+'" target="_blank">'+
                 '<img height="100" width="133" id="prop_2_a"  alt="'+t['img_title']+'" src="'+t['img_url']+'">'+
                 '</a>'+
                 '<div class="pi_info">'+
-                '<a data-soj="'+t["soj"]+'" href="'+t["prop_url"]+'" target="_blank">'+t["title"]+'</a>'+
+                '<a onclick="return false;" data-soj="'+t["soj"]+'" href="'+t["prop_url"]+'" target="_blank">'+t["title"]+'</a>'+
                 '<div class="pi_address"><span>'+t['community_name']+'</span></div>'+
                 '<div class="pi_basic"><span>'+t['room_num']+'室'+t['hall_num']+'厅'+"</span></div></div>"+
                 '<div class="pi_sub"><span class="pi_s_price">'+t['price']+'</span>元/月</div>';
             tmp.innerHTML = str;
             tmp.community_id = t['community_id'];
-            tmp.id = t['id'];
+            tmp.setAttribute("data-id",t['id']);
             frag.appendChild(tmp);
         });
         this.container.get().appendChild(frag);
