@@ -2,8 +2,7 @@
 /// require('map.Bload');
 /// require('page.page');
 
-
-(function(J){
+;(function(J){
     function Bmap(opption){
         var baseDomain = "http://pages.lunjiang.dev.aifcdn.com/";
         var defOpts ={
@@ -66,7 +65,6 @@
             createMap();
         }
         init();
-        //J.map.Bload(init);//加载完百度地图后自动实例化地图对像
 
         function createMap(){
             map = new BMap.Map(opts.id, {
@@ -419,7 +417,8 @@
             getCenter:getCenter,
             addSubwayLine:addSubwayLine,
             clearOverlays:clearOverlays,
-            zoomOut:zoomOut
+            zoomOut:zoomOut,
+            localSearch:localSearch
         }
 
 

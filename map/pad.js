@@ -1,7 +1,9 @@
-;
+
 /// require('map.Core');
 /// require('map.list');
-(function(){
+/// require('map.Search');
+
+;(function(){
    function pad(){
        var opts ={
            url:'/newmap/search2',
@@ -49,6 +51,7 @@
            comms_ids,wait =false,//点击下一页把现在展展的列表小区带过去
            zoneCache,//区域缓存
            progress,
+           search,
            nextPageTimer;
        function init(){
            var listId,//列表id
@@ -61,13 +64,17 @@
            map =  J.map.core(opts);
            bindEvent();
            new Menu();//菜单筛选
-           ListCenter.map = map;
-           ListCenter.progress = progress,
-           ListCenter.opts = map.opts;
-           ListCenter.container = J.g("p_list");
-           ListCenter.CommnameContainer = J.g("propBarLeft").s(".comname").eq(0);
-           ListCenter.countNum = J.g("propBarLeft").s("b").eq(0);
+           J.mix(ListCenter,{
+               map:map,
+               progress:progress,
+               opts:map.opts,
+               container:J.g("p_list"),
+               CommnameContainer:J.g("propBarLeft").s(".comname").eq(0),
+               countNum: J.g("propBarLeft").s("b").eq(0)
+           })
            ListCenter.getRankData();
+           search = new J.map.search();
+           window.afterSelect= search.afterSelect;
        }
        init();
 
@@ -160,7 +167,8 @@
        }
 
        function moveEnd(e){
-           if(map.getZoom()>12){
+           console.log(e);
+           if(map.getZoom()>12&& e.moveLenth>opts.moveLengthChange){
                moveEndTimer&&clearTimeout(moveEndTimer);
                moveEndTimer=setTimeout( function(){
                    ListCenter.getZoneData.call(ListCenter);
