@@ -26,7 +26,8 @@
            moveLengthChange:50,//移动的距离小于自定义距离，不去取数据
            scrollBottom:5//离底部多少像素后马上加载
 
-           },map,
+           },
+           map,
            preClickedOverlay,
            preClickedItem,
            moveEndTimer,
@@ -178,6 +179,7 @@
 
        function beforeRequest(data){
            progress.showMapLoading();
+           progress.showLoadingTip(J.g('p_select_loading'));
            var ret =J.mix(data,{
                model:1,
                order:null,
@@ -273,8 +275,13 @@
                mapTipId:"progress",
                mapTipContainer:'pad_view',
                listTipId:'fresh_list',
-               listTipContainer:'listTipContainer'
-               },mapTip,listTip,opts;
+               listTipContainer:'listTipContainer',
+               loadingSelectTip:'p_select_loading',
+               loadingFilterTip:'p_filter_loading'
+               },
+               mapTip,
+               listTip,
+               opts;
            opts = J.mix(defOpts,opption || {});
            (function(){
                mapTip = J.g(opts.mapTipId);
@@ -333,10 +340,13 @@
                mapTip.html(html).show();
                setTimeout(function(){
                    mapTip.hide();
+                   hideLoadingTip(J.g(opts.loadingSelectTip));//隐藏好房马上来提示
                },3000)
            }
            function showMapChangePosition(){
                mapTip.hide();
+               hideLoadingTip(J.g(opts.loadingSelectTip));//隐藏好房马上来提示
+               hideLoadingTip(J.g(opts.loadingFilterTip));//隐藏列表更多房源正在加载中提示
                return;
                var html=
                    '<div class="map_tip" id="map_tip"  unselectable="on" onselectstart="return false;">' +
@@ -359,7 +369,7 @@
                                '<li>拖动地图更改位置。</li>'+
                            '</ul>'
                listTip.html(html).show();
-
+               hideLoadingTip(J.g(opts.loadingFilterTip));//隐藏列表更多房源正在加载中提示
            }
            function showListChangeZoom(){
                 var html='<b>地图范围内没有符合您要求的房源。</b>'+
@@ -368,8 +378,16 @@
                        '<span>建议您：</span><a href="###" onclick="return false">缩放地图</a>'+
                    '</div>';
                listTip.html(html).show();
+               hideLoadingTip(J.g(opts.loadingFilterTip));//隐藏列表更多房源正在加载中提示
            }
-
+           //显示“房源加载中”提示
+           function showLoadingTip(obj){
+               obj && obj.show();
+           }
+           //隐藏“房源加载中”提示
+           function hideLoadingTip(obj){
+               obj && obj.hide();
+           }
            /**
             * 具体显示什么由progress确定
             */
@@ -382,13 +400,15 @@
                   zoom>14?showMapChangeZoom():showMapChangePosition();
               }else{
                   mapTip.hide();
+                  hideLoadingTip(J.g(opts.loadingSelectTip));//隐藏好房马上来提示
+                  hideLoadingTip(J.g(opts.loadingFilterTip));//隐藏列表更多房源正在加载中提示
               }
                //列表数据为空
               if(data.curPage==1&&!listLen){
                   zoom>14?showListChangeZoom():showListChangePosition()
-
               }else{
                   listTip.hide();
+                  hideLoadingTip(J.g(opts.loadingSelectTip));//隐藏好房马上来提示
               }
 
            }
@@ -401,6 +421,8 @@
            return {
                showMapLoading:showMapLoading,
                showMapChangeZoom:showMapChangeZoom,
+               showLoadingTip:showLoadingTip,
+               hideLoadingTip:hideLoadingTip,
                handler:handler
            }
 
@@ -418,7 +440,6 @@
                    display:'none'
                })
            }
-
            pageHeight= J.page.viewHeight();
            listHeight = pageHeight - J.g("filter_condition").height()- J.g("p_header").height()- J.g('propBarLeft').height();
            listContainer = !listContainer ? J.g(id) :listContainer;
@@ -426,14 +447,19 @@
                height:listHeight+'px'
            })
            listContainer.on('scroll',function(){
+               progress.showLoadingTip(J.g('p_filter_loading')); //显示loading提示
                var lis = document.getElementById("p_list");
                if(this.clientHeight+this.scrollTop >= this.scrollHeight){
                    //把上一　次点击的区域选中状态清掉
                    nextPageTimer&&clearTimeout(nextPageTimer);
                    nextPageTimer = setTimeout(function(){
                        ListCenter.getNextPageData();
-                   },500)
+                   },500);
+                   setTimeout(function(){
+                       progress.hideLoadingTip(J.g('p_filter_loading'));
+                   },0);
                }
+
            });
        }
 
