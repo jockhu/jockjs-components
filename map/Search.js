@@ -22,8 +22,7 @@
         * @return {Boolean}
         */
        function onSelect(data){
-            console.log(data)
-           J.g("loadDrop").get().click();
+            ListCenter.getCommData(data.id,data.name);
             return false;
        }
        function onSource(params,response){
@@ -35,6 +34,7 @@
            }
 
            J.get({
+              timeout:20000,
               type:'json',
               url:'/ajax/newautocomplete/',
               data:def,
