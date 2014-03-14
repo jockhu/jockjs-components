@@ -73,8 +73,11 @@
                countNum: J.g("propBarLeft").s("b").eq(0)
            })
            ListCenter.getRankData();
-           search = new J.map.search();
-           window.afterSelect= search.afterSelect;
+           search = new J.map.search({
+               map:map
+           });
+           console.log(search)
+           ListCenter.search = search;
        }
        init();
 

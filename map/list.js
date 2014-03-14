@@ -15,6 +15,7 @@ var ListCenter = {
         commid:0,
         px:0
     },
+    search:null,//
     map:null,
     opts:null,
     px:0,
@@ -126,8 +127,10 @@ var ListCenter = {
      */
     onResultCommon:function(fn){
         var handler = this.progress.handler;
+        var searchHandler = this.search&&this.search.handler
         return function(data){
             handler(data);
+            searchHandler&&searchHandler(data);
             data.sojData&&SentSoj("anjuke-pad", data.sojData); //第二个参数是anjax请求的
             return fn(data);
         }
