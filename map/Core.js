@@ -189,8 +189,8 @@
              * immediately true 忽略lock
              * isLock 右边不变化,适用于翻页
              */
-            function getData(sendData,isLock){
-                    var paraCallback,paraSendData = {};
+            function getData(sendData,isLock,async){
+                    var paraCallback,paraSendData = {},asy;
                     if(typeof  sendData == 'function'){
                         paraCallback = sendData;
                     }else{
@@ -199,7 +199,9 @@
                     if(!isLock&&lockCenter.isLock()){
                         return;
                     }
+                    asy = async === false ? false:true;
                     var ajaxSetting={
+                        async:asy,
                         url:opts.url,
                         type:opts.type,
                         onSuccess: null,

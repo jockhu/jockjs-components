@@ -76,8 +76,8 @@
            search = new J.map.search({
                map:map
            });
-           console.log(search)
            ListCenter.search = search;
+
        }
        init();
 
@@ -196,6 +196,11 @@
                order:null,
                bounds:data.swlat + "," + data.nelat + "," + data.swlng + "," + data.nelng
            });
+           delete ret['swlat'];
+           delete ret['nelat'];
+           delete ret['swlng'];
+           delete ret['neln'];
+
            if(ret.zoom > 12){
               ret.model = 2;
            }
@@ -380,7 +385,7 @@
                                '<li>拖动地图更改位置。</li>'+
                            '</ul>'
                listTip.html(html).show();
-               hideLoadingTip(J.g(opts.loadingFilterTip));//隐藏列表更多房源正在加载中提示
+
            }
            function showListChangeZoom(){
                 var html='<b>地图范围内没有符合您要求的房源。</b>'+

@@ -21,8 +21,12 @@ var ListCenter = {
     px:0,
     wait:false,
     progress:null,
+    lock:false,
     //获得rank排序的数据
     //
+    getDataCommon:function(data,islock,async){
+        !this.lock&&this.map.getData(data,islock,async);
+    },
     getRankData:function(data,noCache){
         this.data.model = 1;
         this.opts.onItemBuild = this.onRankItemBuild;
@@ -30,11 +34,11 @@ var ListCenter = {
         this.opts.onResult =this.onResultCommon(function (data) {
             return me.onResultRankData(data);
         });
-        this.map.getData(this.data);
+        this.getDataCommon(this.data);
 
     },
     //获得单个小区的数据
-    getCommData:function (commid,commname){
+    getCommData:function (commid,commname,asy){
         this.data.model =2;
         this.data.commid = commid;
         this.data.commids='';
@@ -43,7 +47,7 @@ var ListCenter = {
         this.opts.onResult =this.onResultCommon(function (data) {
             me.onResultCommData.call(me,data,commname);
         });
-        this.map.getData(this.data,true);
+        this.getDataCommon(J.mix({bounds:''},this.data),true,asy);
 
     },
     //普通获得下一页的数据
@@ -62,7 +66,7 @@ var ListCenter = {
             },10000)
             me.onResultNextPageData.call(me,data);
         });
-        this.map.getData(this.data,true);
+        this.getDataCommon(this.data,true);
     },
     //获得可视区域数据
     getZoneData:function(){
@@ -76,7 +80,7 @@ var ListCenter = {
         this.opts.onResult =this.onResultCommon(function (data) {
             return me.onResultZoneData.call(me,data);
         });
-        this.map.getData(this.data);
+        this.getDataCommon(this.data);
     },
 
     //获得筛选数据
@@ -98,7 +102,7 @@ var ListCenter = {
         this.opts.onResult =this.onResultCommon(function (data) {
             me.onResultSortData.call(me,data);
         });
-        this.map.getData(this.data,true);
+        this.getDataCommon(this.data,true);
     },
 
 
@@ -130,7 +134,6 @@ var ListCenter = {
         var searchHandler = this.search&&this.search.handler
         return function(data){
             handler(data);
-            searchHandler&&searchHandler(data);
             data.sojData&&SentSoj("anjuke-pad", data.sojData); //第二个参数是anjax请求的
             return fn(data);
         }
