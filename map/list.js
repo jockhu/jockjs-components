@@ -231,6 +231,7 @@ var ListCenter = {
             tmp.innerHTML = str;
             tmp.community_id = t['community_id'];
             tmp.setAttribute("data-id",t['id']);
+            tmp.setAttribute("data-fromtype",t['fromtype']);
             frag.appendChild(tmp);
         });
         this.container.get().appendChild(frag);
