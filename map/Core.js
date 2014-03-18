@@ -32,6 +32,7 @@
             MSG = new MessageCenter(opts);
             lockCenter = new LockCenter();
             eventBind();
+            
             overlayCenter = new OverlayCenter(opts);
             globaopts = J.mix(dataCenter.options,MSG.options);
             globaopts = J.mix(globaopts,overlayCenter.options);
