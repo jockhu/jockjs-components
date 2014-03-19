@@ -9,6 +9,7 @@
            map,
            me=this,
            singleComm,
+           preClickedItem,//上次所点击的overlay
            retSearchBar= J.g("statusSearch"),
            retStatusBar = J.g("propBarLeft"),
            autocomplete = {
@@ -51,13 +52,10 @@
            window.header.onItemBuild = autocomplete.onItemBuild;
 
            J.g("searchForm").get().onsubmit = function () {
-               autocomplete.onSelect();
-               return false;
-               //return false;
                J.g("searchPrompt").hide();
                var str = J.g("p_search_input").val();
                J.map.search.callback = function (data) {
-                   KW.onSearch(data);
+                   KW.onSearch.call(KW,data);
                }
                J.get({
                    type:'jsonp',
@@ -69,6 +67,11 @@
                })
                return false;
            }
+
+           J.on(document.body,'click',function(){
+               J.g("searchPrompt").hide();
+           });
+
        })();
 
        /**
@@ -113,7 +116,7 @@
 
        this.getDataCommMulti = function(data){
 
-       }
+       },
 
 
        //单小区处理结果
@@ -121,7 +124,6 @@
            this._onResultCommData = this.onResultCommData;
 
            var comm = data.comms[0];
-           console.log(comm)
            if(!comm) return;
            ListCenter.getZoneData = this._getzoneData;
            map.setCenter(comm.lng,comm.lat,17);
@@ -137,12 +139,15 @@
            map.addOverlay(p,'zoneMarker');
        }
 
-
-       function handler(data){
-           if(data.props.iscommid ==1){
-               onResultSingleComm(data);
-           }
+       function getViewPort(data){
+           var points = [];
+           J.each(data,function(k,v){
+                points.push(new BMap.Point(v.lat, v.lng));
+           })
+            return map.getViewport(points);
        }
+
+
        var KW = {
            data:{
                lat:"",
@@ -154,22 +159,15 @@
                switch  (data.matchType){
                    case 0:
                        //搜地标
-                       map.localSearch(data.kw,Search,function(data){
-                           switch (data.length){
-                               case 0:
-                                   this.onResultNo();
-                                   break;
-                               case 1:
-                                   this.onResultLandMask(data);
-                                   break;
-                               default :
-                                   this.onResultLandMaskMulti(data);
-                           }
-                       });
+                       this.getDataCommMulti(data.kw);
                        break;
                    case 1:
-                   //single com
+                       var comm = data.comm[0];
+                       me.getSearchCommData(comm.commId,comm.commName,false);
+                       break;
+
                    case 2:
+                       break;
                    //community multi
                    case 3:
                        //
@@ -179,8 +177,6 @@
                    case 4:
                        this.onResultBlock(data.region);
                    //single area
-
-
 
                }
            },
@@ -218,8 +214,35 @@
                });
                this.getDataCommon(params,false);
            },
-           onResultCommMulti:function(){
-               var html =' <li class="land"><a href="###" class="tip">A</a><div class="t">杨高新城</div><div class="addr">杨浦区杨树浦路830号</div></li>'
+
+
+           onResultCommMulti:function(data){
+               var handler,tmp;
+               var viewPort = getViewPort(data.comms);
+               if (viewPort.zoom > 12) {
+                  handler = ListCenter.getZoneData;
+                   ListCenter.getZoneData = function(){};
+                   map.setViewport(getViewPort(data.comms));
+                   ListCenter.getZoneData = handler;
+               }else{
+                   handler = ListCenter.getRankData;
+                   ListCenter.getRankData = function(){};
+                   map.setViewport(getViewPort(data.comms));
+                   ListCenter.getRankData = handler;
+               }
+               me.container.html('');
+               this.updateListHtml(data.comms,'commid');
+               var _listItemClick = ListCenter.listItemClick;
+               ListCenter.listItemClick= function(elm,e){
+                   this.preClickedItem&&this.preClickedItem.removeClass("landHover");
+                   elm.addClass("landHover");
+                   this.preClickedItem = elm;
+                   if(e.target.className=="view"){
+
+                        ListCenter.getCommData(elm.attr("data-code"),elm.s('.t').eq(0).html());
+                   }
+               }
+               return data.comms;
 
            },
            onResultLandMask:function(data){
@@ -234,24 +257,70 @@
            updateStatusHtml:function(){
 
            },
-           //多少区查找
-           searchCommMulti:function(commName){
-                var url ='http://sh.lunjiang.zu.dev.anjuke.com/newmap/search2';
-               J.get({
-                   url:url,
-                   data:{
-                     model:2,
-                     kw:commName
-                   },
-                   onSuccess:function(data){
-
-                   }
+           updateListHtml:function(data,key){
+               var frag = document.createDocumentFragment();
+               var uid = 65,strChar;
+               J.each(data,function(k,t){
+                   var tmp = document.createElement("li");
+                   strChar = String.fromCharCode(uid++);
+                   tmp.className="land";
+                   tmp.setAttribute("data-code",t[key]);
+                   var str = '<a onclick="return false;" href="'+t['prop_url']+'" class="tip" title="'+t['img_title']+'" alt="'+t['img_title']+'" target="_blank">'+strChar+'</a>'+
+                       '<div class="t">'+t['commname']+'</div>'+
+                       '<div class="addr">'+t['address']+'</div>' +
+                       '<a class="view" href="###">查看附近房源</a>';
+                   tmp.innerHTML = str;
+                   tmp.setAttribute("data-id",t[key]);
+                   frag.appendChild(tmp);
                });
+               me.container.get().appendChild(frag);
            },
+           onSearchItemBuild:function(item){
+               console.log(item)
+               item.x=-8;
+               item.y=-45;
+               item.key = item.commid+'_'+item.zoom;
+               item.html='<div class="OverlayB"><b>'+item.propCount+'套｜</b>'+item.commname+'<span class="tip"></span></div>';
+               item.onClick= function(){}
+               console.log(item)
+               return item;
+           },
+           //多少区查找
+           getDataCommMulti:function(commName){
+               var self = this;
+              me.data= J.mix(me.data,{
+                  kw:commName,
+                  p:1,
+                  model:2
+              });
+               me.opts.onResult =me.onResultCommon(function (data) {
+                   if(!data.comms.length){
+                       //搜多小区无结果时去搜地标
+                       KW.searchBaiduLandMask(commName);
+                       return false;
+                   }
+                   //搜多多少区后的操作
+                   me.opts.onItemBuild = self.onSearchItemBuild;
+                   return self.onResultCommMulti(data);
+               });
+               me.getDataCommon(me.data,true);
+
+           },
+
            //多小区查找
            searchBaiduLandMask:function(kw){
-               /*var url ='searchBaiduLandMask'
-               J.get()*/
+               map.localSearch(data.kw,Search,function(data){
+                   switch (data.length){
+                       case 0:
+                           KW.onResultNo();
+                           break;
+                       case 1:
+                           KW.onResultLandMask(data);
+                           break;
+                       default :
+                           KW.onResultLandMaskMulti(data);
+                   }
+               });
            }
 
 

@@ -99,20 +99,20 @@
                    map.setCenter(data.lng,data.lat,14);
                     return
                }
-               toggleClassOver(data.target,preClickedOverlay);
+               ListCenter.toggleClassOver(data.target,preClickedOverlay);
                ListCenter.getCommData(data.commid,data.commname);
                //计录小区id,用来翻页
            });
            /**
             * 列表点击事件
             */
-           J.g('p_list').on('click',function(e){
+          /* J.g('p_list').on('click',function(e){
                var target = e.target;
                while(target.tagName.toLocaleLowerCase() !== 'li'){
                     target = target.parentNode;
                }
-               listItemClick(J.g(target));
-           })
+               ListCenter.listItemClick(J.g(target));
+           })*/
            //价格排序
            J.g("sort_by_price_link").on('click',function(){
                var target =J.g(this);
@@ -170,7 +170,6 @@
        }
 
        function moveEnd(e){
-           console.log(e);
            if(map.getZoom()>12&& e.moveLenth>opts.moveLengthChange){
                moveEndTimer&&clearTimeout(moveEndTimer);
                moveEndTimer=setTimeout( function(){
@@ -207,6 +206,7 @@
            return ret;
        }
 
+
        function listItemClick(elm){
            var url = '/xiaoqu/jingjiren/'+elm.get().community_id+'/?fromother='+elm.attr("data-id")+'&from=pad_zf_map'+'&fromtype='+elm.attr("data-fromtype");
            window.open(url);
@@ -215,53 +215,18 @@
             var code  =elm.attr('data-code');
             var zoom = map.getZoom();
            var key =code+'_'+zoom;
-
            preClickedItem&&preClickedItem.removeClass("on");
            elm.addClass("on");
            toggleClassOver(overlays[key],preClickedOverlay,true);
-
            preClickedOverlay= overlays[key];
            preClickedItem = elm;
-
-       }
+       }*/
 
        /**
         *
         * @param current overlay
         * @param prev overlay
         */
-       function toggleClassOver(current,prev,isskip){
-           //J.g("p_list").html('');
-           prev&&prev.get().first().removeClass("f60bg");
-           prev&&prev.onMouseOut();
-           current&&current.onMouseOver();
-           current&&current.get().first().addClass("f60bg");
-           preClickedOverlay = current;
-       }
-
-       /**
-        * reutrn the overlay html
-        * @param item
-        */
-       function onItemBuild(item){
-           if(item.zoom > 12){
-             //  item.htuml
-               item.x=-8;
-               item.y=-45;
-               item.key = item.commid+'_'+item.zoom;
-               item.html='<div class="OverlayB"><b>'+item.propCount+'套｜</b>'+item.commname+'<span class="tip"></span></div>';
-               item.onClick= function(){
-               }
-               return
-           }
-           if(!item.propCount){
-               return false;
-           }
-           item.key = item.id+'_'+item.zoom;
-           item.x=-37.5;
-           item.y=-37.5;
-           item.html =item.propCount ? '<div class="OverlayA"><div class="circle"></div><div class="txt"><b>'+item.areaName+'</b><br/><p>'+item.propCount+'</p></div></div>':false;
-       }
        /**
         * js动态添加ｃｏｎｔａｉｎｅｒ
         */
@@ -310,6 +275,7 @@
            function bindEvent(){
                mapTip.on('click',zoomOUt);
                listTip.on('click',zoomOUt);
+               ListCenter.init();
            }
 
 

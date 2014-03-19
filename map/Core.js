@@ -392,7 +392,7 @@
                                 classHover:opts.classHover,
                                 zoom:zoom
                             });
-                            itemOpts = onItemBuild(itemOpts);
+                            itemOpts = onItemBuild(itemOpts) || itemOpts;
                             if(!itemOpts || !itemOpts.html) return;
 
                             key = itemOpts.key || dataCenter.getCacheKey(itemOpts);

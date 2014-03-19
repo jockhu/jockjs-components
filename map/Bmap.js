@@ -401,27 +401,40 @@
             },0);
             //this._busLine = busline;
         }
-
-
-        return {
-            addOverlay:addOverlay,
-            geolocation:geolocation,
-            setCenter:setCenter,
-            getGeocoder:getGeocoder,
-            addMarker:addMarker,
-            getOverlays:getOverlays,
-            getMap:getMap,
-            getZoom:getZoom,
-            pointToPixel:pointToPixel,//latlng translate to px;
-            getMapWH:getMapWH,
-            getCenter:getCenter,
-            addSubwayLine:addSubwayLine,
-            clearOverlays:clearOverlays,
-            zoomOut:zoomOut,
-            localSearch:localSearch
+        function getViewport(data){
+            return map.getViewport(data);
+        }
+        function setViewport(viewport){
+            return map.setViewport(viewport);
         }
 
 
+        function pro(){
+           var m = {
+                addOverlay:addOverlay,
+                    geolocation:geolocation,
+                setCenter:setCenter,
+                getGeocoder:getGeocoder,
+                addMarker:addMarker,
+                getOverlays:getOverlays,
+                getMap:getMap,
+                getZoom:getZoom,
+                pointToPixel:pointToPixel,//latlng translate to px;
+                getMapWH:getMapWH,
+                getCenter:getCenter,
+                addSubwayLine:addSubwayLine,
+                clearOverlays:clearOverlays,
+                zoomOut:zoomOut,
+                localSearch:localSearch,
+               getViewport:getViewport,
+               setViewport:setViewport
+            }
+            for(var i in m){
+                this[i] = m[i];
+            }
+        }
+        pro.prototype = map;
+        return new pro();
     }
 
     J.map.bmap = Bmap;

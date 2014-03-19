@@ -22,6 +22,8 @@ var ListCenter = {
     wait:false,
     progress:null,
     lock:false,
+    preClickedOverlay:null,
+    preClickedItem:null,
     //获得rank排序的数据
     //
     getDataCommon:function(data,islock,async){
@@ -201,16 +203,7 @@ var ListCenter = {
                 target = target.parentNode;
             }
             target = J.g(target);
-            var overlays = map.getCurrentOverlays();
-            var code  =target.attr('data-code');
-            var zoom = map.getZoom();
-            var key =code+'_'+zoom;
-            me.preClickedItem&&me.preClickedItem.removeClass("on");
-            target.addClass("on");
-            toggleClassOver(overlays[key],me.preClickedOverlay);
-            me.preClickedOverlay= overlays[key];
-            me.preClickedItem = target;
-
+            me.listItemClick(target,e);
         })
     },
     upDateStatusHtml:function(commname,countNum){
@@ -241,6 +234,28 @@ var ListCenter = {
             frag.appendChild(tmp);
         });
         this.container.get().appendChild(frag);
+    },
+    listItemClick:function (elm,e) {
+        var url = '/xiaoqu/jingjiren/' + elm.get().community_id + '/?fromother=' + elm.attr("data-id") + '&from=pad_zf_map';
+        window.open(url);
+        var map = this.map;
+        //J.g(elm).s("a").eq(0).get().click();
+        var overlays = map.getCurrentOverlays();
+        var code = elm.attr('data-code');
+        var zoom = map.getZoom();
+        var key = code + '_' + zoom;
+        this.preClickedItem && this.preClickedItem.removeClass("on");
+        elm.addClass("on");
+        this.toggleClassOver(overlays[key], this.preClickedOverlay, true);
+        this.preClickedOverlay = overlays[key];
+        this.preClickedItem = elm;
+    },
+    toggleClassOver:function (current, prev, isskip) {
+        prev && prev.get().first().removeClass("f60bg");
+        prev && prev.onMouseOut();
+        current && current.onMouseOver();
+        current && current.get().first().addClass("f60bg");
+        this.preClickedOverlay = current;
     }
 
 
