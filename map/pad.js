@@ -76,7 +76,6 @@
            search = new J.map.search({
                map:map
            });
-           ListCenter.search = search;
 
        }
        init();
@@ -374,7 +373,7 @@
             * 具体显示什么由progress确定
             */
            function handler(data){
-              var listLen = data.props.list.length;
+              var listLen = data.props.list?data.props.list.length:1;//如果没有ｌｉｓｔ，说明走的搜索
               var commLen = (data.groups||data.comms).length;
               var zoom = map.getZoom();
               //地图小区数量为０

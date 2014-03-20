@@ -222,18 +222,17 @@
                 this.classHover =  this.p.classHover ||'';
                 this._barOffsetX = this.p.x || 0;
                 this._barOffsetY = this.p.y || 0;
+                this._zIndex = this.p.zIndex || 0;
 
                 me = this;
 
                 var div = J.create('div',{
-                    style:"position:absolute;cursor:pointer;z-index:0",
+                    style:"position:absolute;cursor:pointer;z-index:"+this._zIndex,
                     className:me.p.className||'',
                     title:me.p.title||''
                 }).html(this.p.html);
 
-
                 div.on('click',function(){
-
                     me.onClick&&me.onClick();
                     me.p.showInfo&&openOverlayWindow(me.p, me)
                 });
@@ -409,30 +408,31 @@
         }
 
 
-        function pro(){
-           var m = {
+        function pro() {
+            var m = {
                 addOverlay:addOverlay,
-                    geolocation:geolocation,
+                geolocation:geolocation,
                 setCenter:setCenter,
                 getGeocoder:getGeocoder,
                 addMarker:addMarker,
                 getOverlays:getOverlays,
                 getMap:getMap,
                 getZoom:getZoom,
-                pointToPixel:pointToPixel,//latlng translate to px;
+                pointToPixel:pointToPixel, //latlng translate to px;
                 getMapWH:getMapWH,
                 getCenter:getCenter,
                 addSubwayLine:addSubwayLine,
                 clearOverlays:clearOverlays,
                 zoomOut:zoomOut,
                 localSearch:localSearch,
-               getViewport:getViewport,
-               setViewport:setViewport
+                getViewport:getViewport,
+                setViewport:setViewport
             }
-            for(var i in m){
+            for (var i in m) {
                 this[i] = m[i];
             }
         }
+
         pro.prototype = map;
         return new pro();
     }

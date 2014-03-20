@@ -206,6 +206,9 @@ var ListCenter = {
             me.listItemClick(target,e);
         })
     },
+    getContext:function(){
+        return this;
+    },
     upDateStatusHtml:function(commname,countNum){
         this.CommnameContainer.html(commname);
         this.countNum&&this.countNum.html(countNum);

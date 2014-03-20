@@ -379,10 +379,11 @@
             }
 
             /**
-             *
+             * @param isClearPrev  是否清楚除上次节点
              * @param data array
+             *
              */
-            function addOverlays(data){
+            function addOverlays(data,notClearPrev){
                 var i,len=data.length,key,tmpObj={},removeHandler, j,zoom=context.getZoom();
                 for(i=0;i<len;i++){
                     (function(itemOpts){
@@ -620,7 +621,8 @@
             eventType:MSG.eventType,
             getCurrentOverlays:overlayCenter.getCurrentOverlays,
             addOverLays:overlayCenter.addOverLays,
-            opts:globaopts
+            opts:globaopts,
+            clearCache:overlayCenter.clearCache
 
         },context);
     }
