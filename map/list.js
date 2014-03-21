@@ -266,7 +266,7 @@ var ListCenter = {
 
     },
     listItemClick:function (elm,e) {
-        var url = '/xiaoqu/jingjiren/' + elm.get().community_id + '/?fromother=' + elm.attr("data-id") + '&from=pad_zf_map';
+        var url = '/xiaoqu/jingjiren/'+elm.get().community_id+'/?fromother='+elm.attr("data-id")+'&from=pad_zf_map'+'&fromtype='+elm.attr("data-fromtype");
         window.open(url);
         var map = this.map;
         //J.g(elm).s("a").eq(0).get().click();

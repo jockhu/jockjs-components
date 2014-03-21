@@ -212,9 +212,8 @@
            return ret;
        }
 
-
-       function listItemClick(elm){
-           var url = '/xiaoqu/jingjiren/'+elm.get().community_id+'/?fromother='+elm.attr("data-id")+'&from=pad_zf_map'+'&fromtype='+elm.attr("data-fromtype");
+      /* function listItemClick(elm){
+           var url = '/xiaoqu/jingjiren/'+elm.get().community_id+'/?fromother='+elm.attr("data-id")+'&from=pad_zf_map';
            window.open(url);
            //J.g(elm).s("a").eq(0).get().click();
             var overlays = map.getCurrentOverlays();
