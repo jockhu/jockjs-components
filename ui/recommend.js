@@ -18,6 +18,7 @@
             type:'',
             box:'',
             cont:'',
+            requestUrl: "",  //手动传入url
             firstpage:4,
             nextpage:10,
             total:100,
@@ -27,7 +28,7 @@
             onComplete:null,
             onShow:null,//异步加载图片
             onexposure:null//增加曝光亮
-        }, opts, pageIndex = 1,fetchEnd=false;
+        }, opts, pageIndex = 1,fetchEnd=false, onceQuest = false;
 
         (function () {
             opts = J.mix(defaultOptions, options || {}, true);
@@ -78,7 +79,7 @@
                 }else{
                     pageIndex++;
                 }
-                getData();
+                !onceQuest && getData();
             }
         }
 
@@ -150,6 +151,10 @@
                     flow = "/?flow=new";
                 }
                 url += flow;
+            }
+            if(opts.requestUrl !== "") {
+                url = opts.requestUrl;
+                onceQuest = true;
             }
             return url;
         }
