@@ -454,6 +454,10 @@
             function getCurrentOverlays(){
                 return preCache;
             }
+            function setCurrentOverlays(overlays){
+                return preCache=overlays;
+            }
+
 
             /**
              * 移除上次ajax所添加的数据，并移除不应该显示的点
@@ -479,6 +483,7 @@
                 options:opts,
                 removeCurrentOverlays:removeCurrentOverlays,
                 getCurrentOverlays:getCurrentOverlays,
+                setCurrentOverlays:setCurrentOverlays,
                 addOverLays:addOverlays,
                 clearCache:clearCache
             }
@@ -620,6 +625,7 @@
             onResult:dataCenter.onResult,
             eventType:MSG.eventType,
             getCurrentOverlays:overlayCenter.getCurrentOverlays,
+            setCurrentOverlays:overlayCenter.setCurrentOverlays,
             addOverLays:overlayCenter.addOverLays,
             opts:globaopts,
             clearCache:overlayCenter.clearCache

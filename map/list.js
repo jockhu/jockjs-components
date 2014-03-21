@@ -27,6 +27,15 @@ var ListCenter = {
     //获得rank排序的数据
     //
     getDataCommon:function(data,islock,async){
+
+        if(this.preClickedOverlay&&this.preClickedOverlay.isInViewPort()){
+            this.overlayInViewPort = true;
+        }else{
+            J.g("propBarLeft").removeClass("commSel");
+            this.preClickedOverlay&&this.preClickedOverlay.removeOverlay();
+            this.preClickedOverlay = null;
+            this.overlayInViewPort = false;
+        }
         !this.lock&&this.map.getData(data,islock,async);
     },
     getRankData:function(data,noCache){
@@ -37,7 +46,6 @@ var ListCenter = {
             return me.onResultRankData(data);
         });
         this.getDataCommon(this.data);
-
     },
     //获得单个小区的数据
     getCommData:function (commid,commname,asy){
@@ -46,6 +54,9 @@ var ListCenter = {
         this.data.commids='';
         this.data.p = 1;
         var me = this;
+
+
+
         this.opts.onResult =this.onResultCommon(function (data) {
             me.onResultCommData.call(me,data,commname);
         });
@@ -133,7 +144,8 @@ var ListCenter = {
      */
     onResultCommon:function(fn){
         var handler = this.progress.handler;
-        var searchHandler = this.search&&this.search.handler
+        var searchHandler = this.search&&this.search.handler;
+        var me = this;
         return function(data){
             handler(data);
             data.sojData&&SentSoj("anjuke-pad", data.sojData); //第二个参数是anjax请求的
@@ -143,14 +155,15 @@ var ListCenter = {
     onResultRankData:function(data){
         this.container.html('');
         J.g("p_filter_result").get().scrollTop=0;
-        this.updateListHtml(data.props.list,'area_id');
+        this.updateListHtml(data.props.list,'area_id',data.propNum);
         this.upDateStatusHtml('地图内找到房源',data.propNum);
         return data.groups;
     },
     onResultCommData:function(data,commname){
         this.container.html('');
+        J.g("propBarLeft").addClass("commSel");
         J.g("p_filter_result").get().scrollTop=0;
-        this.updateListHtml(data.props.list,'community_id');
+        this.updateListHtml(data.props.list,'community_id',data.propNum);
         this.upDateStatusHtml(commname,data.propNum);
         return data.comms;
     },
@@ -163,13 +176,12 @@ var ListCenter = {
              commanme = !!data.props.iscommid ? data.comms[0].commname : '地图内找到房源';
             this.upDateStatusHtml(commanme,data.propNum);
         }
-        var start =  this.container.s("li").length;
+        var start =  this.container.s("li").length-this.container.s(".sep").length;
         var sep = document.createElement("li");
         sep.className="sep";
         sep.innerHTML =  start+ "-"+(start+data.props.list.length)+"条";
-        //var top = J.g("p_list").get().scrollHeight;
         this.container.get().appendChild(sep);
-        this.updateListHtml(data.props.list,key)
+        this.updateListHtml(data.props.list,key,data.propNum)
         //J.g("p_filter_result").get().scrollTop =top;
         this.data.commids = data.props.commids;
     },
@@ -181,13 +193,16 @@ var ListCenter = {
 
         var commanme;
         var key = this.data.model == 1 ?'area_id':'community_id';
-        this.updateListHtml(data.props.list,key);
+        this.updateListHtml(data.props.list,key,data.propNum);
         this.data.commids = data.props.commids;
     },
     onResultZoneData:function(data){
+        if(this.overlayInViewPort){
+            return data.comms;
+        }
         this.container.html('');
         J.g("p_filter_result").get().scrollTop=0;
-        this.updateListHtml(data.props.list,'community_id');
+        this.updateListHtml(data.props.list,'community_id',data.propNum);
         this.upDateStatusHtml('地图内找到房源',data.propNum);
         this.data.commids = data.props.commids;
         return data.comms;
@@ -212,12 +227,13 @@ var ListCenter = {
     upDateStatusHtml:function(commname,countNum){
         this.CommnameContainer.html(commname);
         this.countNum&&this.countNum.html(countNum);
+
     },
     /**
      * 填充列表数据
      * @param data
      */
-    updateListHtml:function(data,key){
+    updateListHtml:function(data,key,count){
         var frag = document.createDocumentFragment();
         J.each(data,function(k,t){
             var tmp = document.createElement("li");
@@ -237,6 +253,17 @@ var ListCenter = {
             frag.appendChild(tmp);
         });
         this.container.get().appendChild(frag);
+        if(J.g("p_list").get().scrollHeight>J.g("p_filter_result").height()){
+           var tmp = this.container.s("li").length-this.container.s(".sep").length;
+            if(tmp == count){
+                var last =  document.createElement("li");
+                last.setAttribute("class",'last');
+                last.innerHTML='已经到底了,调整找房条件试试。';
+                this.container.get().appendChild(last);
+            }
+        }
+
+
     },
     listItemClick:function (elm,e) {
         var url = '/xiaoqu/jingjiren/' + elm.get().community_id + '/?fromother=' + elm.attr("data-id") + '&from=pad_zf_map';
@@ -254,8 +281,8 @@ var ListCenter = {
         this.preClickedItem = elm;
     },
     toggleClassOver:function (current, prev, isskip) {
-        prev && prev.get().first().removeClass("f60bg");
-        prev && prev.onMouseOut();
+        this.preClickedOverlay && this.preClickedOverlay.get().first().removeClass("f60bg");
+        this.preClickedOverlay && this.preClickedOverlay.onMouseOut();
         current && current.onMouseOver();
         current && current.get().first().addClass("f60bg");
         this.preClickedOverlay = current;

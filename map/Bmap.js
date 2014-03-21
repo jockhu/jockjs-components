@@ -206,7 +206,7 @@
             var p = param
             J.mix(p,param);
             p.latlng = p.latlng ? p.latlng : getLatLng(p);
-            var _key = key||buildOverlayKey(p.latlng),
+            var _key = param.key||key||buildOverlayKey(p.latlng),
            /*     _type = overlayType,
                 oldOverlay = getOverlay(_type,_key),*/
                 me;
@@ -281,6 +281,26 @@
             },
             userOverlay.prototype.get=function(){
                 return this._div;
+            }
+            userOverlay.prototype.isInViewPort=function(){
+                var lat = this.p.lat;
+                var lng = this.p.lng;
+                var pos = map.pointToPixel(new BMap.Point(lng, lat));
+                var size = map.getSize();
+                if(pos.x>size.width){
+                    return false;
+                }
+                if(pos.x+this._div.width()<0){
+                    return false;
+                }
+                if(pos.y<0){
+                    return false;
+                }
+                if(pos.y-this._div.height()>size.height){
+                    return false;
+                }
+                return true
+
             }
             var uO = new userOverlay(p);
             uO.key = _key;

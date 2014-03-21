@@ -25,7 +25,7 @@
            classHover:'hover',
            zoomEnd:zoomEnd,
            moveEnd:moveEnd,
-           moveLengthChange:50,//移动的距离小于自定义距离，不去取数据
+           moveLengthChange:20,//移动的距离小于自定义距离，不去取数据
            scrollBottom:5//离底部多少像素后马上加载
 
            },
@@ -98,7 +98,12 @@
                    map.setCenter(data.lng,data.lat,14);
                     return
                }
-               ListCenter.toggleClassOver(data.target,preClickedOverlay);
+               //对于单个小区，先拿到地图上的那个点，单独处理，移出可视区域再删除
+               var overlays = map.getCurrentOverlays();
+               delete  overlays[data.target.key];
+               map.setCurrentOverlays(overlays);
+               ListCenter.toggleClassOver(data.target);
+               preClickedOverlay = data.target;
                ListCenter.getCommData(data.commid,data.commname);
                //计录小区id,用来翻页
            });
@@ -141,6 +146,7 @@
            J.g("sort_by_time_link").on('click',function(){
                 ListCenter.data.px = 0;
                J.g("sort_by_price_link").get().className='';
+               J.g("sort_by_time_link").addClass("def");
                ListCenter.data.px = 0;
                ListCenter.getSortData();
            });
@@ -169,10 +175,11 @@
        }
 
        function moveEnd(e){
-           if(map.getZoom()>12&& e.moveLenth>opts.moveLengthChange){
+           //if(map.getZoom()>12&& e.moveLenth>opts.moveLengthChange){
+           if(map.getZoom()>12){
                moveEndTimer&&clearTimeout(moveEndTimer);
                moveEndTimer=setTimeout( function(){
-                   ListCenter.getZoneData.call(ListCenter);
+                   ListCenter.getZoneData();
                },700);
            }
        }
@@ -188,7 +195,7 @@
 
        function beforeRequest(data){
            progress.showMapLoading();
-           progress.showLoadingTip(J.g('p_select_loading'));
+           !ListCenter.overlayInViewPort&&progress.showLoadingTip(J.g('p_select_loading'));
            var ret =J.mix(data,{
                model:1,
                order:null,
@@ -430,7 +437,7 @@
            listContainer.on('scroll',function(){
                progress.showLoadingTip(J.g('p_filter_loading')); //显示loading提示
                var lis = document.getElementById("p_list");
-               if(this.clientHeight+this.scrollTop >= this.scrollHeight){
+               if(this.clientHeight+this.scrollTop+30 >= this.scrollHeight){
                    //把上一　次点击的区域选中状态清掉
                    nextPageTimer&&clearTimeout(nextPageTimer);
                    nextPageTimer = setTimeout(function(){
@@ -461,14 +468,26 @@
            var price = categorys.eq(1).first();
            var room = categorys.eq(2).first();
 
+
+           var zoneTarget,priceTarget,roomTarget;
+
            var preTarget =null;
 
            J.on(document,'select:selectedChange',function(e){
+               if(!zoneTarget){
+                   zoneTarget= categorys.eq(0).s(".option_box_second").eq(0).first();
+                   priceTarget = categorys.eq(1).s(".option_box").eq(0).first();
+                   roomTarget = categorys.eq(2).s(".option_box").eq(0).first();
+               }
+
+
+
                var target = e.data.target;
                var areaid = target.attr("areaid");
                var blockid= target.attr("blockid");
                var price = target.attr("price");
                var room = target.attr('room');
+
 
                var name = target.html().replace('　√','');
                var p = {
@@ -519,8 +538,23 @@
                    ListCenter.getFilterData(MenuData);
 
                }
-               repaceHtml(target);
-              // ListCenter.getFilterData(MenuData);
+               var pre;
+               if(J.g(target).attr('blockid')!==null){
+                   repaceHtml(target,zoneTarget);
+                   zoneTarget = target;
+                   return;
+               }
+               if(J.g(target).attr('price')!==null){
+                   repaceHtml(target,priceTarget);
+                   priceTarget = target;
+                   return;
+               }
+               if(J.g(target).attr('room')!==null){
+                   repaceHtml(target,roomTarget);
+                   roomTarget = target;
+                   return;
+               }
+               //repaceHtml(target,pre);
 
            })
 
@@ -538,13 +572,17 @@
                 room.html(data);
            }
 
-           function repaceHtml(target){
+           function repaceHtml(target,prev){
+               console.log(prev.html())
                var html = target.html();
                html = html + (html.indexOf('　√')>-1 ?'':'　√')
                target.html(html);
-               preTarget&&preTarget.html(preTarget.html().replace('　√',''));
-               preTarget= target;
+               prev&&prev.html(prev.html().replace('　√',''));
            }
+
+
+
+
 
 
 
