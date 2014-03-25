@@ -93,8 +93,7 @@
                 timeout: 15000,
                 header:{'X-TW-HAR': 'HTML'},
                 onSuccess:function(data){
-                    if(data.replace(/\s/ig,"")!=""){
-                        box&&box.show();
+                    if(data.replace(/\s/ig,"")!==""){
                         if(pageIndex==1){
                            showBox(data);
                         }else{
@@ -104,7 +103,16 @@
                             }
                         }
                         fetchEnd=true;
+                        box&&box.show();
+                    }else{
+                        J.s(".loveti").length && J.s(".loveti").each(function(i,v){
+                            v.hide();
+                        });
                     }
+                    if(onceQuest){
+                        J.g(opts.elem).hide();
+
+                    } 
                 },
                 onFailure:function(e){
                     if(pageIndex==1){
