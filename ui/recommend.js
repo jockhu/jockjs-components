@@ -18,6 +18,7 @@
             type:'',
             box:'',
             cont:'',
+            requestUrl: "",  //手动传入url
             firstpage:4,
             nextpage:10,
             total:100,
@@ -27,7 +28,7 @@
             onComplete:null,
             onShow:null,//异步加载图片
             onexposure:null//增加曝光亮
-        }, opts, pageIndex = 1,fetchEnd=false;
+        }, opts, pageIndex = 1,fetchEnd=false, onceQuest = false;
 
         (function () {
             opts = J.mix(defaultOptions, options || {}, true);
@@ -78,7 +79,7 @@
                 }else{
                     pageIndex++;
                 }
-                getData();
+                !onceQuest && getData();
             }
         }
 
@@ -92,8 +93,7 @@
                 timeout: 15000,
                 header:{'X-TW-HAR': 'HTML'},
                 onSuccess:function(data){
-                    if(data.replace(/\s/ig,"")!=""){
-                        box&&box.show();
+                    if(data.replace(/\s/ig,"")!==""){
                         if(pageIndex==1){
                            showBox(data);
                         }else{
@@ -103,7 +103,16 @@
                             }
                         }
                         fetchEnd=true;
+                        box&&box.show();
+                    }else{
+                        J.s(".loveti").length && J.s(".loveti").each(function(i,v){
+                            v.hide();
+                        });
                     }
+                    if(onceQuest){
+                        J.g(opts.elem).hide();
+
+                    } 
                 },
                 onFailure:function(e){
                     if(pageIndex==1){
@@ -150,6 +159,10 @@
                     flow = "/?flow=new";
                 }
                 url += flow;
+            }
+            if(opts.requestUrl !== "") {
+                url = opts.requestUrl;
+                onceQuest = true;
             }
             return url;
         }
