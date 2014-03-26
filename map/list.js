@@ -24,10 +24,25 @@ var ListCenter = {
     lock:false,
     preClickedOverlay:null,
     preClickedItem:null,
+    ignoreNextpage:false,//忽略下一页
+    resultHandler:[],
+    resetHandler:function(){
+        this.data = {
+            model:1,//除区域外都是模式１
+            p:1,//页码
+            commids:'',//上一页的小区
+            commid:0,
+            px:0
+        };
+        this.toggleClassOver();
+    },
+
     //获得rank排序的数据
     //
     getDataCommon:function(data,islock,async){
-
+        J.g("statusSearch").hide();
+        J.g("propBarLeft").show();
+        this.ignoreNextpage = false;
         if(this.preClickedOverlay&&this.preClickedOverlay.isInViewPort()){
             this.overlayInViewPort = true;
         }else{
@@ -54,9 +69,6 @@ var ListCenter = {
         this.data.commids='';
         this.data.p = 1;
         var me = this;
-
-
-
         this.opts.onResult =this.onResultCommon(function (data) {
             me.onResultCommData.call(me,data,commname);
         });
@@ -76,7 +88,7 @@ var ListCenter = {
             me.wait = false;
             setTimeout(function(){
               me.wait = false;
-            },10000)
+            },10000);
             me.onResultNextPageData.call(me,data);
         });
         this.getDataCommon(this.data,true);
@@ -137,6 +149,13 @@ var ListCenter = {
         item.onClick= function(){
         }
     },
+    addResultHandler:function(fn){
+        this.resultHandler.push(fn);
+    },
+    getResultHandler:function(){
+        return !this.resultHandler.length?false:this.resultHandler.pop();
+    },
+
     /**
      * 所有ajax回调都会调用这个方法
      * @param fn　回调方法
@@ -146,8 +165,17 @@ var ListCenter = {
         var handler = this.progress.handler;
         var searchHandler = this.search&&this.search.handler;
         var me = this;
+
         return function(data){
-            handler(data);
+            var clientFn = me.getResultHandler();
+            if(clientFn === false){
+                handler(data);
+                data.sojData&&SentSoj("anjuke-pad", data.sojData); //第二个参数是anjax请求的
+                return fn(data);
+            }
+            var clientData = clientFn(data);
+            if(clientData === false)return;
+            handler(clientData||data);
             data.sojData&&SentSoj("anjuke-pad", data.sojData); //第二个参数是anjax请求的
             return fn(data);
         }
@@ -221,6 +249,23 @@ var ListCenter = {
             me.listItemClick(target,e);
         })
     },
+    nextPageEvent:function(){
+        if(ListCenter.ignoreNextpage) return;
+        ListCenter.progress.showLoadingTip(J.g('p_filter_loading')); //显示loading提示
+        ListCenter.nextPageTimer&&clearTimeout(ListCenter.nextPageTimer);
+        var lis = document.getElementById("p_list");
+        if(this.clientHeight+this.scrollTop+30 >= this.scrollHeight){
+            //把上一　次点击的区域选中状态清掉
+            ListCenter.nextPageTimer&&window.clearTimeout(ListCenter.nextPageTimer);
+            ListCenter.nextPageTimer = setTimeout(function(){
+                ListCenter.getNextPageData();
+            },500);
+            setTimeout(function(){
+                ListCenter.progress.hideLoadingTip(J.g('p_filter_loading'));
+            },0);
+        }
+
+    },
     getContext:function(){
         return this;
     },
@@ -280,6 +325,23 @@ var ListCenter = {
         this.preClickedOverlay = overlays[key];
         this.preClickedItem = elm;
     },
+    overlayClick:function(event){
+            var data = event.data;
+             var map = ListCenter.map;
+            if(data.zoom <13){
+                map.setCenter(data.lng,data.lat,14);
+                return
+            }
+            //对于单个小区，先拿到地图上的那个点，单独处理，移出可视区域再删除
+            var overlays = map.getCurrentOverlays();
+            delete  overlays[data.target.key];
+            map.setCurrentOverlays(overlays);
+            ListCenter.toggleClassOver(data.target);
+            ListCenter.preClickedOverlay = data.target;
+            ListCenter.getCommData(data.commid,data.commname);
+            //计录小区id,用来翻页
+    },
+
     toggleClassOver:function (current, prev, isskip) {
         this.preClickedOverlay && this.preClickedOverlay.get().first().removeClass("f60bg");
         this.preClickedOverlay && this.preClickedOverlay.onMouseOut();

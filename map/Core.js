@@ -221,7 +221,10 @@
                     callback[guid]=J.map['callback'+guid] = onResult;
                     ajaxSetting.onSuccess = callback[guid];
                     ajaxSetting.data = J.mix(params,sendData);
+                timer&&clearTimeout(timer);
+                timer =setTimeout(function(){
                     J.get(ajaxSetting);
+                },200)
             }
             function deletePrevCallback(){
                 J.each(callback,function(k,v){
@@ -349,15 +352,11 @@
                 MSG.overlayClick(data);
             }
             function onMouseOver(data){
-
                 this.prevZindex = this._div.getStyle('zIndex');
                 this._div.setStyle({
-                    zIndex:zIndex
+                    zIndex:++zIndex
                 });
                 this.classHover&&this._div.first().addClass(this.classHover);
-
-
-
                 data.target = this;
 
 
@@ -394,7 +393,8 @@
                                 classHover:opts.classHover,
                                 zoom:zoom
                             });
-                            itemOpts = onItemBuild(itemOpts) || itemOpts;
+                            //适用于单个itembuild
+                            itemOpts =!itemOpts.onItemBuild ?( onItemBuild(itemOpts) || itemOpts):itemOpts.onItemBuild(itemOpts);
                             if(!itemOpts || !itemOpts.html) return;
 
                             key = itemOpts.key || dataCenter.getCacheKey(itemOpts);
@@ -439,6 +439,7 @@
                  */
                 removeCurrentOverlays();
                 preCache = tmpObj;
+                return preCache;
             }
 
             /**

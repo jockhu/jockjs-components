@@ -1,13 +1,405 @@
 ;
 (function (context) {
-    function Search(option) {
+    function Search(opts) {
         var defOpts = {
                 KWUrl:'http://shanghai.release.lunjiang.dev.anjuke.com/ajax/geomap/',
-                map:null
-            }, opts, map, me = this, singleComm, preClickedItem, //上次所点击的overlay
-            retSearchBar = J.g("statusSearch"), retStatusBar = J.g("propBarLeft"), autocomplete = {
+                map:null,
+                callback:{}
+            }, opts, map, callback, progress, list, ret = {
+                resetHandler:function () {
+                }
+            }, currentOverlays, charCode = 65,
+            data = {
+                model:2,
+                commid:''
+
+            },
+            KW='';//当前搜索的关键字
+        (function () {
+            opts = J.mix(defOpts, opts || {})
+            callback = opts.callback;
+            map = opts.map;
+            progress = opts.progress;
+            list = document.getElementById("p_list");
+            J.g("statusSearch").on('click',function(){
+                ret.resetHandler();
+                map.getZoom()>12?ListCenter.getZoneData():ListCenter.getRankData();
+                J.g(this).hide();
+                J.g("propBarLeft").removeClass('propBarLeft ').show();
+                ListCenter.resetHandler();
+            });
+            setAutocomplete();
+            rollback();
+
+            J.map.search.callback = onResultKW;
+        })();
+
+
+        /**
+         * 获取单个小区
+         */
+        function getCommData(commid, commName) {
+            ret.resetHandler();
+            J.get({
+                url:'/newmap/search2',
+                data:{
+                    commid:commid,
+                    model:2
+                },
+                type:'json',
+                timeout:20000,
+                onSuccess:onResultCommData
+            });
+        }
+
+        function onResultCommData(data) {
+            var singleComm = data;
+            var com = singleComm.comms[0];
+            map.setCenter(com.lng, com.lat, 17);//居中显示,居中显示和会去取区域数据。
+            ListCenter.addResultHandler(function (data) {
+                data.comms.unshift(singleComm.comms[0]);
+                setTimeout(function () {
+                    var cur = map.getCurrentOverlays();
+                    cur[com.commid + '_' + 17] && cur[com.commid + '_' + 17].onClick();
+                }, 100)
+                data.props.list = singleComm.props.list;
+                return data;
+            })
+        }
+
+
+        function getMultiCommData(commName) {
+            var params = {
+                model:3,
+                kw:commName
+            }
+            J.get({
+                url:'/newmap/search2',
+                data:params,
+                type:'json',
+                timeout:20000,
+                onSuccess:onResultMultiCommData
+            });
+
+        }
+
+        function getLankMask(data) {
+            if(!data.length){
+                progress.showSearchTip();
+                ret.resetHandler();
+                return;
+            }
+            progress.setLock(true)
+            ret.resetHandler = function () {
+            };
+            //给 build item 加上ａ,ｂ,ｃ,ｄ
+            var charCode = 65;
+            var handler, tmp;
+            var _getZoneData = ListCenter.getZoneData;
+            var _getRankData = ListCenter.getRankData;
+            var _getNextPageData = ListCenter.getNextPageData;
+            var _listItemClick = ListCenter.listItemClick;
+            ListCenter.getZoneData = function () {
+            };
+            ListCenter.getRankData = function () {
+            }
+            ListCenter.getNextPageData = function () {
+            };
+            ListCenter.listItemClick = baiduListItemClick;
+            ListCenter.opts.onItemBuild = baiduAddressItemBuild;
+            setTimeout(function () {
+                ret.resetHandler = function () {
+                    J.g("listPager").hide();
+                    progress.setLock(false)
+                    ListCenter.getZoneData = _getZoneData;
+                    ListCenter.getRankData = _getRankData
+                    ListCenter.getNextPageData = _getNextPageData;
+                    ListCenter.listItemClick = _listItemClick;
+                }
+            }, 500)
+            map.setViewport(getViewPort(data));
+            list.innerHTML = '';
+            updateBaiduListeHtml(data);
+
+
+            for(var i= 0,len= data.length;i<len;i++){
+                var p = {
+                    lng:data[i].point.lng,
+                    lat:data[i].point.lat,
+                    className:'areaMarkerMain',
+                    x:-18,
+                    y:-46,
+                    html:'<div><p>'+data[i].title+'</p><i class="areaMarker"></i></div>'
+                }
+            }
+
+            currentOverlays = map.addOverLays(data);
+            if (map.getZoom() > 12) {
+                map.clearCache();
+                map.opts.onItemBuild = ListCenter.onCommItemBuild;
+                map.opts.onResult = function (data) {
+                    return data.comms;
+                }
+                map.getData();
+            }
+
+        }
+
+        function onResultMultiCommData(data) {
+            if (data.comms.length == 0) {
+                map.localSearch(KW, this, getLankMask)
+                return;
+            }
+            if (data.comms.length == 1) {
+                onResultCommData(data);
+                return;
+            }
+            onBuildMultiCommData(data);
+
+        }
+
+
+        function updateListeHtml(data) {
+            var key = 'commid'
+            var frag = document.createDocumentFragment();
+            var uid = 65;
+            J.each(data, function (k, t) {
+                var tmp = document.createElement("li");
+                strChar = String.fromCharCode(uid++);
+                tmp.className = "land";
+                tmp.setAttribute("data-code", t[key]);
+                var str = '<a onclick="return false;" href="' + t['prop_url'] + '" class="tip" title="' + t['img_title'] + '" alt="' + t['img_title'] + '" target="_blank">' + strChar + '</a>' + '<div class="t">' + t['commname'] + '</div>' + '<div class="addr">' + t['address'] + '</div>' + '<a class="view" href="###">查看附近房源</a><span class="line"></span>';
+                tmp.innerHTML = str;
+                tmp.setAttribute("data-id", t[key]);
+                frag.appendChild(tmp);
+            });
+            list.appendChild(frag);
+        }
+
+
+        function updateBaiduListeHtml(data) {
+            var frag = document.createDocumentFragment(),
+             charCode = 65, key = 'commid',code=0;
+            J.each(data, function (k, t) {
+                t[key] = code++;
+                var tmp = document.createElement("li");
+                tmp.className = "land";
+                tmp.setAttribute('lng', t.point.lng);
+                tmp.setAttribute('lat', t.point.lat);
+                tmp.setAttribute("data-code", t[key]);
+                var str = '<a onclick="return false;" href="' + '###' + '" class="tip" title="' + t['title'] + '" alt="' + t['title'] + '" target="_blank">' + String.fromCharCode(charCode++) + '</a>' + '<div class="t">' + t['title'] + '</div><div class="addr">' + t['address'] + '</div><a class="view" href="###">查看附近房源</a>'  + '<span class="line"></span>';
+                tmp.innerHTML = str;
+                tmp.setAttribute("data-id", t[key]);
+                frag.appendChild(tmp);
+            });
+            charCode=65;
+            list.appendChild(frag);
+        }
+
+        /**
+         * 生成地标
+         * @param data
+         */
+        function onBuildMultiCommData(data) {
+            progress.setLock(true)
+            ret.resetHandler = function () {
+            };
+            //给 build item 加上ａ,ｂ,ｃ,ｄ
+            var charCode = 65;
+            var handler, tmp;
+            updateStatusHtml(data.propNum);
+            var _getZoneData = ListCenter.getZoneData;
+            var _getRankData = ListCenter.getRankData;
+            var _getNextPageData = ListCenter.getNextPageData;
+            var _listItemClick = ListCenter.listItemClick;
+            ListCenter.getZoneData = function () {
+            };
+            ListCenter.getRankData = function () {
+            }
+            ListCenter.getNextPageData = function () {
+            };
+            ListCenter.listItemClick = listItemClick;
+            ListCenter.opts.onItemBuild = searchItemBuild;
+            setTimeout(function () {
+                ret.resetHandler = function () {
+                    J.g("listPager").hide();
+                    progress.setLock(false)
+                    ListCenter.getZoneData = _getZoneData;
+                    ListCenter.getRankData = _getRankData
+                    ListCenter.getNextPageData = _getNextPageData;
+                    ListCenter.listItemClick = _listItemClick;
+                }
+            }, 500)
+
+
+            map.setViewport(getViewPort(data.comms));
+            list.innerHTML = '';
+            updateListeHtml(data.comms);
+            currentOverlays = map.addOverLays(data.comms);
+            if (map.getZoom() > 12) {
+                map.clearCache();
+                map.opts.onItemBuild = ListCenter.onCommItemBuild;
+                map.opts.onResult = function (data) {
+                    return data.comms;
+                }
+                map.getData();
+            }
+        }
+
+        //高亮显示小区
+        function toggleComm(key) {
+            var i, t;
+            for (i in currentOverlays) {
+                t = currentOverlays[i];
+                var dom = t._div.first();
+                dom.addClass('f60bg')
+                t.key == key ? (t.onMouseOver(),dom.addClass('buble')) : (t.onMouseOut(),dom.removeClass("f60bg"), dom.removeClass("buble"))
+            }
+        }
+
+
+        //高亮显示小区
+        function toggleMask(key) {
+            var i, t;
+            for (i in currentOverlays) {
+                t = currentOverlays[i];
+                var dom = t._div.first();
+                t.key == key ? (t.onMouseOver(),dom.addClass('buble')) :dom.removeClass("buble");
+            }
+        }
+
+
+        function inAreaZoom() {
+
+        }
+
+        function overAreaZoom() {
+
+        }
+
+        function overlayClick() {
+            var target = this;
+                //已经点击过一次的
+            ListCenter.getCommData(target.p.commid, target.p.commname);
+            return false;
+        }
+
+        function landMaskClick(){
+            return false;
+        }
+
+
+        function searchItemBuild(item) {
+            var tmp = item.lng;
+            item.x = -8;
+            item.y = -45;
+            item.zIndex = 1;
+            item.key = item.commid + '_' + item.zoom;
+            item.html = '<div class="OverlayB searchOverlay f60bg"><b>' + (item.propCount || 0) + '套｜</b>' + item.commname + '<span class="tip"></span><span class="char">' + String.fromCharCode(charCode++) + '</span></div>';
+            item.onClick = overlayClick
+            return item;
+        }
+
+
+        function baiduAddressItemBuild(item) {
+            var tmp = item.lng;
+            item.x = 0;
+            item.y = 0;
+            item.zIndex = 1;
+            item.lng=item.point.lng;
+            item.lat=item.point.lat
+            item.key = item.commid + '_' + item.zoom;
+            item.className='landMask',
+            item.html = '<div><p class="">'+item.title+'</p><i class="tip">'+String.fromCharCode(charCode++)+'</i></div>';
+            item.onClick = landMaskClick;
+            return item;
+        }
+
+        function baiduListItemClick(elm, e) {
+            var code = elm.attr("data-code");
+            if(elm.hasClass("landHover")){
+                J.each(currentOverlays,function(k,v){v.removeOverlay()})
+                var p = {
+                    lng:elm.attr('lng'),
+                    lat:elm.attr('lat'),
+                    className:'areaMarkerMain',
+                    x:-18,
+                    y:-59,
+                    html:'<div><p>'+elm.s(".t").eq(0).html()+'</p><i class="areaMarker"></i></div>'
+                }
+                map.setCenter(p.lng, p.lat,16);
+                map.addOverlay(p,'zoneMarker');
+                return;
+            }
+            this.preClickedItem && this.preClickedItem.removeClass("landHover");
+            elm.addClass("landHover");
+            toggleMask(code + "_" + map.getZoom());
+            this.preClickedItem = elm;
+        }
+
+
+        function listItemClick(elm, e) {
+            var code = elm.attr("data-code");
+            if(elm.hasClass("landHover")){
+                getCommData(code, elm.s('.t').eq(0).html());
+                return;
+            }
+            this.preClickedItem && this.preClickedItem.removeClass("landHover");
+            elm.addClass("landHover");
+            toggleComm(code + "_" + map.getZoom());
+            this.preClickedItem = elm;
+        }
+
+
+        function onResultBlock(data) {
+            data = data[0];
+            map.setCenter(data.lng, data.lat, data.zoom)
+            var p = {
+                lng:data.lng,
+                lat:data.lat,
+                className:'areaMarkerMain',
+                x:-18,
+                y:-46,
+                html:'<div><p>' + data.name + '</p><i class="areaMarker"></i></div>'
+            }
+            map.addOverlay(p, 'zoneMarker');
+        }
+
+
+        function onResultKW(data) {
+            switch (data.matchType) {
+                case 0:
+                    //搜地标
+                    /*   this.data.p =1;
+                     this.data.kw=data.kw;
+                     this.model = 3;*/
+                    getMultiCommData(data.kw);
+                    break;
+                case 1:
+                    getCommData(data.comm.commId, data.comm.commName)
+                    break;
+                case 2:
+                    break;
+                //community multi
+                case 3:
+                    //
+                    onResultBlock(data.region);
+                    break;
+                //single block
+                case 4:
+                    onResultBlock(data.region);
+                //single area
+
+            }
+        }
+
+
+
+        function setAutocomplete() {
+            var auto = {
                 onSelect:function (data) {
-                    me.getSearchCommData(data.id, data.name, false);
+                    ret.resetHandler();
+                    getCommData(data.id, data.name, false);
                     return false;
                 },
                 onSource:function (params, response) {
@@ -17,7 +409,6 @@
                         limit:10,
                         padmap:1
                     }
-
                     J.get({
                         timeout:20000,
                         type:'json',
@@ -35,336 +426,59 @@
                         v:item.k
                     }
                 }
-            };
-        this.data={
-            kw:'',
-            p:1,
-            model:3
-        };
-        J.map.search.callback = function (data) {
-            me.onSearch(data);
-        };
-        (function () {
-            opts = J.mix(defOpts, option || {});
-            map = opts.map;
-            //J.mix(window.header,autocomplete);
-            window.header.onSelect = autocomplete.onSelect;
-            window.header.onSource = autocomplete.onSource;
-            window.header.onItemBuild = autocomplete.onItemBuild;
+            }
+            window.header.onSelect = auto.onSelect;
+            window.header.onSource = auto.onSource;
+            window.header.onItemBuild = auto.onItemBuild;
             J.g("searchForm").get().onsubmit = function () {
+                ret.resetHandler();
                 J.g("searchPrompt").hide();
-                var str = J.g("p_search_input").val();
+                KW = J.g("p_search_input").val();
                 J.get({
                     type:'jsonp',
                     url:opts.KWUrl,
                     data:{
-                        kw:str
+                        kw:KW
                     },
                     callback:'J.map.search.callback'
                 })
                 return false;
             }
-            this.nextPage = this.nextPage || J.g("nextPage");
-            J.on(this.nextPage,'click', function(){
-                me.getDataCommMulti(me.data);
+
+            J.g("p_search_input").on('blur',function(){
+                setTimeout(function(){J.g("searchPrompt").hide();},400)
             });
-            retSearchBar.on('click',function(){
-               me.getNextPageData();
-            });
-            J.on(document.body, 'click', function () {
-                J.g("searchPrompt").hide();
-            });
-
-        })();
-
-
-        this.getNextPageData = function(){
-            ++this.data.p;
-            this.getDataCommMulti();
         }
 
+        function updateStatusHtml(countNum) {
 
-
-        /**
-         * 搜索单小区处理逻辑
-         * @param commid
-         * @param commname
-         * @param async
-         */
-        this.getSearchCommData = function (commid, commname, async) {
-            var _onResultCommData = ListCenter.onResultCommData;
-            var _onResultZoneData = ListCenter.onResultZoneData;
-            var _getCommData = ListCenter.getCommData;
-            ListCenter.onResultCommData = function (data, commname) {
-                singleComm = data.comms[0];
-                var singleData = data;
-                ListCenter.onResultZoneData = function (data) {
-                    ListCenter.getCommData = function () {
-                    };
-                    var comms = data.comms;
-                    comms.unshift(singleComm);
-                    singleData.comms = comms;
-                    this.data.commids = data.props.commids;
-                    this.container.html('');
-                    J.g("p_filter_result").get().scrollTop = 0;
-                    this.updateListHtml(singleData.props.list, 'community_id');
-                    this.upDateStatusHtml(commname, singleData.propNum);
-
-                    setTimeout(function () {
-                        var cur = map.getCurrentOverlays();
-                        cur[singleComm.commid + '_' + 17].onClick();
-                        ListCenter.getCommData = _getCommData;
-                    }, 10)
-
-
-                    ListCenter.onResultZoneData = _onResultZoneData;
-                    ListCenter.onResultCommData = _onResultCommData;
-                    return singleData.comms;
-                }
-                map.setCenter(singleComm.lng, singleComm.lat, 17);//居中显示
-            }
-            console.log(this.data,'fuck')
-            ListCenter.getCommData(commid, commname, false);
-        }
-        this.getContext = function () {
-            return this;
-        }
-
-
-        //单小区处理结果
-        this.onResultCommData = function (data, commname) {
-            this._onResultCommData = this.onResultCommData;
-
-            var comm = data.comms[0];
-            if (!comm) return;
-            ListCenter.getZoneData = this._getzoneData;
-            map.setCenter(comm.lng, comm.lat, 17);
-
-            var p = {
-                lng:comm.lng,
-                lat:comm.lat,
-                className:'',
-                x:-8,
-                y:-45,
-                html:'<div class="OverlayB"><b>' + comm.propCount + '套｜</b>' + comm.commname + '<span class="tip"></span></div>'
-            }
-            map.addOverlay(p, 'zoneMarker');
-        }
-        this.updateStatusHtml = function (countNum) {
-            this.statusBar = this.statusBar || J.g('propBarLeft');
-            this.statusSearchBar = this.statusSearchBar || J.g('statusSearch')
-            this.nextPage = this.nextPage || J.g("listPager");
-            this.nextPage.show();
-            this.statusBar.hide();
+            var statusBar = J.g('propBarLeft');
+            var statusSearchBar = J.g('statusSearch')
+            var nextPage = J.g("listPager");
+            nextPage.show();
+            statusBar.hide();
             J.g("statusSearch").get().style.display = 'block';
-            var tmp = this.statusSearchBar.s(".ret_num").eq(0);
+            var tmp = statusSearchBar.s(".ret_num").eq(0);
             tmp.html(tmp.html().replace(/\d+/, countNum));
         }
 
         function getViewPort(data) {
             var points = [];
             J.each(data, function (k, v) {
-                points.push(new BMap.Point(v.lat, v.lng));
+                points.push(v.point||new BMap.Point(v.lng, v.lat));
             })
             return map.getViewport(points);
         }
 
 
-        this.onSearch = function (data) {
-            switch (data.matchType) {
-                case 0:
-                    //搜地标
-                    this.data.p =1;
-                    this.data.kw=data.kw;
-                    this.model = 3;
-                    this.getDataCommMulti(data.kw);
-                    break;
-                case 1:
-                    this.data.p =1;
-                    this.data.kw='';
-                    this.model = 2;
-                    var comm = data.comm[0];
-                    this.getSearchCommData(comm.commId, comm.commName, false);
-                    break;
-                case 2:
-                    break;
-                //community multi
-                case 3:
-                    //
-                    this.onResultBlock(data.region);
-                    break;
-                //single block
-                case 4:
-                    this.onResultBlock(data.region);
-                //single area
-
-            }
-        }
-        this.onResultArea = function (data) {
-            map.setCenter(data.lng, data.lat, data.zoom)
-        }
-        this.onResultBlock = function (data) {
-            data = data[0];
-            map.setCenter(data.lng, data.lat, data.zoom)
-            var p = {
-                lng:data.lng,
-                lat:data.lat,
-                className:'areaMarkerMain',
-                x:-18,
-                y:-46,
-                html:'<div><p>' + data.name + '</p><i class="areaMarker"></i></div>'
-            }
-            map.addOverlay(p, 'zoneMarker');
-        }
-        //单小区处理逻辑
-        this.onResultComm = function (commid, commname, async) {
-            this._getzoneData = this.getZoneData;
-            ListCenter.getZoneData = function () { };
-            var params = {
-                zoom:17,
-                model:2,
-                commid:commid,
-                commids:'',
-                p:1
-            }
-            var me = this;
-            this.opts.onResult = this.onResultCommon(function (data) {
-                me.onResultCommData.call(me, data, commname);
-            });
-            this.getDataCommon(params, false);
+        function rollback() {
+            ListCenter.isLock = !ListCenter.isLock;
         }
 
-        //多小区处理罗辑
-        this.onResultCommMulti = function (data) {
-            //给 build item 加上ａ,ｂ,ｃ,ｄ
-            me.charCode = 65;
-            var handler, tmp;
-            this.updateStatusHtml(data.propNum);
-            var viewPort = getViewPort(data.comms);
-            if (viewPort.zoom > 12) {
-                //多小区清除
-                handler = ListCenter.getZoneData;
-                ListCenter.getZoneData = function(){};
-                map.setViewport(getViewPort(data.comms));
-                ListCenter.getZoneData = handler;
-                this._onResultZoneData = ListCenter.onResultZoneData;
-                ListCenter.onResultZoneData =this.onResultCommon(function(data){
-                    J.g("p_filter_result").get().scrollTop=0;
-                    map.clearCache();
-                    ListCenter.onResultZoneData = me._onResultZoneData;
-                    return data.comms;
-                });
-                //ListCenter.getZoneData();//去拉取区域数据，但是不展示列表数据。
-                setTimeout(function(){
-                    handler.call(ListCenter)
-                },1000);
-            } else {
-                handler = ListCenter.getRankData;
-                ListCenter.getRankData = function(){};
-                map.setViewport(getViewPort(data.comms));
-                ListCenter.getRankData = handler;
+        return ret;
 
-
-            }
-            this.container.html('');
-            this.updateListHtml(data.comms, 'commid');
-            var _listItemClick = ListCenter.listItemClick;
-            //list item click 什么时候回去呢？
-            ListCenter.listItemClick = function (elm, e) {
-               var code = elm.attr("data-code");
-                this.preClickedItem && this.preClickedItem.removeClass("landHover");
-                elm.addClass("landHover");
-
-                this.preClickedItem = elm;
-                if (e.target.className == "view") {
-                    ListCenter.getCommData(code, elm.s('.t').eq(0).html());
-                }
-                var currentOverlays = map.getCurrentOverlays();
-            }
-
-            return data.comms;
-
-        }
-        this.onResultLandMask = function (data) {
-
-        }
-        this.onResultLandMaskMulti = function () {
-
-        }
-        this.onResultNo = function () {
-
-        }
-        this.updateListHtml = function (data, key) {
-            var frag = document.createDocumentFragment();
-            var uid = 65, strChar;
-            J.each(data, function (k, t) {
-                var tmp = document.createElement("li");
-                strChar = String.fromCharCode(uid++);
-                tmp.className = "land";
-                tmp.setAttribute("data-code", t[key]);
-                var str = '<a onclick="return false;" href="' + t['prop_url'] + '" class="tip" title="' + t['img_title'] + '" alt="' + t['img_title'] + '" target="_blank">' + strChar + '</a>' + '<div class="t">' + t['commname'] + '</div>' + '<div class="addr">' + t['address'] + '</div>' + '<a class="view" href="###">查看附近房源</a>' + '<span class="line"></span>';
-                tmp.innerHTML = str;
-                tmp.setAttribute("data-id", t[key]);
-                frag.appendChild(tmp);
-            });
-            this.container.get().appendChild(frag);
-        }
-        this.onSearchItemBuild = function (item) {
-            //尼玛，搞返了
-            var tmp = item.lng;
-            item.x = -8;
-            item.y = -45;
-            item.zIndex=1;
-            item.key = item.commid + '_' + item.zoom;
-            item.html = '<div class="OverlayB searchOverlay f60bg"><b>' + (item.propCount || 0) + '套｜</b>' + item.commname + '<span class="tip"></span><span class="char">'+String.fromCharCode(me.charCode++)+'</span></div>';
-            item.onClick = function () {
-            }, item.lng = item.lat;
-            item.lat = tmp;
-            return item;
-        }
-        //多少区查找
-        this.getDataCommMulti = function (commName) {
-            this.data.kw = commName;
-            this.data.model = 3;
-            var self = this;
-            this.opts.onResult = this.onResultCommon(function (data) {
-                if (!data.comms.length) {
-                    //搜多小区无结果时去搜地标
-                    this.searchBaiduLandMask(commName);
-                    return false;
-                }
-                //搜多多少区后的操作
-                me.opts.onItemBuild = self.onSearchItemBuild;
-                return self.onResultCommMulti.call(self,data);
-            });
-            this.getDataCommon(this.data, true);
-        }
-
-        //多小区查找
-        this.searchBaiduLandMask = function (kw) {
-            map.localSearch(kw, Search, function (data) {
-                switch (data.length) {
-                    case 0:
-                        this.onResultNo();
-                        break;
-                    case 1:
-                        this.onResultLandMask(data);
-                        break;
-                    default :
-                        this.onResultLandMaskMulti(data);
-                }
-            });
-        }
-        this.resetHandler = function(){
-
-        }
-
-
-
-        return autocomplete;
 
     }
-    Search.prototype = ListCenter;
 
     context.search = Search;
 

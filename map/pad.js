@@ -74,7 +74,9 @@
            })
            ListCenter.getRankData();
            search = new J.map.search({
-               map:map
+               map:map,
+               progress:progress,
+               callback:map.opts
            });
 
        }
@@ -92,31 +94,10 @@
            /**
             * overlay click event
             */
-           J.on(opts.target,map.eventType.overlay.click,function(event){
-               var data = event.data;
-               if(data.zoom <13){
-                   map.setCenter(data.lng,data.lat,14);
-                    return
-               }
-               //对于单个小区，先拿到地图上的那个点，单独处理，移出可视区域再删除
-               var overlays = map.getCurrentOverlays();
-               delete  overlays[data.target.key];
-               map.setCurrentOverlays(overlays);
-               ListCenter.toggleClassOver(data.target);
-               preClickedOverlay = data.target;
-               ListCenter.getCommData(data.commid,data.commname);
-               //计录小区id,用来翻页
+           J.on(opts.target,map.eventType.overlay.click,function(e){
+               ListCenter.overlayClick(e);
            });
-           /**
-            * 列表点击事件
-            */
-          /* J.g('p_list').on('click',function(e){
-               var target = e.target;
-               while(target.tagName.toLocaleLowerCase() !== 'li'){
-                    target = target.parentNode;
-               }
-               ListCenter.listItemClick(J.g(target));
-           })*/
+
            //价格排序
            J.g("sort_by_price_link").on('click',function(){
                var target =J.g(this);
@@ -166,22 +147,21 @@
        function zoomEnd(e){
            ListCenter.data.commids='';
            ListCenter.data.commid = '';
-           var zoom = map.getZoom();
-           if(zoom >12){
-               ListCenter.getZoneData();
-               return true;
-           }
-           ListCenter.getRankData();
+           mapChangePosition();
+
        }
 
        function moveEnd(e){
            //if(map.getZoom()>12&& e.moveLenth>opts.moveLengthChange){
-           if(map.getZoom()>12){
-               moveEndTimer&&clearTimeout(moveEndTimer);
-               moveEndTimer=setTimeout( function(){
-                   ListCenter.getZoneData();
-               },700);
-           }
+           mapChangePosition();
+       }
+
+       function mapChangePosition(){
+           moveEndTimer&&clearTimeout(moveEndTimer);
+           moveEndTimer=setTimeout( function(){
+               search.resetHandler();
+               map.getZoom()>12?ListCenter.getZoneData():ListCenter.getRankData();
+           },200);
        }
 
        /**
@@ -211,21 +191,6 @@
            }
            return ret;
        }
-
-      /* function listItemClick(elm){
-           var url = '/xiaoqu/jingjiren/'+elm.get().community_id+'/?fromother='+elm.attr("data-id")+'&from=pad_zf_map';
-           window.open(url);
-           //J.g(elm).s("a").eq(0).get().click();
-            var overlays = map.getCurrentOverlays();
-            var code  =elm.attr('data-code');
-            var zoom = map.getZoom();
-           var key =code+'_'+zoom;
-           preClickedItem&&preClickedItem.removeClass("on");
-           elm.addClass("on");
-           toggleClassOver(overlays[key],preClickedOverlay,true);
-           preClickedOverlay= overlays[key];
-           preClickedItem = elm;
-       }*/
 
        /**
         *
@@ -267,6 +232,7 @@
                },
                mapTip,
                listTip,
+               lock,
                opts;
            opts = J.mix(defOpts,opption || {});
            (function(){
@@ -309,11 +275,13 @@
 
 
            function showMapLoading(){
+               if(lock)return;
                 var html= '<i class="loading_pic"></i>房源加载中...';
                mapTip.removeClass("map_change_zoom");
                mapTip.html(html).show();
            }
            function showMapChangeZoom(){
+               if(lock)return;
                var html=
                    '<div class="map_tip" id="map_tip"  unselectable="on" onselectstart="return false;">' +
                        '<div class="map_tip_no_props">' +
@@ -331,6 +299,7 @@
                },3000)
            }
            function showMapChangePosition(){
+               if(lock)return;
                mapTip.hide();
                hideLoadingTip(J.g(opts.loadingSelectTip));//隐藏好房马上来提示
                hideLoadingTip(J.g(opts.loadingFilterTip));//隐藏列表更多房源正在加载中提示
@@ -349,7 +318,8 @@
            }
 
            function showListChangePosition(){
-                var html ='<b>地图范围内没有符合您要求的房源。</b>'+
+               if(lock)return;
+               var html ='<b>地图范围内没有符合您要求的房源。</b>'+
                            '<div>建议您：</div>'+
                            '<ul>'+
                                '<li>调整筛选条件；</li>'+
@@ -359,7 +329,8 @@
 
            }
            function showListChangeZoom(){
-                var html='<b>地图范围内没有符合您要求的房源。</b>'+
+               if(lock)return;
+               var html='<b>地图范围内没有符合您要求的房源。</b>'+
                    '<p>可能是因为您的地图比例较过大</p>'+
                    '<div>'+
                        '<span>建议您：</span><a href="###" onclick="return false">缩放地图</a>'+
@@ -367,8 +338,42 @@
                listTip.html(html).show();
                hideLoadingTip(J.g(opts.loadingFilterTip));//隐藏列表更多房源正在加载中提示
            }
+
+           function showSearchTip(){
+               J.g("propBarLeft").hide();
+               listTip.html('');
+               var commName = J.g("p_search_input").val();
+               J.g("p_list").html('');
+               var html='<div class="search_blk">'+
+                   '<div class="s">没有找到“'+commName+'”小区</div>'+
+               '<div class="btn">清空条件重新重找</div>'+
+               '<div style="color: #999">建议您 ：</div>'+
+               '<ul style="color: #999">'+
+               '<li>输入正确的小区或地标名</li>'+
+               '<li>直接拖动地图到目标位置</li>'+
+               '</ul>'+
+               '</div>';
+               listTip.html(html).show();
+               hideLoadingTip(J.g(opts.loadingFilterTip));//隐藏列表更多房源正在加载中提示
+
+               html =
+                   '<div class="map_tip" id="map_tip"  unselectable="on" onselectstart="return false;">' +
+                       '<div class="map_tip_no_props">' +
+                       '<b>你搜索的“'+commName+'”没有找到</b>' +
+                       '<br>建议您： ' +
+                       '<a href="javascript:;" class="btn">清空条件重新查找</a>或拖动地图到目标位置   ' +
+                       ' <i class="iDel">&nbsp;</i>' +
+                       '</div>' +
+                       '</div>';
+               mapTip.addClass("map_change_zoom");
+               mapTip.html(html).show();
+
+
+           }
+
            //显示“房源加载中”提示
            function showLoadingTip(obj){
+               if(lock)return;
                obj && obj.show();
            }
            //隐藏“房源加载中”提示
@@ -405,12 +410,18 @@
            function hideList(){
 
            }
+          function setLock(isLock){
+              lock = !!isLock;
+          }
+
            return {
                showMapLoading:showMapLoading,
                showMapChangeZoom:showMapChangeZoom,
                showLoadingTip:showLoadingTip,
                hideLoadingTip:hideLoadingTip,
-               handler:handler
+               showSearchTip:showSearchTip,
+               handler:handler,
+               setLock:setLock
            }
 
 
@@ -433,21 +444,7 @@
            listContainer.setStyle({
                height:listHeight+'px'
            })
-           listContainer.on('scroll',function(){
-               progress.showLoadingTip(J.g('p_filter_loading')); //显示loading提示
-               var lis = document.getElementById("p_list");
-               if(this.clientHeight+this.scrollTop+30 >= this.scrollHeight){
-                   //把上一　次点击的区域选中状态清掉
-                   nextPageTimer&&clearTimeout(nextPageTimer);
-                   nextPageTimer = setTimeout(function(){
-                       ListCenter.getNextPageData();
-                   },500);
-                   setTimeout(function(){
-                       progress.hideLoadingTip(J.g('p_filter_loading'));
-                   },0);
-               }
-
-           });
+           listContainer.on('scroll',ListCenter.nextPageEvent);
        }
 
        /**
