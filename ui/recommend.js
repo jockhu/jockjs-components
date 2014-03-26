@@ -108,6 +108,11 @@
                         J.s(".loveti").length && J.s(".loveti").each(function(i,v){
                             v.hide();
                         });
+                        J.g('likeFew')&&J.g("likeFew").setStyle({"display":"none"});
+                        J.g('list_lookmore')&&J.g("list_lookmore").setStyle({"display":"none"});
+                        if (J.g('likeNo')&&J.g('likeNo').s(".loveti").length>0) {
+                            J.g('likeNo').s(".loveti").eq(0).setStyle({"display":"none"});
+                        }
                     }
                     if(onceQuest){
                         J.g(opts.elem).hide();
