@@ -287,12 +287,10 @@ var ListCenter = {
                 '<img height="100" width="133" id="prop_2_a"  alt="'+t['img_title']+'" src="'+t['img_url']+'">'+
                 '</a>'+
                 '<div class="pi_info">'+
-                '<a onclick="return false;" data-soj="'+t["soj"]+'"class = "pi_title" href="'+t["prop_url"]+'" target="_blank">'+t["title"]+'</a>'+
+                '<a onclick="return false;" data-soj="'+t["soj"]+'" href="'+t["prop_url"]+'" target="_blank">'+t["title"]+'</a>'+
                 '<div class="pi_address"><span>'+t['community_name']+'</span></div>'+
-                '<div class="pi_basic"><span>'+t['room_num']+'室'+t['hall_num']+'厅'+"</span></div>" +
-                '<div class="pi_sub"><span class="pi_s_price">'+t['price']+'</span>元/月</div>'+
-                "</div>"
-                ;
+                '<div class="pi_basic"><span>'+t['room_num']+'室'+t['hall_num']+'厅'+"</span></div></div>"+
+                '<div class="pi_sub"><span class="pi_s_price">'+t['price']+'</span>元/月</div>';
             tmp.innerHTML = str;
             tmp.community_id = t['community_id'];
             tmp.setAttribute("data-id",t['id']);
