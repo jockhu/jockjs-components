@@ -28,7 +28,7 @@
             onComplete:null,
             onShow:null,//异步加载图片
             onexposure:null//增加曝光亮
-        }, opts, pageIndex = 1,fetchEnd=false, stopQuest = false;
+        }, opts, pageIndex = 1,fetchEnd=false, stopQuest = false, pause = false;
 
         (function () {
             opts = J.mix(defaultOptions, options || {}, true);
@@ -57,7 +57,7 @@
                      var page_hei = document.body.scrollHeight;
                      setTimeout(function(){
                          if((page_hei-(scroll_top+screen_hei)<100) && fetchEnd){
-                             pageAdd();
+                            !pause && pageAdd();
                          }
                      },50)
                  };
@@ -87,12 +87,14 @@
          * 获取数据
          */
         function getData() {
+            pause = true;
             var url = bindUrl(),box=J.g(opts.box);
             J.get({
                 url:url,
                 timeout: 15000,
                 header:{'X-TW-HAR': 'HTML'},
                 onSuccess:function(data){
+                    pause = false;
                     if(data.replace(/\s/ig,"")!==""){
                         if(pageIndex==1){
                            showBox(data);
