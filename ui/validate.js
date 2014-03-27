@@ -113,7 +113,6 @@
          * @constructor
          */
         function ValidateObject(elm, validateString, taskerTrigger) {
-
             var status = -1, placeholder = elm.attr('placeholder'),
                 validateMessage = {ok: '', error: ''},
                 validateCenter,                             // 验证中心;
@@ -122,7 +121,6 @@
                 validateItems = [],                         // 当前验证对象的所有验证类型
                 autoCreateTarget = false,
                 infoTarget, groupId, information, customId, events = [], eventFuns = {};
-
             /**
              * Initialize
              */
@@ -458,7 +456,6 @@
                 var status = 0, groupId = null, elmVal = elm.val(), inCustom = false, iLen = validateItems.length;
 
                 J.each(validateItems, function (i, vItem) {
-
 
                     // 如果是disabled，或者不是必填但内容为空的可跳过验证
                     if ((elmVal == '' && vItem.type != 'require')) {
@@ -912,7 +909,8 @@
          * @returns {string}
          */
         function buildValidateString(vitem){
-            return vitem.type+"$"+vitem.message;
+            var targetStr = vitem.target ? '$$target$'+vitem.target : '';
+            return vitem.type+"$"+vitem.message + targetStr;
         }
 
 
@@ -921,7 +919,7 @@
          * @param element
          */
         function removeValidateItem(element, vtype) {
-            var vobj;
+            var vobj,target;
             if(vobj = findValidateByElm(element)){
                 var I = vobj.validateItems, l = I.length;
                 while (l--) {
@@ -931,6 +929,7 @@
                 }
                 I.length === 0 && removeValidateElement(element);
                 vobj.setStatus(-1);
+                (target = vobj.infoTarget) && target.hide().html('');
             }
         }
 
