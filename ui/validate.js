@@ -87,7 +87,7 @@
             formElm = J.g(opts.formId);
             formElm.addClass(opts.tpl);
             formElm.s("*").each(function (i, element) {
-                addValidateItem(element);
+                addValidateElement(element);
             });
             formElm.on('submit', function (e) {
                 e.stop();
@@ -117,8 +117,10 @@
             var status = -1, placeholder = elm.attr('placeholder'),
                 validateMessage = {ok: '', error: ''},
                 validateCenter,                             // 验证中心;
-                validateData = validateString.split('$$'),  // 验证规则数据;
+                validateData = validateString.split(/\$\$|\|\|/),  // 验证规则数据;
+                validateOr = /\|\|/.test(validateString),
                 validateItems = [],                         // 当前验证对象的所有验证类型
+                autoCreateTarget = false,
                 infoTarget, groupId, information, customId, events = [], eventFuns = {};
 
             /**
@@ -188,6 +190,7 @@
              * @returns {*}
              */
             function createInfoElement(tagName, elm, infoMessage, id) {
+                autoCreateTarget = true;
                 return J.create(tagName, {'class': opts.classNames.tooltip, id:id||''}).html(infoMessage).appendTo(elm.up());
             }
 
@@ -267,6 +270,7 @@
                 var vItem = buildValidateItem(vString), groupId = vItem.groupId;
                 vItem.elm = elm;
                 vItem.placeholder = placeholder;
+                vItem.validateOr = validateOr;
                 if (vItem.type === 'group' && groupId) {
                     GROUPS[groupId] || (GROUPS[groupId] = {items: [], source: null, status: -1});
                     vItem.condition && (GROUPS[groupId].condition = vItem.condition);
@@ -395,7 +399,6 @@
                     setStatus(-2); // 标记为验证中
                     validateCenter.doValidate();
                 }
-
             }
 
             /**
@@ -420,7 +423,9 @@
                 trigger: trigger,
                 groupId:groupId,
                 validateItems: validateItems,
+                validateOr: validateOr,
                 infoTarget: infoTarget,
+                targetCreated: autoCreateTarget,
                 setStatus: setStatus,
                 getStatus: getStatus,
                 placeholder: placeholder
@@ -450,7 +455,7 @@
              * 验证核心入口，单个输入框包含的所有验证类型
              */
             function doValidate() {
-                var status = 0, groupId = null, elmVal = elm.val(), inCustom = false;
+                var status = 0, groupId = null, elmVal = elm.val(), inCustom = false, iLen = validateItems.length;
 
                 J.each(validateItems, function (i, vItem) {
 
@@ -468,6 +473,7 @@
                             vItem.groupType || (vItem.groupType = GRP.groupType);
                             GROUPS[groupId].status = status = groupAction(vItem);
                             if (status === -1) {
+                                if (i !== iLen-1 && vItem.validateOr) break;
                                 finishCallback(status, GRP.message);
                                 return false;
                             }
@@ -475,6 +481,7 @@
                         case 'range':
                             status = rangeAction(vItem);
                             if (status === -1) {
+                                if (i !== iLen-1 && vItem.validateOr) break;
                                 finishCallback(status, vItem.message);
                                 return false;
                             }
@@ -482,6 +489,7 @@
                         case 'length':
                             status = lenAction(vItem);
                             if (status === -1) {
+                                if (i !== iLen-1 && vItem.validateOr) break;
                                 finishCallback(status, vItem.message);
                                 return false;
                             }
@@ -495,11 +503,13 @@
                         default:
                             status = regAction(vItem);
                             if (status === -1) {
+                                if (i !== iLen-1 && vItem.validateOr) break;
                                 finishCallback(status, vItem.message);
                                 return false;
                             }
                             break;
                     }
+                    if (status === 1 && vItem.validateOr) return false;
                 });
                 if (status !== -1 && !inCustom) {
                     finishCallback(status, '');
@@ -733,34 +743,6 @@
             }
         }
 
-
-        /**
-         * 动态添加验证元素
-         * @param element 验证元素，是J.dom实例
-         */
-        function addValidateItem(element) {
-            element = J.g(element);
-            var validateString;
-            if (validateString = element.attr('data-validate')) {
-                CACHE.push(new ValidateObject(element, validateString, taskerTrigger));
-            }
-        }
-
-        /**
-         * 动态移除验证元素
-         * @param element
-         */
-        function rmValidateItem(element) {
-            element = J.g(element).get();
-            var l = CACHE.length;
-            while (l--) {
-                if (element === CACHE[l].elm.get()) {
-                    CACHE[l].elm.un();
-                    CACHE.splice(l, 1);
-                }
-            }
-        }
-
         /**
          * 获取所有验证是否都通过
          * @return {Boolean}
@@ -866,7 +848,7 @@
          * 重置验证对象
          * @param elements
          */
-        function resetItems(elements){
+        function resetValidateElements(elements){
             var vobj, target;
 
             if(J.isString(elements)){
@@ -895,10 +877,129 @@
             return null;
         }
 
+        /**
+         * 动态添加验证元素
+         * @param element 验证元素，是J.dom实例
+         */
+        function addValidateItem(element, vitems) {
+            var vobj, ditems = {
+                condition: '',
+                elm: element,
+                halfChars: true,
+                message: '',
+                placeholder: '',
+                type: ''
+            };
+            ditems = J.mix(ditems, vitems || {});
+            if(vobj = findValidateByElm(element)){
+                var I = vobj.validateItems, l = I.length;
+                while (l--) {
+                    if (ditems.type === I[l].type) {
+                        I[l] = ditems;
+                        return;
+                    }
+                }
+                I.push(ditems);
+                return;
+            }
+            addValidateElement(element,buildValidateString(ditems));
+
+        }
+
+        /**
+         * 通过验证规则对象还原属性字符串 data-validate
+         * @param vitem
+         * @returns {string}
+         */
+        function buildValidateString(vitem){
+            return vitem.type+"$"+vitem.message;
+        }
+
+
+        /**
+         * 动态移除验证元素
+         * @param element
+         */
+        function removeValidateItem(element, vtype) {
+            var vobj;
+            if(vobj = findValidateByElm(element)){
+                var I = vobj.validateItems, l = I.length;
+                while (l--) {
+                    if (vtype === I[l].type) {
+                        I.splice(l, 1);
+                    }
+                }
+                I.length === 0 && removeValidateElement(element);
+                vobj.setStatus(-1);
+            }
+        }
+
+        /**
+         * 动态添加验证元素
+         * @param element 验证元素
+         * @param vString 验证字符串
+         */
+        function addValidateElement(element, vString) {
+            element = J.g(element);
+            var validateString;
+            if ( (validateString = vString) || (validateString = element.attr('data-validate')) ) {
+                CACHE.push(new ValidateObject(element, validateString, taskerTrigger));
+            }
+        }
+
+        /**
+         * 动态移除验证元素
+         * @param element
+         */
+        function removeValidateElement(element) {
+            element = J.g(element).get();
+            var l = CACHE.length, v;
+            while (l--) {
+                v = CACHE[l];
+                if (element === v.elm.get()) {
+                    v.elm.un();
+                    v.targetCreated && v.infoTarget.remove();
+                    CACHE.splice(l, 1);
+                }
+            }
+        }
+
+        function getValidateTypes(){
+            return {
+                REQUIRE: 'require',
+                INTEGE:'intege',
+                INTEGE1:'intege1',
+                INTEGE2:'intege2',
+                DECMAL:'decmal',
+                DECMAL1:'decmal1',
+                DECMAL2:'decmal2',
+                EMAIL:'email',
+                URL:'url',
+                CHINESE:'chinese',
+                ZIPCODE:'zipcode',
+                QQ:'qq',
+                TEL:'tel',
+                TEL1:'tel1',
+                MOBILE:'mobile',
+                USERNAME:'username',
+                LETTER:'letter',
+                OK:'ok',
+                ERROR:'error',
+                TARGET:'target',
+                INFO:'info',
+                EVENT:'event',
+                AUTO:'auto',
+                CUSTOM:'custom'
+            }
+        }
+
         return {
-            resetItems: resetItems,
+            VTYPES: getValidateTypes(),
+            resetElements: resetValidateElements,
+            addElement: addValidateElement,
+            removeElement: removeValidateElement,
             addItem: addValidateItem,
-            rmItem: rmValidateItem,
+            removeItem: removeValidateItem,
             validate: validate
         };
 
