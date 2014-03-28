@@ -385,7 +385,7 @@
              */
             function addOverlays(data,notClearPrev){
                 var i,len=data.length,key,tmpObj={},removeHandler, j,zoom=context.getZoom();
-                for(i=0;i<len;i++){
+                J.each(data,function(k,v){
                     (function(itemOpts){
                         if(!itemOpts.key){
                             itemOpts = J.mix(itemOpts,{
@@ -406,7 +406,7 @@
                          * 不在ｃａｃｈｅ里，需要创建，同时创建缓存
                          */
                         if(!preCache[key]){
-                           var item =  context.addOverlay(itemOpts,itemOpts.overlaysType);
+                            var item =  context.addOverlay(itemOpts,itemOpts.overlaysType);
                             item.onClick = function(){
                                 var ret = itemOpts.onClick&&itemOpts.onClick.call(this);
                                 if(ret === false) return;
@@ -430,10 +430,8 @@
                         }
                         tmpObj[key] = preCache[key];
                         delete  preCache[key];
-                    })(data[i]);
-
-
-                }
+                    })(v);
+                });
                 /**
                  * 删除本次请求与上次请求之外的点
                  */

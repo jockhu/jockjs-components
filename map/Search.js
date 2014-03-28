@@ -22,12 +22,13 @@
             progress = opts.progress;
             list = document.getElementById("p_list");
             J.g("statusSearch").on('click',function(){
-                ret.resetHandler();
-                map.getZoom()>12?ListCenter.getZoneData():ListCenter.getRankData();
                 J.g(this).hide();
-                J.g("propBarLeft").removeClass('propBarLeft ').show();
-                ListCenter.resetHandler();
+                clickTipHandler();
             });
+            J.g("fresh_list").on('click',function(e){
+                J.g(e.target).hasClass('btn')&&clickTipHandler();
+            })
+
             setAutocomplete();
             rollback();
 
@@ -84,6 +85,7 @@
         }
 
         function getLankMask(data) {
+            this.landMask=[];
             if(!data.length){
                 progress.showSearchTip();
                 ret.resetHandler();
@@ -106,7 +108,6 @@
             ListCenter.getNextPageData = function () {
             };
             ListCenter.listItemClick = baiduListItemClick;
-            ListCenter.opts.onItemBuild = baiduAddressItemBuild;
             setTimeout(function () {
                 ret.resetHandler = function () {
                     J.g("listPager").hide();
@@ -120,29 +121,15 @@
             map.setViewport(getViewPort(data));
             list.innerHTML = '';
             updateBaiduListeHtml(data);
-
-
-            for(var i= 0,len= data.length;i<len;i++){
-                var p = {
-                    lng:data[i].point.lng,
-                    lat:data[i].point.lat,
-                    className:'areaMarkerMain',
-                    x:-18,
-                    y:-46,
-                    html:'<div><p>'+data[i].title+'</p><i class="areaMarker"></i></div>'
-                }
-            }
-
-            currentOverlays = map.addOverLays(data);
+            this.landMask = map.addOverLays(data);
+            map.clearCache();
             if (map.getZoom() > 12) {
-                map.clearCache();
                 map.opts.onItemBuild = ListCenter.onCommItemBuild;
                 map.opts.onResult = function (data) {
                     return data.comms;
                 }
                 map.getData();
             }
-
         }
 
         function onResultMultiCommData(data) {
@@ -158,12 +145,25 @@
 
         }
 
+        /**
+         * 清空条件重新查找事件
+         */
+        function clickTipHandler(){
+            ret.resetHandler();
+            map.getZoom()>12?ListCenter.getZoneData():ListCenter.getRankData();
+            J.g("propBarLeft").removeClass('propBarLeft ').show();
+            ListCenter.resetHandler();
+            progress.hide();
+        }
+
 
         function updateListeHtml(data) {
             var key = 'commid'
             var frag = document.createDocumentFragment();
             var uid = 65;
             J.each(data, function (k, t) {
+                if(!t.propCount)return;
+                t.onItemBuild = searchItemBuild;
                 var tmp = document.createElement("li");
                 strChar = String.fromCharCode(uid++);
                 tmp.className = "land";
@@ -182,6 +182,7 @@
              charCode = 65, key = 'commid',code=0;
             J.each(data, function (k, t) {
                 t[key] = code++;
+                t.onItemBuild = baiduAddressItemBuild;
                 var tmp = document.createElement("li");
                 tmp.className = "land";
                 tmp.setAttribute('lng', t.point.lng);
@@ -218,8 +219,7 @@
             }
             ListCenter.getNextPageData = function () {
             };
-            ListCenter.listItemClick = listItemClick;
-            ListCenter.opts.onItemBuild = searchItemBuild;
+            ListCenter.listItemClick = listItemClick
             setTimeout(function () {
                 ret.resetHandler = function () {
                     J.g("listPager").hide();
@@ -231,24 +231,38 @@
                 }
             }, 500)
 
+           /* if(map.getZoom()>12){
 
+                ListCenter.addResultHandler(function(data){
+
+                });d
+            }*/
             map.setViewport(getViewPort(data.comms));
             list.innerHTML = '';
             updateListeHtml(data.comms);
-            currentOverlays = map.addOverLays(data.comms);
             if (map.getZoom() > 12) {
-                map.clearCache();
+               // map.clearCache();
+                J.each(data.comms,function(k,v){
+                    v.onItemBuild = searchItemBuild;
+                });
                 map.opts.onItemBuild = ListCenter.onCommItemBuild;
-                map.opts.onResult = function (data) {
-                    return data.comms;
+                map.opts.onResult = function (ret) {
+                    J.each(data.comms,function(k,v){
+                       ret.comms.push(v);
+                    });
+                    //var merge = ret.comms.concat(data.comms);
+                    return ret.comms;
                 }
                 map.getData();
+                return;
             }
+           map.addOverLays(data.comms);
         }
 
         //高亮显示小区
         function toggleComm(key) {
             var i, t;
+            currentOverlays = map.getCurrentOverlays();
             for (i in currentOverlays) {
                 t = currentOverlays[i];
                 var dom = t._div.first();
@@ -261,20 +275,12 @@
         //高亮显示小区
         function toggleMask(key) {
             var i, t;
+            currentOverlays = this.landMask;
             for (i in currentOverlays) {
                 t = currentOverlays[i];
                 var dom = t._div.first();
                 t.key == key ? (t.onMouseOver(),dom.addClass('buble')) :dom.removeClass("buble");
             }
-        }
-
-
-        function inAreaZoom() {
-
-        }
-
-        function overAreaZoom() {
-
         }
 
         function overlayClick() {
@@ -285,6 +291,27 @@
         }
 
         function landMaskClick(){
+            ret.resetHandler();
+            var data = this.p;
+            var p = {
+                lng:data.lng,
+                lat:data.lat,
+                className:'areaMarkerMain',
+                x:-18,
+                y:-59,
+                html:'<div><p>'+data.title+'</p><i class="areaMarker"></i></div>'
+            }
+            map.setCenter(p.lng, p.lat,16);
+            map.addOverlay(p,'zoneMarker');
+            return false;
+        }
+
+        function landMaskMouseOver(){
+            this._div.first().addClass('buble');
+            return false;
+        }
+        function landMaskMouseOut(){
+            this._div.first().removeClass('buble');
             return false;
         }
 
@@ -300,8 +327,8 @@
             return item;
         }
 
-
         function baiduAddressItemBuild(item) {
+            console.log(item)
             var tmp = item.lng;
             item.x = 0;
             item.y = 0;
@@ -312,13 +339,17 @@
             item.className='landMask',
             item.html = '<div><p class="">'+item.title+'</p><i class="tip">'+String.fromCharCode(charCode++)+'</i></div>';
             item.onClick = landMaskClick;
+            item.onMouseOver = landMaskMouseOver;
+            item.onMouseOut = landMaskMouseOut;
+
+
             return item;
         }
 
         function baiduListItemClick(elm, e) {
             var code = elm.attr("data-code");
             if(elm.hasClass("landHover")){
-                J.each(currentOverlays,function(k,v){v.removeOverlay()})
+              /*  J.each(this.landMask,function(k,v){v.removeOverlay()})*/
                 var p = {
                     lng:elm.attr('lng'),
                     lat:elm.attr('lat'),
@@ -432,6 +463,7 @@
             window.header.onItemBuild = auto.onItemBuild;
             J.g("searchForm").get().onsubmit = function () {
                 ret.resetHandler();
+                map.clearOverlays();
                 J.g("searchPrompt").hide();
                 KW = J.g("p_search_input").val();
                 J.get({

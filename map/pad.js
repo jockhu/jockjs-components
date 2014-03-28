@@ -72,6 +72,8 @@
                CommnameContainer:J.g("propBarLeft").s(".comname").eq(0),
                countNum: J.g("propBarLeft").s("b").eq(0)
            })
+           document.addEventListener('touchend',function(){
+           })
            ListCenter.getRankData();
            search = new J.map.search({
                map:map,
@@ -149,11 +151,12 @@
            ListCenter.data.commid = '';
            mapChangePosition();
 
+
        }
 
+
        function moveEnd(e){
-           //if(map.getZoom()>12&& e.moveLenth>opts.moveLengthChange){
-           mapChangePosition();
+               (map.getZoom()>12)&&mapChangePosition();
        }
 
        function mapChangePosition(){
@@ -361,7 +364,7 @@
                        '<div class="map_tip_no_props">' +
                        '<b>你搜索的“'+commName+'”没有找到</b>' +
                        '<br>建议您： ' +
-                       '<a href="javascript:;" class="btn">清空条件重新查找</a>或拖动地图到目标位置   ' +
+                       '<a href="javascript:;" class="btn">清空条件重新查找</a>&nbsp;或拖动地图到目标位置   ' +
                        ' <i class="iDel">&nbsp;</i>' +
                        '</div>' +
                        '</div>';
@@ -369,6 +372,12 @@
                mapTip.html(html).show();
 
 
+           }
+
+
+           function hide(){
+               listTip.hide();
+               mapTip.hide();
            }
 
            //显示“房源加载中”提示
@@ -404,12 +413,6 @@
               }
 
            }
-           function hideMap(){
-
-           }
-           function hideList(){
-
-           }
           function setLock(isLock){
               lock = !!isLock;
           }
@@ -420,6 +423,7 @@
                showLoadingTip:showLoadingTip,
                hideLoadingTip:hideLoadingTip,
                showSearchTip:showSearchTip,
+               hide:hide,
                handler:handler,
                setLock:setLock
            }
