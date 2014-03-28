@@ -2,7 +2,7 @@
 (function (context) {
     function Search(opts) {
         var defOpts = {
-                KWUrl:'http://shanghai.release.lunjiang.dev.anjuke.com/ajax/geomap/',
+               KWUrl:J.g("p_filter_result").attr("data-searchurl"),
                 map:null,
                 callback:{}
             }, opts, map, callback, progress, list, ret = {
@@ -14,7 +14,10 @@
                 commid:''
 
             },
+            _proListCenter= J.mix({},ListCenter),
+            me= this,
             KW='';//当前搜索的关键字
+
         (function () {
             opts = J.mix(defOpts, opts || {})
             callback = opts.callback;
@@ -28,10 +31,8 @@
             J.g("fresh_list").on('click',function(e){
                 J.g(e.target).hasClass('btn')&&clickTipHandler();
             })
-
             setAutocomplete();
             rollback();
-
             J.map.search.callback = onResultKW;
         })();
 
@@ -95,7 +96,7 @@
             ret.resetHandler = function () {
             };
             //给 build item 加上ａ,ｂ,ｃ,ｄ
-            var charCode = 65;
+            charCode = 65;
             var handler, tmp;
             var _getZoneData = ListCenter.getZoneData;
             var _getRankData = ListCenter.getRankData;
@@ -130,6 +131,7 @@
                 }
                 map.getData();
             }
+            charCode=65;
         }
 
         function onResultMultiCommData(data) {
@@ -160,19 +162,22 @@
         function updateListeHtml(data) {
             var key = 'commid'
             var frag = document.createDocumentFragment();
-            var uid = 65;
+            charCode =65;;
             J.each(data, function (k, t) {
                 if(!t.propCount)return;
                 t.onItemBuild = searchItemBuild;
+                t.onClick = listItemClick;
                 var tmp = document.createElement("li");
-                strChar = String.fromCharCode(uid++);
+                strChar = String.fromCharCode(charCode++);
                 tmp.className = "land";
                 tmp.setAttribute("data-code", t[key]);
                 var str = '<a onclick="return false;" href="' + t['prop_url'] + '" class="tip" title="' + t['img_title'] + '" alt="' + t['img_title'] + '" target="_blank">' + strChar + '</a>' + '<div class="t">' + t['commname'] + '</div>' + '<div class="addr">' + t['address'] + '</div>' + '<a class="view" href="###">查看附近房源</a><span class="line"></span>';
                 tmp.innerHTML = str;
+                tmp.onclick = listItemClick;
                 tmp.setAttribute("data-id", t[key]);
                 frag.appendChild(tmp);
             });
+            charCode=65;
             list.appendChild(frag);
         }
 
@@ -190,6 +195,7 @@
                 tmp.setAttribute("data-code", t[key]);
                 var str = '<a onclick="return false;" href="' + '###' + '" class="tip" title="' + t['title'] + '" alt="' + t['title'] + '" target="_blank">' + String.fromCharCode(charCode++) + '</a>' + '<div class="t">' + t['title'] + '</div><div class="addr">' + t['address'] + '</div><a class="view" href="###">查看附近房源</a>'  + '<span class="line"></span>';
                 tmp.innerHTML = str;
+                tmp.onclick = baiduListItemClick;
                 tmp.setAttribute("data-id", t[key]);
                 frag.appendChild(tmp);
             });
@@ -202,42 +208,30 @@
          * @param data
          */
         function onBuildMultiCommData(data) {
+            var _ListCenter = ListCenter;
+            charCode = 65;
+
+            ListCenter = {
+                data:{},
+                getZoneData : function () {},
+                getRankData : function () {},
+                getNextPageData : function (){},
+                nextPageEvent:function(){}
+            }
             progress.setLock(true)
             ret.resetHandler = function () {
             };
             //给 build item 加上ａ,ｂ,ｃ,ｄ
-            var charCode = 65;
             var handler, tmp;
             updateStatusHtml(data.propNum);
-            var _getZoneData = ListCenter.getZoneData;
-            var _getRankData = ListCenter.getRankData;
-            var _getNextPageData = ListCenter.getNextPageData;
-            var _listItemClick = ListCenter.listItemClick;
-            ListCenter.getZoneData = function () {
-            };
-            ListCenter.getRankData = function () {
-            }
-            ListCenter.getNextPageData = function () {
-            };
-            ListCenter.listItemClick = listItemClick
+            map.setViewport(getViewPort(data.comms));
             setTimeout(function () {
                 ret.resetHandler = function () {
                     J.g("listPager").hide();
                     progress.setLock(false)
-                    ListCenter.getZoneData = _getZoneData;
-                    ListCenter.getRankData = _getRankData
-                    ListCenter.getNextPageData = _getNextPageData;
-                    ListCenter.listItemClick = _listItemClick;
+                    ListCenter=_ListCenter;
                 }
-            }, 500)
-
-           /* if(map.getZoom()>12){
-
-                ListCenter.addResultHandler(function(data){
-
-                });d
-            }*/
-            map.setViewport(getViewPort(data.comms));
+            }, 500);
             list.innerHTML = '';
             updateListeHtml(data.comms);
             if (map.getZoom() > 12) {
@@ -245,7 +239,7 @@
                 J.each(data.comms,function(k,v){
                     v.onItemBuild = searchItemBuild;
                 });
-                map.opts.onItemBuild = ListCenter.onCommItemBuild;
+                map.opts.onItemBuild = _ListCenter.onCommItemBuild;
                 map.opts.onResult = function (ret) {
                     J.each(data.comms,function(k,v){
                        ret.comms.push(v);
@@ -256,6 +250,7 @@
                 map.getData();
                 return;
             }
+            charCode=65;
            map.addOverLays(data.comms);
         }
 
@@ -286,7 +281,8 @@
         function overlayClick() {
             var target = this;
                 //已经点击过一次的
-            ListCenter.getCommData(target.p.commid, target.p.commname);
+            _proListCenter.getCommData(target.p.commid, target.p.commname);
+            toggleComm(target.key)
             return false;
         }
 
@@ -328,7 +324,6 @@
         }
 
         function baiduAddressItemBuild(item) {
-            console.log(item)
             var tmp = item.lng;
             item.x = 0;
             item.y = 0;
@@ -346,10 +341,11 @@
             return item;
         }
 
-        function baiduListItemClick(elm, e) {
+        function baiduListItemClick( e) {
+            e.stopPropagation();
+            var elm = J.g(this);
             var code = elm.attr("data-code");
             if(elm.hasClass("landHover")){
-              /*  J.each(this.landMask,function(k,v){v.removeOverlay()})*/
                 var p = {
                     lng:elm.attr('lng'),
                     lat:elm.attr('lat'),
@@ -362,23 +358,26 @@
                 map.addOverlay(p,'zoneMarker');
                 return;
             }
-            this.preClickedItem && this.preClickedItem.removeClass("landHover");
+            me.preClickedItem && me.preClickedItem.removeClass("landHover");
             elm.addClass("landHover");
             toggleMask(code + "_" + map.getZoom());
-            this.preClickedItem = elm;
+            me.preClickedItem = elm;
         }
 
 
-        function listItemClick(elm, e) {
+        function listItemClick(e) {
+            e.stopPropagation();
+            var elm = J.g(this);
             var code = elm.attr("data-code");
             if(elm.hasClass("landHover")){
                 getCommData(code, elm.s('.t').eq(0).html());
                 return;
             }
-            this.preClickedItem && this.preClickedItem.removeClass("landHover");
+            me.preClickedItem && me.preClickedItem.removeClass("landHover");
             elm.addClass("landHover");
             toggleComm(code + "_" + map.getZoom());
-            this.preClickedItem = elm;
+            me.preClickedItem = elm;
+            return false;
         }
 
 
@@ -431,6 +430,7 @@
                 onSelect:function (data) {
                     ret.resetHandler();
                     getCommData(data.id, data.name, false);
+                    progress.hide();
                     return false;
                 },
                 onSource:function (params, response) {
@@ -466,6 +466,10 @@
                 map.clearOverlays();
                 J.g("searchPrompt").hide();
                 KW = J.g("p_search_input").val();
+                if(!KW){
+                    ListCenter.getRankData();
+                    return false;
+                }
                 J.get({
                     type:'jsonp',
                     url:opts.KWUrl,
@@ -474,6 +478,7 @@
                     },
                     callback:'J.map.search.callback'
                 })
+                progress.hide();
                 return false;
             }
 

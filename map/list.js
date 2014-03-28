@@ -250,7 +250,8 @@ var ListCenter = {
         })
     },
     nextPageEvent:function(){
-        if(ListCenter.ignoreNextpage) return;
+        //搜索状态出来后，就不进行翻页
+        if(J.g("statusSearch").get().clientHeight) return;
         ListCenter.progress.showLoadingTip(J.g('p_filter_loading')); //显示loading提示
         ListCenter.nextPageTimer&&clearTimeout(ListCenter.nextPageTimer);
         var lis = document.getElementById("p_list");

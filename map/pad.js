@@ -72,14 +72,27 @@
                CommnameContainer:J.g("propBarLeft").s(".comname").eq(0),
                countNum: J.g("propBarLeft").s("b").eq(0)
            })
-           document.addEventListener('touchend',function(){
-           })
            ListCenter.getRankData();
            search = new J.map.search({
                map:map,
                progress:progress,
                callback:map.opts
            });
+           ListCenter.search = search;
+           J.on(document,'gesturechange',gestureChange());
+           function gestureChange(){
+               var timer;
+               return function(){
+                   timer&&clearTimeout(timer);
+                   timer=setTimeout(function(){
+                       var overlays  = map.getCurrentOverlays();
+                       J.each(overlays,function(k,v){
+                           //alert(v.get().height())
+                           return false;
+                       })
+                   },500)
+               }
+           }
 
        }
        init();
@@ -97,6 +110,7 @@
             * overlay click event
             */
            J.on(opts.target,map.eventType.overlay.click,function(e){
+               search.resetHandler();
                ListCenter.overlayClick(e);
            });
 
@@ -149,9 +163,8 @@
        function zoomEnd(e){
            ListCenter.data.commids='';
            ListCenter.data.commid = '';
+           ListCenter.overlayInViewPort = false;
            mapChangePosition();
-
-
        }
 
 
@@ -162,7 +175,6 @@
        function mapChangePosition(){
            moveEndTimer&&clearTimeout(moveEndTimer);
            moveEndTimer=setTimeout( function(){
-               search.resetHandler();
                map.getZoom()>12?ListCenter.getZoneData():ListCenter.getRankData();
            },200);
        }
@@ -573,7 +585,6 @@
            }
 
            function repaceHtml(target,prev){
-               console.log(prev.html())
                var html = target.html();
                html = html + (html.indexOf('　√')>-1 ?'':'　√')
                target.html(html);
