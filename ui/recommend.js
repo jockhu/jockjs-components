@@ -108,6 +108,10 @@
                         box&&box.show();
                         if(opts.requestUrl !== ""){
                             len = box.s("a").length;
+                            //如果只有一套数据的话，需要将遮挡板块显示list_nodata_bg
+                            if (len==1) {
+                                J.g("list_nodata_bg")&&J.g("list_nodata_bg").show();
+                            }
                             stopQuest = (pageIndex == 1 && len < 10) || len < (10 + (pageIndex-1)*20) ? true : false;
                         }
                     }else{
