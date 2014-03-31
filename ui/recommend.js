@@ -110,6 +110,9 @@
                         J.g("list_nodata_bg")&&J.g("list_nodata_bg").setStyle({"display":"none"});
                         if(opts.requestUrl !== ""){
                             len = box.s("a").length;
+                            if (len==1) {
+                                J.g("list_nodata_bg")&&J.g("list_nodata_bg").setStyle({"display":"block", "height":"50px"});
+                            }
                             stopQuest = (pageIndex == 1 && len < 10) || len < (10 + (pageIndex-1)*20) ? true : false;
                         }
                     }else{
