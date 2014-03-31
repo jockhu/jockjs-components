@@ -118,6 +118,7 @@
                         J.g('list_lookmore')&&J.g("list_lookmore").setStyle({"display":"none"});
                         if (J.g('likeNo')&&J.g('likeNo').s(".loveti").length>0) {
                             J.g('likeNo').s(".loveti").eq(0).setStyle({"display":"none"});
+                            J.g("list_nodata_bg")&&J.g("list_nodata_bg").show();
                         }
                         stopQuest = true;
                     }
