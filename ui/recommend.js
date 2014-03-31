@@ -106,12 +106,10 @@
                         }
                         fetchEnd=true;
                         box&&box.show();
+                        //如果有数据的话，则将遮挡板块隐藏list_nodata_bg
+                        J.g("list_nodata_bg")&&J.g("list_nodata_bg").setStyle({"display":"none"});
                         if(opts.requestUrl !== ""){
                             len = box.s("a").length;
-                            //如果只有一套数据的话，需要将遮挡板块显示list_nodata_bg
-                            if (len==1) {
-                                J.g("list_nodata_bg")&&J.g("list_nodata_bg").show();
-                            }
                             stopQuest = (pageIndex == 1 && len < 10) || len < (10 + (pageIndex-1)*20) ? true : false;
                         }
                     }else{
@@ -122,7 +120,6 @@
                         J.g('list_lookmore')&&J.g("list_lookmore").setStyle({"display":"none"});
                         if (J.g('likeNo')&&J.g('likeNo').s(".loveti").length>0) {
                             J.g('likeNo').s(".loveti").eq(0).setStyle({"display":"none"});
-                            J.g("list_nodata_bg")&&J.g("list_nodata_bg").show();
                         }
                         stopQuest = true;
                     }
