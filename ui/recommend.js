@@ -97,7 +97,7 @@
                     pause = false;
                     if(data.replace(/\s/ig,"")!==""){
                         if(pageIndex==1){
-                           showBox(data);
+                           showBox(data, true);
                         }else{
                             showMore(data);
                             if (opts.type=='home'){
@@ -190,15 +190,18 @@
         /**
          * 第一次数据请求成功，并渲染到容器里。
          * @param data
+         * @param isExp -- by lyj
          */
-        function showBox(data) {
+        function showBox(data, isExp) {
             var div= J.create('div'),cont= J.g(opts.cont);
             if(opts.type=='list'){
                 div.html(data).appendTo(opts.cont);
             }else{
                 cont.html(data);
             }
-            opts.onexposure&&opts.onexposure(cont);
+            if (isExp) {
+                opts.onexposure&&opts.onexposure(cont);
+            }
             opts.total=J.g(opts.cont).s('a').eq(0).attr('count');
             opts.onShow&&opts.onShow();
             showInfor();
@@ -245,7 +248,7 @@
                 i=pageIndex*10-12;
                 opts.total=J.g(opts.cont).s('a').eq(i).attr('count');
             }else if(opts.type=='view'){
-                showBox(data);
+                showBox(data, false);
             }
             opts.onShow&&opts.onShow();
             opts.onexposure&&opts.onexposure(cont);
