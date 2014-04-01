@@ -189,8 +189,11 @@
 
 
        function beforeRequest(data){
-           //将单页隐藏掉
+           //将单页隐藏掉,临时写法 by zhh
            J.g('pad_view_map') && J.g('pad_view_map').hide();
+           J.g('pad_view_map_bg') && J.g('pad_view_map_bg').hide();
+           J.g('close_prop_view') && J.g('close_prop_view').hide();
+
            progress.showMapLoading();
            !ListCenter.overlayInViewPort&&progress.showLoadingTip(J.g('p_select_loading'));
            var ret =J.mix(data,{
