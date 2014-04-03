@@ -111,6 +111,7 @@ var ListCenter = {
     //获得筛选数据
     getFilterData:function(data){
         this.data = J.mix(this.data,data);
+        this.map.removeCurrentOverlays();
         if(!(this.map.getZoom()>12)){
             this.getRankData(data,true);
             return;
@@ -313,7 +314,7 @@ var ListCenter = {
     },
     listItemClick:function (elm,e) {
         var url = '/xiaoqu/jingjiren/'+elm.get().community_id+'/?fromother='+elm.attr("data-id")+'&from=pad_zf_map'+'&fromtype='+elm.attr("data-fromtype");
-        window.open(url);
+      //  window.open(url);
         var map = this.map;
         //J.g(elm).s("a").eq(0).get().click();
         var overlays = map.getCurrentOverlays();
@@ -322,8 +323,7 @@ var ListCenter = {
         var key = code + '_' + zoom;
         this.preClickedItem && this.preClickedItem.removeClass("on");
         elm.addClass("on");
-        this.toggleClassOver(overlays[key], this.preClickedOverlay, true);
-        this.preClickedOverlay = overlays[key];
+        this.toggleClassOver(overlays[key]|| ListCenter.preClickedOverlay);
         this.preClickedItem = elm;
     },
     overlayClick:function(event){
@@ -337,15 +337,15 @@ var ListCenter = {
             var overlays = map.getCurrentOverlays();
             delete  overlays[data.target.key];
             map.setCurrentOverlays(overlays);
-            ListCenter.toggleClassOver(data.target);
+            ListCenter.toggleClassOver(data.target,true);
             ListCenter.preClickedOverlay = data.target;
             ListCenter.getCommData(data.commid,data.commname);
             //计录小区id,用来翻页
     },
-
-    toggleClassOver:function (current, prev, isskip) {
+    toggleClassOver:function (current, isskip) {
         this.preClickedOverlay && this.preClickedOverlay.get().first().removeClass("f60bg");
         this.preClickedOverlay && this.preClickedOverlay.onMouseOut();
+        console.log(current)
         current && current.onMouseOver();
         current && current.get().first().addClass("f60bg");
         this.preClickedOverlay = current;

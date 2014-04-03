@@ -7,7 +7,8 @@
                 callback:{}
             }, opts, map, callback, progress, list, ret = {
                 resetHandler:function () {
-                }
+                },
+                reset:clickTipHandler
             }, currentOverlays, charCode = 65,
             data = {
                 model:2,
@@ -24,6 +25,7 @@
             map = opts.map;
             progress = opts.progress;
             list = document.getElementById("p_list");
+            //清除条件事件
             J.g("statusSearch").on('click',function(){
                 J.g(this).hide();
                 clickTipHandler();
@@ -31,6 +33,11 @@
             J.g("fresh_list").on('click',function(e){
                 J.g(e.target).hasClass('btn')&&clickTipHandler();
             })
+
+
+            J.g(document,'touchend',function(){
+                J.g("searchPrompt").hide();
+            });
             setAutocomplete();
             rollback();
             J.map.search.callback = onResultKW;
@@ -86,6 +93,7 @@
         }
 
         function getLankMask(data) {
+            ret.resetHandler();
             this.landMask=[];
             if(!data.length){
                 progress.showSearchTip();
@@ -93,22 +101,15 @@
                 return;
             }
             progress.setLock(true)
-            ret.resetHandler = function () {
-            };
             //给 build item 加上ａ,ｂ,ｃ,ｄ
             charCode = 65;
             var handler, tmp;
             var _getZoneData = ListCenter.getZoneData;
             var _getRankData = ListCenter.getRankData;
             var _getNextPageData = ListCenter.getNextPageData;
-            var _listItemClick = ListCenter.listItemClick;
-            ListCenter.getZoneData = function () {
-            };
-            ListCenter.getRankData = function () {
-            }
-            ListCenter.getNextPageData = function () {
-            };
-            ListCenter.listItemClick = baiduListItemClick;
+            ListCenter.getZoneData = function () {};
+            ListCenter.getRankData = function () {};
+            ListCenter.getNextPageData = function () {};
             setTimeout(function () {
                 ret.resetHandler = function () {
                     J.g("listPager").hide();
@@ -116,7 +117,7 @@
                     ListCenter.getZoneData = _getZoneData;
                     ListCenter.getRankData = _getRankData
                     ListCenter.getNextPageData = _getNextPageData;
-                    ListCenter.listItemClick = _listItemClick;
+                    ret.resetHandler=function(){};
                 }
             }, 500)
             map.setViewport(getViewPort(data));
@@ -152,10 +153,13 @@
          */
         function clickTipHandler(){
             ret.resetHandler();
+            J.g("p_search_input").val('');
+            map.removeCurrentOverlays();
             map.getZoom()>12?ListCenter.getZoneData():ListCenter.getRankData();
             J.g("propBarLeft").removeClass('propBarLeft ').show();
             ListCenter.resetHandler();
             progress.hide();
+
         }
 
 
@@ -230,6 +234,8 @@
                     J.g("listPager").hide();
                     progress.setLock(false)
                     ListCenter=_ListCenter;
+                    ret.resetHandler=function(){};
+
                 }
             }, 500);
             list.innerHTML = '';
@@ -282,6 +288,7 @@
             var target = this;
                 //已经点击过一次的
             _proListCenter.getCommData(target.p.commid, target.p.commname);
+            ListCenter = J.mix({},_proListCenter);
             toggleComm(target.key)
             return false;
         }
@@ -354,6 +361,8 @@
                     y:-59,
                     html:'<div><p>'+elm.s(".t").eq(0).html()+'</p><i class="areaMarker"></i></div>'
                 }
+                ret.resetHandler();
+                console.log(ListCenter,123)
                 map.setCenter(p.lng, p.lat,16);
                 map.addOverlay(p,'zoneMarker');
                 return;
@@ -430,6 +439,7 @@
                 onSelect:function (data) {
                     ret.resetHandler();
                     getCommData(data.id, data.name, false);
+                    map.removeCurrentOverlays();
                     progress.hide();
                     return false;
                 },
@@ -462,6 +472,7 @@
             window.header.onSource = auto.onSource;
             window.header.onItemBuild = auto.onItemBuild;
             J.g("searchForm").get().onsubmit = function () {
+                map.removeCurrentOverlays();
                 ret.resetHandler();
                 map.clearOverlays();
                 J.g("searchPrompt").hide();
@@ -479,6 +490,7 @@
                     callback:'J.map.search.callback'
                 })
                 progress.hide();
+                J.g("p_search_input").get().blur();
                 return false;
             }
 

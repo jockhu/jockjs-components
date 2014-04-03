@@ -264,7 +264,14 @@
            })();
 
            function bindEvent(){
-               mapTip.on('click',zoomOUt);
+               mapTip.on('click',function(e){
+                   if(e.target.className.indexOf("btn")>-1){
+                       //这是走走搜索
+                       search.reset();
+                       return;
+                   }
+                   zoomOUt(e);
+               });
                listTip.on('click',zoomOUt);
                ListCenter.init();
            }
@@ -478,7 +485,8 @@
                areaid:'',
                blockid:'',
                price:'',
-               room:''
+               room:'',
+               p:1
            }
            var categorys = J.s('.category');
            var zone = categorys.eq(0).first();
@@ -530,7 +538,6 @@
                        ListCenter.data = J.mix(ListCenter.data,MenuData);
                        map.setCenter(p.lng, p.lat,16);
                        map.addOverlay(p,'zoneMarker');
-
                    }
                    else
                    {

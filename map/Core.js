@@ -466,6 +466,7 @@
             function removeCurrentOverlays(){
                 J.each(preCache,function(k,v){
                     v.remove();
+                    delete preCache[k];
                 })
             }
             function clearCache(){
@@ -621,6 +622,7 @@
         }
 
         return J.mix({
+            removeCurrentOverlays:overlayCenter.removeCurrentOverlays,
             getData:dataCenter.getData,
             onResult:dataCenter.onResult,
             eventType:MSG.eventType,
