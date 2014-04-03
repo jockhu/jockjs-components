@@ -79,19 +79,9 @@
                callback:map.opts
            });
            ListCenter.search = search;
-           J.on(document,'gesturechange',gestureChange());
-           function gestureChange(){
-               var timer;
-               return function(){
-                   timer&&clearTimeout(timer);
-                   timer=setTimeout(function(){
-                       var overlays  = map.getCurrentOverlays();
-                       J.each(overlays,function(k,v){
-                           //alert(v.get().height())
-                           return false;
-                       })
-                   },500)
-               }
+           window.onerror=function(){
+                alert(1)
+               map.zoomIn();
            }
 
        }
