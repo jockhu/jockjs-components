@@ -379,7 +379,6 @@
         }
         function setCenter(lng,lat,zoom){
             map.centerAndZoom(new BMap.Point(lng, lat),zoom);
-            map.setCenter(new BMap.Point(lng, lat));
         }
         function geolocation(obj, callback){
             var gl = new BMap.Geolocation();

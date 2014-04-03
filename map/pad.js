@@ -79,10 +79,9 @@
                callback:map.opts
            });
            ListCenter.search = search;
-           window.onerror=function(){
-                alert(1)
-               map.zoomIn();
-           }
+//           window.onerror=function(){
+//               map.zoomIn();
+//           }
 
        }
        init();
@@ -125,7 +124,6 @@
                        J.g("sort_by_time_link").addClass("def");
                        break;
                }
-
                ListCenter.getSortData();
            });
 
@@ -179,11 +177,6 @@
 
 
        function beforeRequest(data){
-           //将单页隐藏掉,临时写法 by zhh
-           J.g('pad_view_map') && J.g('pad_view_map').hide();
-           J.g('pad_view_map_bg') && J.g('pad_view_map_bg').hide();
-           J.g('close_prop_view') && J.g('close_prop_view').hide();
-
            progress.showMapLoading();
            !ListCenter.overlayInViewPort&&progress.showLoadingTip(J.g('p_select_loading'));
            var ret =J.mix(data,{
@@ -488,13 +481,27 @@
 
            var preTarget =null;
 
+
+           function hideSinglePage(){
+               var viewMap,viewMapBg,propView;
+               return viewMap&&(viewMap.hide(),viewMapBg.hide(),propView.hide()) || (function(){
+                   viewMap = J.g('pad_view_map');
+                   viewMapBg = J.g('pad_view_map_bg');
+                   propView = J.g('close_prop_view');
+                   viewMap.hide(),viewMapBg.hide(),propView.hide();
+               })();
+           }
+
            J.on(document,'select:selectedChange',function(e){
+
+               //将单页隐藏掉,临时写法 by zhh
+               hideSinglePage();
+
                if(!zoneTarget){
                    zoneTarget= categorys.eq(0).s(".option_box_second").eq(0).first();
                    priceTarget = categorys.eq(1).s(".option_box").eq(0).first();
                    roomTarget = categorys.eq(2).s(".option_box").eq(0).first();
                }
-
 
 
                var target = e.data.target;
@@ -521,9 +528,11 @@
 
                }
                if(areaid !=='' && blockid !== null){
+
                    MenuData.blockid = blockid;
                    setZone(target.attr("typename"));
                    //是板块
+                   console.log(blockid,map.setCenter,p)
                    if(blockid !== ''){
                        ListCenter.data = J.mix(ListCenter.data,MenuData);
                        map.setCenter(p.lng, p.lat,16);
