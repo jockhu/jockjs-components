@@ -488,7 +488,7 @@
                    viewMap = J.g('pad_view_map');
                    viewMapBg = J.g('pad_view_map_bg');
                    propView = J.g('close_prop_view');
-                   viewMap.hide(),viewMapBg.hide(),propView.hide();
+                   viewMap && viewMap.hide(),viewMapBg && viewMapBg.hide(),propView && propView.hide();
                })();
            }
 
