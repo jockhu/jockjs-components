@@ -41,6 +41,7 @@ var ListCenter = {
     getDataCommon:function(data){
         J.g("statusSearch").hide();
         J.g("propBarLeft").show();
+
         this.ignoreNextpage = false;
         if(this.preClickedOverlay&&this.preClickedOverlay.isInViewPort()){
             this.overlayInViewPort = true;

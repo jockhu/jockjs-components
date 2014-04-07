@@ -192,6 +192,7 @@
              * isLock 右边不变化,适用于翻页
              */
             function getData(sendData,onsuccess){
+                    if(lockCenter)return true;
                     var paraSendData = sendData,asy;
                     var ajaxSetting={
                         url:opts.url,
@@ -587,40 +588,18 @@
          * @constructor
          */
 
-        function LockCenter(){
-            var task = [];
-            function run(){
-                var curTask, i,len = task.length;
-                for(i=0;i<len;i++){
-                    if(task[i]()===false)return true;
-                }
-           /*     while((curTask=task.shift())&&(curTask()=== false)){
-                       return true;
-                }*/
-            }
-            function addLockTask (fn){
-                task.push(fn)
-            }
-            function removeLockTask(fn){
-                var i= 0,len= task.length;
-                for(;i<len;i++){
-                    if(task[i] === fn){
-                        task.splice(i,1);
-                        console.dir(task)
-
-                        i--;
-                    }
-                }
-
-            }
-            return {
-                addLockTask:addLockTask,
-                removeLockTask:removeLockTask,
-                isLock:run
-            }
+        function LockCenter(isLock){
+            lockCenter = !!isLock;
         }
 
-        return J.mix({
+
+        function O(data){
+            for(var i in data ){
+                this[i] = data[i];
+            }
+        }
+        O.prototype= context;
+        return new O({
             removeCurrentOverlays:overlayCenter.removeCurrentOverlays,
             getData:dataCenter.getData,
             onResult:dataCenter.onResult,
@@ -629,9 +608,10 @@
             setCurrentOverlays:overlayCenter.setCurrentOverlays,
             addOverLays:overlayCenter.addOverLays,
             opts:globaopts,
+            setLock:LockCenter,
             clearCache:overlayCenter.clearCache
 
-        },context);
+        });
     }
     J.map.core =core;
 

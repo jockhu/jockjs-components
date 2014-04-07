@@ -40,6 +40,7 @@
            listContainer,
            currentPage= 1,
            D,
+           lock,//事件锁
            data={
                model:1,//除区域外都是模式１
                p:1,//页码
@@ -157,6 +158,7 @@
        }
 
        function mapChangePosition(){
+           if(lock)true;
            moveEndTimer&&clearTimeout(moveEndTimer);
            moveEndTimer=setTimeout( function(){
                map.getZoom()>12?ListCenter.getZoneData():ListCenter.getRankData();
@@ -212,6 +214,8 @@
           });
            return elm;
        }
+
+
 
        /**
         *
@@ -311,7 +315,6 @@
                },3000)
            }
            function showMapChangePosition(){
-               if(lock)return;
                mapTip.hide();
                hideLoadingTip(J.g(opts.loadingSelectTip));//隐藏好房马上来提示
                hideLoadingTip(J.g(opts.loadingFilterTip));//隐藏列表更多房源正在加载中提示

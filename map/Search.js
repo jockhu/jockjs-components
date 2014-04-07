@@ -18,6 +18,9 @@
             _proListCenter= J.mix({},ListCenter),
             me= this,
             KW='';//当前搜索的关键字
+        var dataCenter;
+        var eventCenter;
+        var viewCenter;
 
         (function () {
             opts = J.mix(defOpts, opts || {})
@@ -39,57 +42,273 @@
                 J.g("searchPrompt").hide();
             });
             setAutocomplete();
-            rollback();
+            //rollback();
             J.map.search.callback = onResultKW;
+            dataCenter = new DataCenter(map);
+            viewCenter = new ViewCenter();
+            eventCenter = new EventCenter();
         })();
 
+        function DataCenter(map){
+            var map = map;
+            var data={};
+            var kw;
+            /**
+             * 获取单个小区
+             */
+            function getSingleData(commid) {
+                data.commid = commid;
+                data.model = 2;
+                return getData(data)
+            }
 
-        /**
-         * 获取单个小区
-         */
-        function getCommData(commid) {
-            ret.resetHandler();
-            J.get({
-                url:'/newmap/search2',
-                data:{
-                    commid:commid,
-                    model:2
-                },
-                type:'json',
-                timeout:20000,
-                onSuccess:onResultCommData
-            });
-        }
-
-        /**
-         * 获取单个小区by filter
-         * @param data
-         */
-        function getCommDataByFilter(data) {
-            progress.setLock(true);
-            var param = J.mix({
-                commid:'',
-                price:'',
-                room:'',
-                model:2
-            },data||{});
-            //获取单个小区含筛选功能的
-            J.get({
-                url:'/newmap/search2',
-                data:param,
-                type:'json',
-                timeout:20000,
-                onSuccess:function(data){
-                    //筛选，当前点击的小区数量为空
-                    if(!data.propNum)
-                    onResultCommData(data);
+            function getZoneData(){
+                var b=map.getBounds(),w=b.getSouthWest(),e=b.getNorthEast();
+                var data = {
+                    swlat:w.lat,
+                    nelat:e.lat,
+                    swlng:w.lng,
+                    nelng:e.lng
                 }
-            });
-         }
+                var params = {
+                    model:2,
+                    p:1,
+                    bounds:data.swlat + "," + data.nelat + "," + data.swlng + "," + data.nelng
+                }
+                return getData(params);
 
-        function onResultCommDataByFilter(){
+            }
+
+            /**
+             * demo dataCenter.getMoreCommData('a')
+             * 获得多小区的接口
+             * @param name
+             * @return {*}
+             */
+            function getMoreCommData(name){
+                var data = {
+                    model:3,
+                    kw:name
+                }
+                return getData(data);
+
+            }
+
+            /**
+             * 获取二手房分词接口数据
+             * @param name　关键字
+             * @return {*}
+             */
+            function getKWData(name){
+                kw = name;
+               //这里跨域了
+                return getData({
+                    kw:name
+                },opts.KWUrl)
+             }
+
+            /**
+             * 从百地拉地标数据
+             * 这个是异步的，没法同步
+             */
+            function getBaiduData(name,context,callback){
+                map.localSearch(name, context||this, callback)
+            }
+
+            function getData(data,url){
+                var ret;
+                J.get({
+                    async:false,
+                    url:url||'/newmap/search2',
+                    data:data,
+                    type:'json',
+                    timeout:20000,
+                    onSuccess:function(data){ret = data}
+                });
+                return ret;
+            }
+            return {
+                getSingleCommData:getSingleData,
+                getMoreCommData:getMoreCommData,
+                getKWData:getKWData,
+                getBaiduData:getBaiduData,
+                getZoneData:getZoneData
+            }
+        }
+
+
+        function EventCenter(){
+            /**
+             *
+             * @param params 可以为参数或数据对象
+             */
+            function onItemSelect(params){
+                data = params.props&&params.comms ?params:dataCenter.getSingleCommData(params.id);
+                var singleComm = data;
+                var com = singleComm.comms[0];
+                map.setCenter(com.lng, com.lat, 17);//居中显示,居中显示和会去取区域数据。
+                ListCenter.addResultHandler(function (data) {
+                    data.comms.unshift(singleComm.comms[0]);
+                    setTimeout(function () {
+                        var cur = map.getCurrentOverlays();
+                        cur[com.commid + '_' + 17] && cur[com.commid + '_' + 17].onClick();
+                        singleComm= null;
+                        com = null;
+                    }, 100)
+                    data.props.list = singleComm.props.list;
+                    return data;
+                })
+            }
+
+            function onSubmit(name){
+                var data = dataCenter.getKWData(name);
+                switch (data.matchType) {
+                    case 0:
+                        //先搜多小区，再搜百度地标
+                        　var ret = dataCenter.getMoreCommData(name);
+                         switch (ret.commNum){
+                             case 0:
+                                data = dataCenter.getBaiduData(name);
+                                break;
+                             case 1:
+                                onItemSelect(ret);
+                                 break;
+                             default:
+                                 onBuildMultiCommData(ret);
+                         }
+                        break;
+                    case 1:
+                        onItemSelect(data.comm.commId)
+                        break;
+                    case 2:
+                        break;
+                    //community multi
+                    case 3:
+                        //
+                        viewCenter.showLankMask(data.region);
+                        break;
+                    //single block
+                    case 4:
+                        viewCenter.showLankMask(data.region);
+                }
+            }
+
+            function onClickListItem(){
+
+
+            }
+
+            function onClearCondition(){
+
+            }
+            return {
+                onItemSelect:onItemSelect,
+                onSubmit:onSubmit
+            }
+        }
+
+
+        function ViewCenter(){
+            var charCode = 65;
+            function showMoreCommList(data) {
+                list.innerHTML = '';
+                var key = 'commid'
+                var frag = document.createDocumentFragment();
+                charCode =65;;
+                J.each(data, function (k, t) {
+                    if(!t.propCount)return;
+                    t.onItemBuild = searchItemBuild;
+                    t.onClick = listItemClick;
+                    var tmp = document.createElement("li");
+                    strChar = String.fromCharCode(charCode++);
+                    tmp.className = "land";
+                    tmp.setAttribute('data-lng', t.lng);
+                    tmp.setAttribute('data-lat', t.lat);
+                    tmp.setAttribute("data-code", t[key]);
+                    var str = '<a onclick="return false;" href="' + t['prop_url'] + '" class="tip" title="' + t['img_title'] + '" alt="' + t['img_title'] + '" target="_blank">' + strChar + '</a>' + '<div class="t">' + t['commname'] + '</div>' + '<div class="addr">' + t['address'] + '</div>' + '<a class="view" href="###">查看附近房源</a><span class="line"></span>';
+                    tmp.innerHTML = str;
+                    tmp.onclick = listItemClick;
+                    tmp.setAttribute("data-id", t[key]);
+                    frag.appendChild(tmp);
+                });
+                charCode=65;
+                list.appendChild(frag);
+            }
+
+
+            function showLandMaskList(data) {
+                var frag = document.createDocumentFragment(),
+                    charCode = 65, key = 'commid',code=0;
+                J.each(data, function (k, t) {
+                    t[key] = code++;
+                    t.onItemBuild = baiduAddressItemBuild;
+                    var tmp = document.createElement("li");
+                    tmp.className = "land";
+                    tmp.setAttribute('lng', t.point.lng);
+                    tmp.setAttribute('lat', t.point.lat);
+                    tmp.setAttribute("data-code", t[key]);
+                    var str = '<a onclick="return false;" href="' + '###' + '" class="tip" title="' + t['title'] + '" alt="' + t['title'] + '" target="_blank">' + String.fromCharCode(charCode++) + '</a>' + '<div class="t">' + t['title'] + '</div><div class="addr">' + t['address'] + '</div><a class="view" href="###">查看附近房源</a>'  + '<span class="line"></span>';
+                    tmp.innerHTML = str;
+                    tmp.onclick = baiduListItemClick;
+                    tmp.setAttribute("data-id", t[key]);
+                    frag.appendChild(tmp);
+                });
+                charCode=65;
+                list.appendChild(frag);
+            }
+
+            function showLankMask(data) {
+                data = data[0];
+                map.setCenter(data.lng, data.lat, data.zoom)
+                var p = {
+                    lng:data.lng,
+                    lat:data.lat,
+                    className:'areaMarkerMain',
+                    x:-18,
+                    y:-46,
+                    html:'<div><p>' + data.name + '</p><i class="areaMarker"></i></div>'
+                }
+                map.addOverlay(p, 'zoneMarker');
+            }
+
+            function showNoResultTip(){
+                progress.showSearchTip();
+            }
+            /**
+             * 展示搜索结果状态
+             */
+            function showStatus(countNum) {
+                var statusBar = J.g('propBarLeft');
+                var statusSearchBar = J.g('statusSearch')
+                var nextPage = J.g("listPager");
+                nextPage.show();
+                statusBar.hide();
+                J.g("statusSearch").get().style.display = 'block';
+                var tmp = statusSearchBar.s(".ret_num").eq(0);
+                tmp.html(tmp.html().replace(/\d+/, countNum));
+            }
+
+
+
+            return {
+                showLandMaskList:showLandMaskList,
+                showMoreCommList:showMoreCommList,
+                showNoResultTip:showNoResultTip,
+                showStatus:showStatus,
+                showLankMask:showLankMask
+            }
+
+
 
         }
+
+
+
+
+
+
+
+
 
 
 
@@ -109,20 +328,6 @@
         }
 
 
-        function getMultiCommData(commName) {
-            var params = {
-                model:3,
-                kw:commName
-            }
-            J.get({
-                url:'/newmap/search2',
-                data:params,
-                type:'json',
-                timeout:20000,
-                onSuccess:onResultMultiCommData
-            });
-
-        }
 
         function getLankMask(data) {
             ret.resetHandler();
@@ -168,6 +373,9 @@
             charCode=65;
         }
 
+
+
+
         function onResultMultiCommData(data) {
             if (data.comms.length == 0) {
                 map.localSearch(KW, this, getLankMask)
@@ -209,6 +417,8 @@
                 strChar = String.fromCharCode(charCode++);
                 tmp.className = "land";
                 tmp.setAttribute("data-code", t[key]);
+                tmp.setAttribute('data-lng', t.lng);
+                tmp.setAttribute('data-lat', t.lat);
                 var str = '<a onclick="return false;" href="' + t['prop_url'] + '" class="tip" title="' + t['img_title'] + '" alt="' + t['img_title'] + '" target="_blank">' + strChar + '</a>' + '<div class="t">' + t['commname'] + '</div>' + '<div class="addr">' + t['address'] + '</div>' + '<a class="view" href="###">查看附近房源</a><span class="line"></span>';
                 tmp.innerHTML = str;
                 tmp.onclick = listItemClick;
@@ -248,50 +458,23 @@
         function onBuildMultiCommData(data) {
             var _ListCenter = ListCenter;
             charCode = 65;
-
-            ListCenter = {
-                data:{},
-                getZoneData : function () {},
-                getRankData : function () {},
-                getNextPageData : function (){},
-                nextPageEvent:function(){}
-            }
+            map.setLock(true);
             progress.setLock(true)
-            ret.resetHandler = function () {
-            };
             //给 build item 加上ａ,ｂ,ｃ,ｄ
             var handler, tmp;
-            updateStatusHtml(data.commNum);
+            viewCenter.showStatus(data.commNum);
+            viewCenter.showMoreCommList(data.comms);
             map.setViewport(getViewPort(data.comms));
-            setTimeout(function () {
-                ret.resetHandler = function () {
-                    J.g("listPager").hide();
-                    progress.setLock(false)
-                    ListCenter=_ListCenter;
-                    ret.resetHandler=function(){};
 
-                }
-            }, 500);
-            list.innerHTML = '';
-            updateListeHtml(data.comms);
             if (map.getZoom() > 12) {
-               // map.clearCache();
-                J.each(data.comms,function(k,v){
-                    v.onItemBuild = searchItemBuild;
-                });
-                map.opts.onItemBuild = _ListCenter.onCommItemBuild;
-                map.opts.onResult = function (ret) {
-                    J.each(data.comms,function(k,v){
-                       ret.comms.push(v);
-                    });
-                    //var merge = ret.comms.concat(data.comms);
-                    return ret.comms;
-                }
-                map.getData();
-                return;
+                var  zoneData =dataCenter.getZoneData();
+                 data.comms = data.comms.concat(zoneData.comms);
+                ListCenter.opts.onItemBuild = ListCenter.onCommItemBuild;
             }
             charCode=65;
-           map.addOverLays(data.comms);
+            progress.setLock(false)
+            map.addOverLays(data.comms);
+           // map.setLock(false);
         }
 
         //高亮显示小区
@@ -413,7 +596,7 @@
             var elm = J.g(this);
             var code = elm.attr("data-code");
             if(elm.hasClass("landHover")){
-                getCommData(code);
+                eventCenter.onItemSelect(code);
                 return;
             }
             me.preClickedItem && me.preClickedItem.removeClass("landHover");
@@ -424,19 +607,7 @@
         }
 
 
-        function onResultBlock(data) {
-            data = data[0];
-            map.setCenter(data.lng, data.lat, data.zoom)
-            var p = {
-                lng:data.lng,
-                lat:data.lat,
-                className:'areaMarkerMain',
-                x:-18,
-                y:-46,
-                html:'<div><p>' + data.name + '</p><i class="areaMarker"></i></div>'
-            }
-            map.addOverlay(p, 'zoneMarker');
-        }
+
 
 
         function onResultKW(data) {
@@ -476,9 +647,9 @@
                         J.g("searchForm").get().onsubmit();
                         return false;
                     }
-                    getCommData(data.id, data.name, false);
+                    eventCenter.onItemSelect(data);
                     map.removeCurrentOverlays();
-                    progress.hide();
+                    map.clearOverlays();
                     return false;
                 },
                 onSource:function (params, response) {
@@ -511,7 +682,6 @@
             window.header.onItemBuild = auto.onItemBuild;
             J.g("searchForm").get().onsubmit = function () {
                 map.removeCurrentOverlays();
-                ret.resetHandler();
                 map.clearOverlays();
                 J.g("searchPrompt").hide();
                 KW = J.g("p_search_input").val();
@@ -519,22 +689,11 @@
                     ListCenter.getRankData();
                     return false;
                 }
-                J.get({
-                    type:'jsonp',
-                    url:opts.KWUrl,
-                    data:{
-                        kw:KW
-                    },
-                    callback:'J.map.search.callback'
-                })
-                progress.hide();
+                eventCenter.onSubmit(KW);
                 J.g("p_search_input").get().blur();
                 return false;
                 }
 
-          /*  J.g("p_search_input").on('blur',function(){
-                setTimeout(function(){J.g("searchPrompt").hide();},400)
-            });*/
         }
 
         function updateStatusHtml(countNum) {
@@ -557,43 +716,8 @@
             return map.getViewport(points);
         }
 
-        /**
-         * 并发操作对象
-         * @param callback
-         * @returns {{getCallBack: Function}}
-         */
-        function stack(callback){
-            var task = [];
-            var ret = [];
-            var guid = 0;
-            var callback=callback;
-            function getCallback(fn){
-                return (function(index){
-                    return function(data){
-                        ret[index] = data;
-                        if(ret.length==guid)callback(ret);
-                        fn(data)
-
-                    };
-                })(guid++);
-            }
-            function done(){
-
-            }
-            return {
-                getCallBack:getCallback
-            }
-        }
 
 
-
-
-        function rollback() {
-            ListCenter.isLock = !ListCenter.isLock;
-        }
-
-        ret.getSingleComm=getCommData;
-      //  ret.getCommDataByFilter = getCommDataByFilter
         return ret;
 
 
