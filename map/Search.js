@@ -47,7 +47,7 @@
         /**
          * 获取单个小区
          */
-        function getCommData(commid, commName) {
+        function getCommData(commid) {
             ret.resetHandler();
             J.get({
                 url:'/newmap/search2',
@@ -60,6 +60,38 @@
                 onSuccess:onResultCommData
             });
         }
+
+        /**
+         * 获取单个小区by filter
+         * @param data
+         */
+        function getCommDataByFilter(data) {
+            progress.setLock(true);
+            var param = J.mix({
+                commid:'',
+                price:'',
+                room:'',
+                model:2
+            },data||{});
+            //获取单个小区含筛选功能的
+            J.get({
+                url:'/newmap/search2',
+                data:param,
+                type:'json',
+                timeout:20000,
+                onSuccess:function(data){
+                    //筛选，当前点击的小区数量为空
+                    if(!data.propNum)
+                    onResultCommData(data);
+                }
+            });
+         }
+
+        function onResultCommDataByFilter(){
+
+        }
+
+
 
         function onResultCommData(data) {
             var singleComm = data;
@@ -123,6 +155,7 @@
             map.setViewport(getViewPort(data));
             list.innerHTML = '';
             updateBaiduListeHtml(data);
+            updateStatusHtml(data.length);
             this.landMask = map.addOverLays(data);
             map.clearCache();
             if (map.getZoom() > 12) {
@@ -155,7 +188,8 @@
             ret.resetHandler();
             J.g("p_search_input").val('');
             map.removeCurrentOverlays();
-            map.getZoom()>12?ListCenter.getZoneData():ListCenter.getRankData();
+            map.clearOverlays();
+            map.getZoom()>12?_proListCenter.getZoneData():_proListCenter.getRankData();
             J.g("propBarLeft").removeClass('propBarLeft ').show();
             ListCenter.resetHandler();
             progress.hide();
@@ -227,7 +261,7 @@
             };
             //给 build item 加上ａ,ｂ,ｃ,ｄ
             var handler, tmp;
-            updateStatusHtml(data.propNum);
+            updateStatusHtml(data.commNum);
             map.setViewport(getViewPort(data.comms));
             setTimeout(function () {
                 ret.resetHandler = function () {
@@ -379,7 +413,7 @@
             var elm = J.g(this);
             var code = elm.attr("data-code");
             if(elm.hasClass("landHover")){
-                getCommData(code, elm.s('.t').eq(0).html());
+                getCommData(code);
                 return;
             }
             me.preClickedItem && me.preClickedItem.removeClass("landHover");
@@ -412,7 +446,7 @@
                     /*   this.data.p =1;
                      this.data.kw=data.kw;
                      this.model = 3;*/
-                    getMultiCommData(data.kw);
+                    getMultiCommData(data.kwFmt);
                     break;
                 case 1:
                     getCommData(data.comm.commId, data.comm.commName)
@@ -438,6 +472,10 @@
             var auto = {
                 onSelect:function (data) {
                     ret.resetHandler();
+                    if(!data.id){
+                        J.g("searchForm").get().onsubmit();
+                        return false;
+                    }
                     getCommData(data.id, data.name, false);
                     map.removeCurrentOverlays();
                     progress.hide();
@@ -492,11 +530,11 @@
                 progress.hide();
                 J.g("p_search_input").get().blur();
                 return false;
-            }
+                }
 
-            J.g("p_search_input").on('blur',function(){
+          /*  J.g("p_search_input").on('blur',function(){
                 setTimeout(function(){J.g("searchPrompt").hide();},400)
-            });
+            });*/
         }
 
         function updateStatusHtml(countNum) {
@@ -519,11 +557,43 @@
             return map.getViewport(points);
         }
 
+        /**
+         * 并发操作对象
+         * @param callback
+         * @returns {{getCallBack: Function}}
+         */
+        function stack(callback){
+            var task = [];
+            var ret = [];
+            var guid = 0;
+            var callback=callback;
+            function getCallback(fn){
+                return (function(index){
+                    return function(data){
+                        ret[index] = data;
+                        if(ret.length==guid)callback(ret);
+                        fn(data)
+
+                    };
+                })(guid++);
+            }
+            function done(){
+
+            }
+            return {
+                getCallBack:getCallback
+            }
+        }
+
+
+
 
         function rollback() {
             ListCenter.isLock = !ListCenter.isLock;
         }
 
+        ret.getSingleComm=getCommData;
+      //  ret.getCommDataByFilter = getCommDataByFilter
         return ret;
 
 

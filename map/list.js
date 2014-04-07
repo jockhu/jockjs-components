@@ -21,8 +21,7 @@ var ListCenter = {
     px:0,
     wait:false,
     progress:null,
-    lock:false,
-    preClickedOverlay:null,
+    preClickedOverlay:null,//上一个点击过的overlay
     preClickedItem:null,
     ignoreNextpage:false,//忽略下一页
     resultHandler:[],
@@ -39,7 +38,7 @@ var ListCenter = {
 
     //获得rank排序的数据
     //
-    getDataCommon:function(data,islock,async){
+    getDataCommon:function(data){
         J.g("statusSearch").hide();
         J.g("propBarLeft").show();
         this.ignoreNextpage = false;
@@ -51,7 +50,7 @@ var ListCenter = {
             this.preClickedOverlay = null;
             this.overlayInViewPort = false;
         }
-        !this.lock&&this.map.getData(data,islock,async);
+        this.map.getData(data);
     },
     getRankData:function(data,noCache){
         this.data.model = 1;
@@ -64,16 +63,20 @@ var ListCenter = {
     },
     //获得单个小区的数据
     getCommData:function (commid,commname,asy){
-        this.data.model =2;
-        this.data.commid = commid;
-        this.data.commids='';
-        this.data.p = 1;
+        if(Object.prototype.toString.call(commid)==='[object Object]'){
+            J.mix(this.data,commid);
+            commid = null;
+        }else{
+            this.data.model =2;
+            this.data.commid = commid;
+            this.data.commids='';
+            this.data.p = 1;
+        }
         var me = this;
         this.opts.onResult =this.onResultCommon(function (data) {
             me.onResultCommData.call(me,data,commname);
         });
         this.getDataCommon(J.mix({bounds:''},this.data),true,asy);
-
     },
     //普通获得下一页的数据
     getNextPageData:function (){
@@ -91,7 +94,7 @@ var ListCenter = {
             },10000);
             me.onResultNextPageData.call(me,data);
         });
-        this.getDataCommon(this.data,true);
+        this.getDataCommon(this.data);
     },
     //获得可视区域数据
     getZoneData:function(){
@@ -110,13 +113,47 @@ var ListCenter = {
 
     //获得筛选数据
     getFilterData:function(data){
+        this.data.p =1;
         this.data = J.mix(this.data,data);
         this.map.removeCurrentOverlays();
+        //点击过单　个小区
+        if(this.preClickedOverlay){
+            this.getFilterCommData(this.data)
+            return;
+        }
+
         if(!(this.map.getZoom()>12)){
             this.getRankData(data,true);
             return;
         }
         this.getZoneData(data);
+    },
+
+    /**
+     *
+     * @param data　筛选条件
+     */
+    getFilterCommData:function(data){
+        //首先拿到当前选中小区的筛选数据
+        data.commid = this.preClickedOverlay.p.commid;
+        var me = this;
+        var stack = this.getCombineResult(function(){
+           // me.progress.hide();
+        });
+        //定义单小区的callback
+        this.map.getData(data,stack.getCallBack('comm',onResultCommData));
+        function onResultCommData(data,combineData){
+             var item = me.preClickedOverlay._div.s("b").eq(0);
+             item.html(item.html().replace(/\d+/,data.propNum))
+            me.onResultCommData(data);
+        }
+        //首先拿到当前选中小区的筛选数据
+        data.commid = '';
+        //定义多小区的callback
+        this.map.getData(data,stack.getCallBack('muti',onResultZoneData));
+        function onResultZoneData(data,combineData){
+            return data.comms;
+        }
     },
 
     //获得排序数据
@@ -128,7 +165,7 @@ var ListCenter = {
         this.opts.onResult =this.onResultCommon(function (data) {
             me.onResultSortData.call(me,data);
         });
-        this.getDataCommon(this.data,true);
+        this.getDataCommon(this.data);
     },
 
 
@@ -190,10 +227,16 @@ var ListCenter = {
     },
     onResultCommData:function(data,commname){
         this.container.html('');
+        this.upDateStatusHtml(commname,data.propNum);
+        if(!data.propNum){
+            //无房源
+            this.progress.showCommResultTip();
+            return;
+        }
+        this.progress.hide();
         J.g("propBarLeft").addClass("commSel");
         J.g("p_filter_result").get().scrollTop=0;
         this.updateListHtml(data.props.list,'community_id',data.propNum);
-        this.upDateStatusHtml(commname,data.propNum);
         return data.comms;
     },
     onResultNextPageData:function(data){
@@ -226,6 +269,7 @@ var ListCenter = {
         this.data.commids = data.props.commids;
     },
     onResultZoneData:function(data){
+        console.log(this.overlayInViewPort,'in view port');
         if(this.overlayInViewPort){
             return data.comms;
         }
@@ -272,7 +316,7 @@ var ListCenter = {
         return this;
     },
     upDateStatusHtml:function(commname,countNum){
-        this.CommnameContainer.html(commname);
+        commname&&this.CommnameContainer.html(commname);
         this.countNum&&this.countNum.html(countNum);
 
     },
@@ -309,8 +353,6 @@ var ListCenter = {
                 this.container.get().appendChild(last);
             }
         }
-
-
     },
     listItemClick:function (elm,e) {
         var url = '/xiaoqu/jingjiren/'+elm.get().community_id+'/?fromother='+elm.attr("data-id")+'&from=pad_zf_map'+'&fromtype='+elm.attr("data-fromtype");
@@ -336,6 +378,9 @@ var ListCenter = {
             //对于单个小区，先拿到地图上的那个点，单独处理，移出可视区域再删除
             var overlays = map.getCurrentOverlays();
             delete  overlays[data.target.key];
+            //把上一次点击过的ｏｖｅｒａｌｙ重新放到ｏｖｅｒａｌｙ数组
+            var pre = ListCenter.preClickedOverlay;
+            pre&&pre.isInViewPort()&&(overlays[pre.key]=pre);
             map.setCurrentOverlays(overlays);
             ListCenter.toggleClassOver(data.target,true);
             ListCenter.preClickedOverlay = data.target;
@@ -349,7 +394,36 @@ var ListCenter = {
         current && current.onMouseOver();
         current && current.get().first().addClass("f60bg");
         this.preClickedOverlay = current;
+    },
+    getCombineResult:function(callback){
+        function stack(callback){
+            var ret = {};
+            var guid = 0;
+            var num=0;
+            var callback=callback;
+            function getCallback(name,fn){
+                var key;
+                if(Object.prototype.toString.call(name)=='[object Function]'){
+                    fn = name;
+                    key = guid;
+                }else{
+                    key = ret[name] === undefined ? name:guid;
+                }
+                ret[key] = undefined;
+                guid++;
+                ret.count = guid;
+                return function(data){
+                    ret[key] = data;
+                    num++;
+                    ret.length = num;
+                    if(num==guid)callback&&callback(ret);
+                    return fn&&fn(data,ret);
+                };
+            }
+            return {
+                getCallBack:getCallback
+            }
+        }
+        return new  stack(callback);
     }
-
-
 }

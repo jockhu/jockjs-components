@@ -3,7 +3,7 @@
 /// require('map.list');
 /// require('map.Search');
 
-;(function(){
+;(function(context){
    function pad(){
        var opts ={
            url:'/newmap/search2',
@@ -72,17 +72,13 @@
                CommnameContainer:J.g("propBarLeft").s(".comname").eq(0),
                countNum: J.g("propBarLeft").s("b").eq(0)
            })
-           ListCenter.getRankData();
+
            search = new J.map.search({
                map:map,
                progress:progress,
                callback:map.opts
            });
            ListCenter.search = search;
-//           window.onerror=function(){
-//               map.zoomIn();
-//           }
-
        }
        init();
 
@@ -151,7 +147,7 @@
        function zoomEnd(e){
            ListCenter.data.commids='';
            ListCenter.data.commid = '';
-           ListCenter.overlayInViewPort = false;
+           ListCenter.preClickedOverlay = false;
            mapChangePosition();
        }
 
@@ -255,7 +251,13 @@
                    }
                    zoomOUt(e);
                });
-               listTip.on('click',zoomOUt);
+               listTip.on('click',function(e){
+                   if(e.target.parentNode.className == 'search_blk'){
+                       search.reset();
+                       return;
+                   }
+                   zoomOUt(e);
+               });
                ListCenter.init();
            }
 
@@ -365,7 +367,6 @@
                '</div>';
                listTip.html(html).show();
                hideLoadingTip(J.g(opts.loadingFilterTip));//隐藏列表更多房源正在加载中提示
-
                html =
                    '<div class="map_tip" id="map_tip"  unselectable="on" onselectstart="return false;">' +
                        '<div class="map_tip_no_props">' +
@@ -380,6 +381,21 @@
 
 
            }
+
+           function showCommResultTip(){
+               if(lock)return;
+               var html ='<b>该小区没有符合条件的房源。</b>'+
+                   '<div>建议您：</div>'+
+                   '<ul>'+
+                   '<li>更改筛选价格；</li>'+
+                   '<li>更改筛选房型。</li>'+
+                   '</ul>'
+               mapTip.hide();
+               listTip.html(html).show();
+               hideLoadingTip(J.g(opts.loadingFilterTip));//隐藏列表更多房源正在加载中提示
+           }
+
+
 
 
            function hide(){
@@ -430,6 +446,7 @@
                showLoadingTip:showLoadingTip,
                hideLoadingTip:hideLoadingTip,
                showSearchTip:showSearchTip,
+               showCommResultTip:showCommResultTip,
                hide:hide,
                handler:handler,
                setLock:setLock
@@ -484,19 +501,16 @@
 
            function hideSinglePage(){
                var viewMap,viewMapBg,propView;
-               return viewMap&&(viewMap.hide(),viewMapBg.hide(),propView.hide()) || (function(){
-                   viewMap = J.g('pad_view_map');
-                   viewMapBg = J.g('pad_view_map_bg');
-                   propView = J.g('close_prop_view');
-                   viewMap && viewMap.hide(),viewMapBg && viewMapBg.hide(),propView && propView.hide();
+              return viewMap&&(viewMap.hide(),viewMapBg&&viewMapBg.hide(),propView&&propView.hide()) || (function(){
+                   (viewMap = J.g('pad_view_map'))&&viewMap.hide();
+                   (viewMapBg = J.g('pad_view_map_bg'))&&viewMapBg.hide();
+                   (propView = J.g('close_prop_view'))&&propView.hide();
                })();
            }
 
            J.on(document,'select:selectedChange',function(e){
-
-               //将单页隐藏掉,临时写法 by zhh
                hideSinglePage();
-
+               search.resetHandler();
                if(!zoneTarget){
                    zoneTarget= categorys.eq(0).s(".option_box_second").eq(0).first();
                    priceTarget = categorys.eq(1).s(".option_box").eq(0).first();
@@ -532,7 +546,6 @@
                    MenuData.blockid = blockid;
                    setZone(target.attr("typename"));
                    //是板块
-                   console.log(blockid,map.setCenter,p)
                    if(blockid !== ''){
                        ListCenter.data = J.mix(ListCenter.data,MenuData);
                        map.setCenter(p.lng, p.lat,16);
@@ -601,17 +614,13 @@
                target.html(html);
                prev&&prev.html(prev.html().replace('　√',''));
            }
-
-
-
-
-
-
-
+       }
+       return {
+           getSingleComm:search.getSingleComm,
+           getRankData:function(){ListCenter.getRankData()}
        }
 
 
    }
-
-    pad();
-})();
+    context.pad =pad;
+})(J.map);

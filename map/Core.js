@@ -30,7 +30,7 @@
             context = new J.map.bmap(opts);
             dataCenter = DataCenter(opts);
             MSG = new MessageCenter(opts);
-            lockCenter = new LockCenter();
+           // lockCenter = new LockCenter();
             eventBind();
 
             overlayCenter = new OverlayCenter(opts);
@@ -186,23 +186,14 @@
             /**
              * 防止用户频繁操作，用setTimeout解决
              * 发送ajax请求数据
+             * onsuccesse 用于同时多请求
              * sendData　自定义发数的数据　用于用户主动发送的数据
              * immediately true 忽略lock
              * isLock 右边不变化,适用于翻页
              */
-            function getData(sendData,isLock,async){
-                    var paraCallback,paraSendData = {},asy;
-                    if(typeof  sendData == 'function'){
-                        paraCallback = sendData;
-                    }else{
-                        paraSendData =  sendData
-                    }
-                    if(!isLock&&lockCenter.isLock()){
-                        return;
-                    }
-                    asy = async === false ? false:true;
+            function getData(sendData,onsuccess){
+                    var paraSendData = sendData,asy;
                     var ajaxSetting={
-                        async:asy,
                         url:opts.url,
                         type:opts.type,
                         onSuccess: null,
@@ -212,19 +203,15 @@
                     if(params === false){
                         return false;
                     }
-
-
-
-
                    deletePrevCallback();
                     ++guid;
-                    callback[guid]=J.map['callback'+guid] = onResult;
+                    callback[guid]=J.map['callback'+guid] =  (typeof onsuccess =='function'?getResultCallback(onsuccess):onResult);
                     ajaxSetting.onSuccess = callback[guid];
                     ajaxSetting.data = J.mix(params,sendData);
-                timer&&clearTimeout(timer);
-                timer =setTimeout(function(){
+                //!onsuccess&&timer&&clearTimeout(timer);
+                //timer =setTimeout(function(){
                     J.get(ajaxSetting);
-                },200)
+                //},200)
             }
             function deletePrevCallback(){
                 J.each(callback,function(k,v){
@@ -254,11 +241,27 @@
             function onResult(data){
                 deletePrevCallback();
                 data.zoom = context.getZoom();
-            //    onResult.callBack&&onResult.callBack(data);
                 var clientData = opts.onResult&&opts.onResult(data);
                 if(Object.prototype.toString.call(clientData) == "[object Array]"){
                     MSG.ajaxChange(data);//通过消息中心发送消息
-                    !onResult.isLock&&overlayCenter.addOverLays(clientData);
+                    overlayCenter.addOverLays(clientData);
+                }
+            }
+
+            /**
+             * 区别于onResult,这种情况用于异处处理
+             * @param fn
+             * @return {Function}
+             */
+            function getResultCallback(fn){
+                return function(data){
+                    deletePrevCallback();
+                    data.zoom = context.getZoom();
+                    var clientData = fn&&fn(data);
+                    if(Object.prototype.toString.call(clientData) == "[object Array]"){
+                        MSG.ajaxChange(data);//通过消息中心发送消息
+                        overlayCenter.addOverLays(clientData);
+                    }
                 }
             }
 
@@ -558,10 +561,6 @@
             function listItemClick(data){
                 sendMessage(overlayEventType.listItemClick,data);
             }
-
-
-
-
 
             return {
                 options:opts,
