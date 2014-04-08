@@ -355,9 +355,10 @@ var ListCenter = {
         }
     },
     listItemClick:function (elm,e) {
-        var url = '/xiaoqu/jingjiren/'+elm.get().community_id+'/?fromother='+elm.attr("data-id")+'&from=pad_zf_map'+'&fromtype='+elm.attr("data-fromtype");
+        J.g("pad_list").get().style.boxShadow="none";
+       /* var url = '/xiaoqu/jingjiren/'+elm.get().community_id+'/?fromother='+elm.attr("data-id")+'&from=pad_zf_map'+'&fromtype='+elm.attr("data-fromtype");
         window.open(url);
-        var map = this.map;
+ */       var map = this.map;
         //J.g(elm).s("a").eq(0).get().click();
         var overlays = map.getCurrentOverlays();
         var code = elm.attr('data-code');
