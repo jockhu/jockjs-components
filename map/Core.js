@@ -209,16 +209,12 @@
                     callback[guid]=J.map['callback'+guid] =  (typeof onsuccess =='function'?getResultCallback(onsuccess):onResult);
                     ajaxSetting.onSuccess = callback[guid];
                     ajaxSetting.data = J.mix(params,sendData);
-                //!onsuccess&&timer&&clearTimeout(timer);
-                //timer =setTimeout(function(){
                     J.get(ajaxSetting);
-                //},200)
             }
             function deletePrevCallback(){
                 J.each(callback,function(k,v){
                     J.map['callback'+guid]=v=null;
                     delete callback[k];
-                    //v = null;
                 })
             }
 
