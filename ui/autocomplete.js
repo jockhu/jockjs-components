@@ -228,7 +228,7 @@
         function getData(){
             sendedStr= opts.params[opts.query] = currentValue.trim();
             var a;
-           // hide();
+            // hide();
             if(opts.cache && (a = CACHED[getCacheKey()])) return suggest(a,'c');
             if(opts.source){
                 if(J.isFunction(opts.source)) opts.source(opts.params, suggest);
@@ -316,10 +316,7 @@
                 var close_btn = "<i id='item_close' class='ui_close'>关闭</i>"
                 J.create('div', {
                     "class": "ui_item ui_cb"
-                }).html(close_btn).appendTo(container).on('click', function(e){
-                        e&& e.stop();
-                        hide();
-                    });
+                }).html(close_btn).appendTo(container);
             }
 
             skipedNum =0;
