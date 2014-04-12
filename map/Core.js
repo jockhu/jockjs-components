@@ -81,6 +81,7 @@
                  * @type {*}
                  */
                 e.moveLenth = moveLength(moveStart,moveEnd);
+                if(lockCenter)return true;
                 opts.moveEnd&&opts.moveEnd.call(this,e);
             });
             map.addEventListener('zoomstart', function () {
@@ -90,7 +91,8 @@
 
                 overlayCenter.clearCache();
                 map.clearOverlays();
-                 opts.zoomEnd&&opts.zoomEnd.call(this,e);
+                if(lockCenter)return true;
+                opts.zoomEnd&&opts.zoomEnd.call(this,e);
                 //map click
             });
             map.addEventListener('touchstart', function () {
