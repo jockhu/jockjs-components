@@ -408,6 +408,7 @@
                          * 不在ｃａｃｈｅ里，需要创建，同时创建缓存
                          */
                         if(!preCache[key]){
+                            if(tmpObj[key])return;//本批数据中已存在相同的ＫＥＹ值
                             var item =  context.addOverlay(itemOpts,itemOpts.overlaysType);
                             item.onClick = function(){
                                 var ret = itemOpts.onClick&&itemOpts.onClick.call(this);
