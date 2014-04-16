@@ -13,37 +13,20 @@
 (function(J) {
     "use strict";
 
-    function replaceW(s){
-        return s ? s.replace(/\W|_/g,'') : Math.random().toString().replace(/\./,'')
+    function pad(source) {
+        return ('00' + source).match(/\d{2}$/)[0]
     }
 
-    function pad(source){
-        return ('00'+source).match(/\d{2}$/)[0]
-    }
-
-    J.utils.uuid = function () {
-        var userAgent = replaceW(navigator.userAgent),
-            herf = replaceW(J.D.location.href),
-            lastModifiled = replaceW(J.D.lastModified),
-            keys = (userAgent + herf + lastModifiled + '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz').split(''), len = keys.length,
-            uuid = [], i, r;
-
-        var date = new Date(),
-            month = date.getMonth()+1,
-            date2   = date.getDate(),
-            hours   = date.getHours(),
-            minutes = date.getMinutes();
-
-        uuid[8] = uuid[13] = uuid[18] = uuid[23] = '-';
-        uuid[14] = '4';
-        uuid[24] = 'T';
-
-        for (i = 0; i < 28; i++) {
-            if (!uuid[i]) {
-                r = 0 | Math.random()*len;
-                uuid[i] = keys[(i == 19) ? (r & 0x3) | 0x8 : r];
-            }
-        }
-        return uuid.join('').toUpperCase() + pad(month) + pad(date2) + pad(hours) + pad(minutes);
+    function Uuid(sType) {
+        sType = sType || 'T';
+        var date = new Date(), month = date.getMonth() + 1, date2 = date.getDate(), hours = date.getHours(),
+            minutes = date.getMinutes(), d = date.getTime();
+        var uuid = ('xxxxxxxx-yxxx-yxxx-yxxx-'+ sType +'xxx').replace(/[xy]/g, function(c) {
+            var r = (d + Math.random()*16)%16 | 0;
+            d = Math.floor(d/0x3);
+            return (c=='x' ? r : (r&0x7|0x8)).toString(16);
+        });
+        return (uuid + pad(month) + pad(date2) + pad(hours) + pad(minutes)).toUpperCase();
     };
+    J.utils.uuid = Uuid;
 })(J);
