@@ -64,10 +64,9 @@
      * Auto Complete Function
      * @param el 需要绑定的输入框
      * @param options 扩展选项
-     * @param close 是否有关闭按钮
      * @constructor
      */
-    function Autocomplete(el, options, close) {
+    function Autocomplete(el, options) {
         var disabled = false, el = J.g(el), targetEl, equaled = -1, selectedIndex = -1, currentValue = el.val().trim(), CACHED = [], DATA = [], opts, aId, isShow = false, divs,
             mainContainer, container, valueChangeTimer = null, ignoreValueChange = false, intervalTimer = null,isFocusSupport=false,sendedStr='',skipedNum=0;
         (function(){
@@ -311,13 +310,6 @@
                 }
                 item_count = i;
             });
-            //添加关闭按钮--by lyj--date 2014-02-24
-            if (close&&item_count!=0) {
-                var close_btn = "<i id='item_close' class='ui_close'>关闭</i>"
-                J.create('div', {
-                    "class": "ui_item ui_cb"
-                }).html(close_btn).appendTo(container);
-            }
 
             skipedNum =0;
             J.each(DATA,function(k,v){
@@ -451,8 +443,8 @@
             show:show
         };
     }
-    J.dom.fn.autocomplete = function(options, close){
-        return new Autocomplete(this.get(), options, close)
+    J.dom.fn.autocomplete = function(options){
+        return new Autocomplete(this.get(), options)
     };
     J.ui.autocomplete = Autocomplete;
 })(J, document);
