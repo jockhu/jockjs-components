@@ -121,10 +121,9 @@
                         }
                         stopQuest = true;
                     }
-                    if(stopQuest){
+                    if(stopQuest && J.site.info.pageName!="Anjuke_Prop_View"){
                         J.g(opts.elem).hide();
-
-                    } 
+                    }
                 },
                 onFailure:function(e){
                     if(pageIndex==1){
