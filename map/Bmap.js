@@ -231,7 +231,6 @@
                     className:me.p.className||'',
                     title:me.p.title||''
                 }).html(this.p.html);
-
                 div.on('click',function(){
                     me.onClick&&me.onClick();
                     me.p.showInfo&&openOverlayWindow(me.p, me)
@@ -445,7 +444,9 @@
                 zoomOut:zoomOut,
                 localSearch:localSearch,
                 getViewport:getViewport,
-                setViewport:setViewport
+                setViewport:setViewport,
+                localSearchNearby:localSearchNearby,
+		localSearch:localSearch
             }
             for (var i in m) {
                 this[i] = m[i];
