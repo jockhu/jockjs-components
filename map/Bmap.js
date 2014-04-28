@@ -22,6 +22,7 @@
             minz:0,
             maxz:0,
             scale:0,
+            nav:true,
             onMoveStart:null,
             onMoveEnd:null,
             onZoomStart:null,
@@ -81,7 +82,7 @@
                 var marker = addMarker(opts,'center');
             }
             if (!!opts.ezoom)
-                map.enableScrollWheelZoom();  // 开启鼠标滚轮缩放
+           map.enableScrollWheelZoom();  // 开启鼠标滚轮缩放
             map.enableKeyboard();         // 开启键盘控制
             map.enableContinuousZoom();   // 开启连续缩放效果
             map.enableInertialDragging(); // 开启惯性拖拽效果
@@ -89,7 +90,7 @@
                 anchor: BMAP_ANCHOR_TOP_LEFT,
                 type: !!opts.ctype ? BMAP_NAVIGATION_CONTROL_LARGE : BMAP_NAVIGATION_CONTROL_ZOOM
             });
-            map.addControl(ctrl_nav);
+            opts.nav&&map.addControl(ctrl_nav);
             if(!!opts.scale){
                 var ctrl_scale = new BMap.ScaleControl({
                     anchor: BMAP_ANCHOR_BOTTOM_LEFT
@@ -442,11 +443,10 @@
                 addSubwayLine:addSubwayLine,
                 clearOverlays:clearOverlays,
                 zoomOut:zoomOut,
-                localSearch:localSearch,
                 getViewport:getViewport,
                 setViewport:setViewport,
                 localSearchNearby:localSearchNearby,
-		localSearch:localSearch
+		        localSearch:localSearch
             }
             for (var i in m) {
                 this[i] = m[i];
