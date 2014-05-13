@@ -44,7 +44,7 @@
              * cookie 保存的格式为 15|12345|23456
              * chat窗口如果在后台保持1小时，哪怕窗口存在，也强制open一个新窗口，反之是激活后台窗口
              */
-            J.cookie.setCookie(cookie.name, hours + '|' + bId + '|' + pId, 0, cookie.domain);
+            cookieObj.setCookie(cookie.name, hours + '|' + bId + '|' + pId, 0, cookie.domain);
         }
 
         /**
