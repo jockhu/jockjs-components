@@ -21,18 +21,76 @@
      * @returns {{show: show, remove: remove}}
      * @constructor
      */
-    function Tab(){
+    function Tab(option){
 
         var
+            defOPts={
+               brokerId:0,
+               borkerName:'',
+               container:''
+            },
+            opts,
+            dom,
             //当前的经纪人ID
             currentBrokerId = 0;
+
+        ;(function(){
+            opts = J.mix(option,defOPts);
+            dom = createElement();
+            opts.container.append(dom);
+
+
+
+        })();
+
+
+        /**
+         * type priveate
+         */
+        function bindEvent(){
+
+            dom.on('click',function(e){
+                var e = e || window.event;
+                if(e.target.className=='btn_close'){
+                    remove();
+                    return true;
+                }
+                show();
+            });
+
+
+
+
+        }
+
+        /**
+         *
+         * @param id 经济人ｉｄ　
+         * @param name　经济人姓名
+         * @param num　　未读消息数
+         * @returns {li|*}
+         */
+        function createElement(id,name,num){
+            var dom = J.create("li",{
+                className:'now'
+            })
+            var html ='<em class="tab_l"></em><strong class="name">'+name+'</strong><em class="tab_r"></em>' +
+                '<a href="javascript:void(0);" class="btn_close" title="关闭"></a>' +
+                '<span>'+num+'</span>'
+            dom.html(html)
+            return dom;
+        }
+
+
+
 
         /**
          * 显示或激活和经纪人的聊天会话tab
          * @param brokerObject
          */
         function show(brokerObject){
-            
+            dom.addClass('now')
+            return dom;
         }
 
         /**
@@ -40,7 +98,8 @@
          * @param brokerObject
          */
         function hide(brokerObject){
-
+            dom.removeClass('now')
+            return dom;
         }
 
         /**
@@ -48,7 +107,9 @@
          * @param brokerObject
          */
         function remove(brokerObject){
-
+            J.un(dom)
+            dom.remove();
+            J.fire(opts.container,'chat:tabclick',{id:opts.id});
         }
 
         /**
@@ -56,13 +117,19 @@
          * @param data
          */
         function update(data){
-
+            var tip = dom.s(".tip").eq(0);
+            data = parseInt(data)>99?'99+':data;
+            tip.html(data);
+            update=function(data){
+                tip.html(data);
+            }
         }
 
         /**
          * 向打开的所有tab发消息
          */
         function triggerEvent(){
+
 
         }
 
@@ -77,7 +144,8 @@
 
         return {
             show:show,
-            remove:remove
+            remove:remove,
+            update:update
         }
     }
 
