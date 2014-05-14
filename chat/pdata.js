@@ -19,67 +19,260 @@
      * Pdata
      * @constructor
      */
-    function Pdata(){
+    function Pdata(options){
+        var apidomain = 'http://chatapi.dev.anjuke.com',
+            longdomain = 'http://dev.aifang.com:8080/register';
+        var opts = {
+            phone: '',
+            userId: '',
+            hosueUrl: 'http://shanghai.anjuke.com/prop/view/213787510',
+            brList: {}
+        }
 
+        init(options);
         /**
          * 初始化
          */
-        function init(){
-
+        function init(options){
+            opts = J.mix(opts, options || {});
         }
 
         /**
          *
          */
         function getFriends(){
+            var sendUrl = apidomain + '/user/getFriends/' + opts.phone;
+            J.get({
+                url: sendUrl,
+                type: 'jsonp',
+                async: 'false',
+                callback: 'processGetFriends'
+            });
 
+            window.processGetFriends = processGetFriends;
+
+            function processGetFriends(response) {
+                if (!response) return;
+                if (response.status == 'OK' && response.result && (response.result.length > 0)) {
+                    opts.brList = new Brlist(response.result.friends);
+                }
+            }            
         }
+
 
         /**
          *
          */
         function getChatList(){
+            var sendUrl = apidomain + '/message/getChatList';
+            J.get({
+                url: sendUrl,
+                type: 'jsonp',
+                async: 'false',
+                callback: 'processGetUnreadChat'
+            });
 
+            window.processGetFriends = processGetFriends;
+
+            function processGetUnreadChat(response) {
+                if (!response) return;
+                if (response.status == 'OK' && response.result && (response.result.length > 0)) {
+                    opts.brList && opts.brList.update(response.result);
+                }
+            }
         }
 
         /**
          *
          */
-        function getChatDetail(){
-
+        function getChatDetail(to_uid, min_msg_id, max_msg_id, limit){
+            var sendUrl = apidomain + '/message/getChatDetail/' + to_uid + '/' + min_msg_id + '/' + max_msg_id + '/' + limit;
+            J.get({
+                url: sendUrl,
+                type: 'jsonp',
+                async: 'false',
+                callback: 'processChatDetail'
+            });
+            function processChatDetail(response) {
+                if (!response) return;
+                if (response.status == 'OK' && response.result && (response.result.length > 0)) {
+                    //返回数据???????????????????????
+                }
+            }
+            window.processChatDetail = processChatDetail;
         }
 
         /**
          *
          */
-        function getFriendInfo(){
+        function getFriendInfo(uid){
+            var sendUrl = apidomain + '/user/getFriendInfo/' + opts.phone + '/' + uid, friendInfo = {};
+            J.get({
+                url: sendUrl,
+                type: 'jsonp',
+                async: 'false',
+                callback: 'processFriendInfo'
+            });
 
+            function processFriendInfo(response) {
+                if (!response) return;
+                if (response.status = 'OK' && response.result) {
+                    friendInfo = {
+                        icon: response.result.icon,
+                        nick_name: response.result.nick_name,
+                        broker_id: response.result.to_uid
+                    };
+
+                    return friendInfo;//???????????????????????
+                }
+            }
+            window.processFriendInfo = processFriendInfo;
         }
 
-        /**
-         *
-         */
-        function getRecomm(){
-
-        }
-
-        /**
-         *
-         */
-        function getPropertyInfo(){
-
-        }
 
         /**
          *
          */
         function getPollListener(){
+            var sendUrl = longdomain + '/' + '11' + '/w-ajk-user-chat/' + userId + '?auth=1';
+            J.get({
+                url: sendUrl,
+                type: 'jsonp',
+                callback: 'processLongPolling'
+            });
 
+            window.processLongPolling = processLongPolling;
+
+            function processLongPolling(response) {
+                if (!response) return;
+                if (response.status == 'OK') {
+                    if (typeof(response.result) == 'object') { //表示有消息返回
+                        getChatList();
+                        getPollListener();
+                    }
+                }
+            }
+        }
+
+        /**
+         *获取推荐信息[若无propId，则传空值]
+         */
+        function getRecomm(brokerId, propId){
+            var sendurl = '/api/rec',
+                param = {
+                    broker_id: brokerId
+                };
+            if (propId) {
+                param.prop_id = propId;
+            }
+            J.get({
+                url: sendurl,
+                data: param,
+                type: 'json',
+                onSuccess: function(response) { 
+                    if (!response.retcode) {
+
+                    }
+                }
+
+            });
+        }
+
+        /**
+         *获取房源信息
+         */
+        function getPropertyInfo(propId){
+            var sendurl = '/property/info',
+                param = {
+                    property_id: propId
+                };
+            J.get({
+                url: sendurl,
+                data: param,
+                type: 'json',
+                onSuccess: function(response) {  
+                    if (!response.retcode) {
+
+                    }
+                }
+            });
+        }
+
+        /**
+         *获取房源信息
+         */
+        function getBrokerInfo(brokerId){
+            var sendurl = '/broker/info',
+                param = {
+                    broker_id: brokerId
+                };
+            J.get({
+                url: sendurl,
+                data: param,
+                type: 'json',
+                onSuccess: function(response) { 
+                    if (!response.retcode) {
+
+                    }
+                }
+            });
+        }
+
+        /*
+        *获取房源卡片
+        */
+        function getHouseCard() {
+            var sendurl = '/property/card/ershou',
+            param = {
+                'request_url': hosueUrl
+            };
+            J.get({
+                url: sendurl,
+                data: param,
+                type: 'json',
+                onSuccess: function(response) { 
+                    if (response.retcode) return;
+
+                }
+            });
+        }
+
+        /*
+        *消息发送
+        *@param:msgObject包含字段：msg_type, body
+        */
+        function sendMsgToBroker(msgObject, brokerId) {
+            var sendurl = '/api/sendmsg',
+                param = {
+                    phone: opts.phone,
+                    body: msgObject.body,
+                    msg_type: msgObject.msg_type,
+                    to_uid: brokerId
+                };
+            J.post({
+                url: sendurl,
+                data: param,
+                type: 'json',
+                onSuccess: function(response) {  console.log('sendMsgToBroker:'); console.log(response);
+                    if (!response.retcode) {
+
+                    }
+                }
+            });
         }
 
 
         return {
-
+            getFriends: getFriends,
+            getChatList: getChatList,
+            getChatDetail: getChatDetail,
+            getFriendInfo: getFriendInfo,
+            getPollListener: getPollListener,
+            getRecomm: getRecomm,
+            getPropertyInfo: getPropertyInfo,
+            getHouseCard: getHouseCard,
+            getBrokerInfo: getBrokerInfo,
+            sendMsgToBroker: sendMsgToBroker
         }
     }
 
