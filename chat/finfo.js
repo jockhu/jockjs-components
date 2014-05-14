@@ -32,7 +32,7 @@
         function init(){
             
         }
-        var pdata = new J.chat.Pdata();
+        var pdata = J.chat.Pdata;
         /**
          * 获取房源信息
          */

@@ -21,6 +21,7 @@
      *      container:
      *      brokerObject:
      *      propertyId
+            callback
      *
      * @constructor
      */
@@ -28,6 +29,7 @@
         /**
          * 初始化
          */
+
         function init(opts,callback){
             var defaults = {
                 broker_id : opts.broker_id || '',
@@ -36,14 +38,13 @@
                 prop_id : opts.prop_id || ''
             };
             getRecommList(defaults,callback);
-        }
+        };
 
         /**
          * 获取房源推荐列表
          */
         function getRecommList(opts,callback){
-            var pdata = new J.chat.Pdata(),
-            recomm = pdata.getRecomm({
+            var pdata = J.chat.Pdata.getRecomm({
                 broker_id : opts.broker_id ,
                 city_id : opts.city_id,
                 price_int : opts.price_int,
@@ -71,12 +72,13 @@
                 return callback&&callback(html);
             });
         }
+
         return {
-            init : init
+            init:init
         }
+       
     }
 
     C.Recomm = Recomm;
 
 })(J.chat);
-
