@@ -42,8 +42,17 @@
 
 
         function fillData(friends){
-            var i, length = friends.length, brokerId, brokerInfo = {};
-            for(i = 0; i < length; i++) {
+            //var i, length = friends.length, brokerId, brokerInfo = {};
+            J.each(friends, function(i, v){
+                if( v.user_type == 2 ){
+                    BROKERSCACHE[v.to_uid] = new C.Broker({
+                        id: v.to_uid,
+                        name: v.nick_name,
+                        icon: v.icon
+                    });
+                }
+            });
+            /*for(i = 0; i < length; i++) {
                 if (friends[i].user_type == 2) {
                     brokerId = friends[i].to_uid;
                     brokerInfo = {
@@ -53,7 +62,7 @@
                     };
                     BROKERSCACHE[brokerId] = new Broker(brokerInfo);
                 }
-            }
+            }*/
         }
 
 
