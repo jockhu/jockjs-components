@@ -48,7 +48,7 @@
          * @param phone 登录的手机号码
          * @param callback 回调函数的字符串形式
          */
-        function getFriends(callback){
+        function getFriends(phone,callback){
             J.get({
                 url: buildUrl('friends'),
                 type: 'jsonp',
@@ -251,7 +251,6 @@
             sendMsgToBroker: sendMsgToBroker
         }
     }
-
     C.pdata = new Pdata();
 
 })(J.chat);

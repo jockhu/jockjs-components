@@ -9,7 +9,7 @@
  *
  */
 
-
+/// require('chat.pdata');
 /// require('chat.chat');
 /// require('chat.broker');
 

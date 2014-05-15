@@ -13,9 +13,10 @@
 /// require('chat.chat');
 /// require('chat.finfo');
 /// require('chat.recomm');
+/// require('chat.broker');
 /// require('chat.tab');
 
-(function(C){
+;(function(C){
 
 
     /**
@@ -24,7 +25,6 @@
      * @constructor
      */
     function Box(option){
-
         var defOpts={
             brokerId:0,
             brokerName:'万钟玲',
@@ -41,7 +41,7 @@
         /**
          * 初始化
          */
-        function init(){
+        (function(){
             opts = J.mix(defOpts,option);
             container = createElement();
             opts.container = container;
@@ -49,18 +49,19 @@
             Recommend = new J.chat.Recomm(opts);
             BrokerInfo = new J.chat.Broker(opts);
             FInfo = new J.chat.Finfo(opts);
-        }
+            eventBind();
+        })();
 
 
 
         function createElement(isFromList){
             var dom = J.create('div',{
-                className:'tab_conf_cf'
+                'class':'tab_conf_cf'
             })
             var html= J.g("tpl_chat_box").html();
             dom.html(html);
+            J.g("box_container").append(dom)
             return dom;
-
         }
 
 
@@ -71,6 +72,11 @@
              var chatList = container.s(".chatlist").eq(0);
             var btnSend =  container.s(".btn_sub").eq(0);
 
+            var txtSend = container.s(".txtbox").eq(0);
+            var txtMessageBox = container.s(".chatlist").eq(0);
+
+
+
             //聊天信息点击事件
             chatList.on('click',function(e){
                 var e = e || window.event;
@@ -79,8 +85,8 @@
 
             })
             //发送消息事件
-            btnSend.on('click',function(e){
-                sendMessage();
+            btnSend.on('click',function(){
+                sendMessage(txtSend.val(),txtMessageBox);
             })
 
 
@@ -182,7 +188,6 @@
             remove:remove
         }
     }
-
     C.Box = Box;
     new C.Box();
 

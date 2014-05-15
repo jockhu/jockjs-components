@@ -124,7 +124,7 @@
         }
     }
 
-    C.opened = new opened();
+    C.opened = new Opened();
 
 })(J.chat);
 

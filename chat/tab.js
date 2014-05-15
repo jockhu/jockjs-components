@@ -27,7 +27,7 @@
             defOPts={
                brokerId:0,
                borkerName:'',
-               container:''
+               unReadNum:0
             },
             opts,
             dom,
@@ -36,10 +36,7 @@
 
         ;(function(){
             opts = J.mix(option,defOPts);
-            dom = createElement();
-            opts.container.append(dom);
-
-
+            dom = createElement(opts.broker_id,opts.brokerName,opts.unReadNum);
 
         })();
 
@@ -77,7 +74,8 @@
             var html ='<em class="tab_l"></em><strong class="name">'+name+'</strong><em class="tab_r"></em>' +
                 '<a href="javascript:void(0);" class="btn_close" title="关闭"></a>' +
                 '<span>'+num+'</span>'
-            dom.html(html)
+            dom.html(html);
+            J.g("tab_container").append(dom);
             return dom;
         }
 
