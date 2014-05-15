@@ -26,9 +26,9 @@
     function Box(option){
 
         var defOpts={
-            id:0
-
-
+            brokerId:0,
+            brokerName:'万钟玲',
+            unReadNum:0
             },opts;
 
         var Tab,
@@ -184,6 +184,7 @@
     }
 
     C.Box = Box;
+    new C.Box();
 
 })(J.chat);
 
