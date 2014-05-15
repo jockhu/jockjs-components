@@ -68,6 +68,22 @@
          * 绑定事件
          */
         function eventBind(){
+             var chatList = container.s(".chatlist").eq(0);
+            var btnSend =  container.s(".btn_sub").eq(0);
+
+            //聊天信息点击事件
+            chatList.on('click',function(e){
+                var e = e || window.event;
+                var target = e.target;
+                //while(target.className=='map'||target.className=='map')
+
+            })
+            //发送消息事件
+            btnSend.on('click',function(e){
+                sendMessage();
+            })
+
+
 
         }
 
