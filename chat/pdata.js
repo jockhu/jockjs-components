@@ -75,6 +75,10 @@
                 url: sendUrl,
                 type: 'jsonp',
                 async: 'false',
+
+
+
+                
                 callback: 'processGetUnreadChat'
             });
 
