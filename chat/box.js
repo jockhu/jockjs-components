@@ -30,13 +30,25 @@
 
 
             },opts;
+
+        var Tab,
+            Recommend,
+            FInfo,
+            BrokerInfo,
+            container;
+
+
         /**
          * 初始化
          */
         function init(){
             opts = J.mix(defOpts,option);
-
-
+            container = createElement();
+            opts.container = container;
+            Tab = new J.chat.Tab(opts);
+            Recommend = new J.chat.Recomm(opts);
+            BrokerInfo = new J.chat.Broker(opts);
+            FInfo = new J.chat.Finfo(opts);
         }
 
 
@@ -45,9 +57,10 @@
             var dom = J.create('div',{
                 className:'tab_conf_cf'
             })
-            var html;
+            var html= J.g("tpl_chat_box").html();
+            dom.html(html);
+            return dom;
 
-            dom.html()
         }
 
 

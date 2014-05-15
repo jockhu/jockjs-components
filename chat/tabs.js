@@ -33,7 +33,6 @@
 
         ;(function(){
              container = J.s(".multiple").eq(0);
-
         })();
 
         /**
@@ -44,6 +43,7 @@
             var brokerId = typeof brokerId=='object'?brokerObject.id:brokerObject;
             var brokerObject = CACHE[brokerId];
             if(!brokerObject){
+                brokerObject.container = container;
                 CACHE[brokerId] = new C.Box(brokerObject);
                 CACHE[brokerId].prev= CACHE[currentBrokerId];
                 CACHE[currentBrokerId]&&(CACHE[currentBrokerId].next = CACHE[brokerId]);
@@ -71,26 +71,19 @@
         function remove(brokerObject){
             var brokerId = brokerObject.id;
             var obj = CACHE[brokerId];
-            obj.remove();
-            obj.next?obj.next.show():obj.prev.show();
             var next = obj.next;
             var prev = obj.prev;
-
+            obj.remove();
+            next?next.show():prev.show();
             delete CACHE[brokerId];
-
+            next&&(next.prev = prev);
+            prev&&(prev.next = next);
         }
 
 
         function getActiveBrokerId(){
             return currentBrokerId;
         }
-
-
-
-
-
-
-
 
         return {
             show:show,
