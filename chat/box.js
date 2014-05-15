@@ -23,14 +23,33 @@
      * @returns {{show: show, remove: remove}}
      * @constructor
      */
-    function Box(){
+    function Box(option){
 
+        var defOpts={
+            id:0
+
+
+            },opts;
         /**
          * 初始化
          */
         function init(){
+            opts = J.mix(defOpts,option);
+
 
         }
+
+
+
+        function createElement(isFromList){
+            var dom = J.create('div',{
+                className:'tab_conf_cf'
+            })
+            var html;
+
+            dom.html()
+        }
+
 
         /**
          * 绑定事件
