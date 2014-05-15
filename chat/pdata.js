@@ -20,9 +20,9 @@
      */
     function Pdata(){
 
-        var isDev = /\.(dev\.|test)/.test(J.D.location.host), optss = {
-            apiDomain : isDev ? 'http://chatapi.dev.anjuke.com' : '',
-            longDomain: isDev ? 'http://dev.aifang.com:8080/register' : ''
+        var isDev = /\.(dev\.|test)/.test(J.D.location.host), opts = {
+            apiDomain : isDev ? 'http://chatapi.dev.anjuke.com' : 'http://api.anjuke.com/weiliao',
+            longDomain: isDev ? 'http://dev.aifang.com:8080/register' : 'http://push10.anjuke.com'
         }
 
         function buildUrl(type){
@@ -50,196 +50,171 @@
          */
         function getFriends(callback){
             J.get({
-                url: buildUrl('friends',phone),
+                url: buildUrl('friends'),
                 type: 'jsonp',
                 callback: callback
             });
-/*
-            window.processGetFriends = processGetFriends;
+            // window.processGetFriends = processGetFriends;
 
-            function processGetFriends(response) {
-                if (!response) return;
-                if (response.status == 'OK' && response.result && (response.result.length > 0)) {
-                    optss.brList = new Brlist(response.result.friends);
-                }
-            }            */
+            // function processGetFriends(response) {
+            //     if (!response) return;
+            //     if (response.status == 'OK' && response.result && (response.result.length > 0)) {
+            //         opts.brList = new Brlist(response.result.friends);
+            //     }
+            // }            
         }
 
 
         /**
          *
          */
-        function getChatList(){
-            var sendUrl = apidomain + '/message/getChatList';
+        function getChatList(callback){
             J.get({
-                url: sendUrl,
+                url: buildUrl('chatlist'),
                 type: 'jsonp',
-                async: 'false',
-                callback: 'processGetUnreadChat'
+                callback: callback
             });
 
-            window.processGetFriends = processGetFriends;
+            // window.processGetFriends = processGetFriends;
 
-            function processGetUnreadChat(response) {
-                if (!response) return;
-                if (response.status == 'OK' && response.result && (response.result.length > 0)) {
-                    optss.brList && optss.brList.update(response.result);
-                }
-            }
+            // function processGetUnreadChat(response) {
+            //     if (!response) return;
+            //     if (response.status == 'OK' && response.result && (response.result.length > 0)) {
+            //         opts.brList && opts.brList.update(response.result);
+            //     }
+            // }
         }
 
         /**
          *
          */
-        function getChatDetail(to_uid, min_msg_id, max_msg_id, limit){
+        function getChatDetail(to_uid, min_msg_id, max_msg_id, limit, callback){
             var sendUrl = apidomain + '/message/getChatDetail/' + to_uid + '/' + min_msg_id + '/' + max_msg_id + '/' + limit;
             J.get({
                 url: sendUrl,
                 type: 'jsonp',
-                async: 'false',
-                callback: 'processChatDetail'
+                callback: callback
             });
-            function processChatDetail(response) {
-                if (!response) return;
-                if (response.status == 'OK' && response.result && (response.result.length > 0)) {
-                    //返回数据???????????????????????
-                }
-            }
-            window.processChatDetail = processChatDetail;
+            // function processChatDetail(response) {
+            //     if (!response) return;
+            //     if (response.status == 'OK' && response.result && (response.result.length > 0)) {
+            //         //返回数据???????????????????????
+            //     }
+            // }
+            // window.processChatDetail = processChatDetail;
         }
 
         /**
          *
          */
-        function getFriendInfo(uid){
-            var sendUrl = apidomain + '/user/getFriendInfo/' + optss.phone + '/' + uid, friendInfo = {};
+        function getFriendInfo(callback){
             J.get({
-                url: sendUrl,
+                url: buildUrl('friend'),
                 type: 'jsonp',
-                async: 'false',
-                callback: 'processFriendInfo'
+                callback: callback
             });
 
-            function processFriendInfo(response) {
-                if (!response) return;
-                if (response.status = 'OK' && response.result) {
-                    friendInfo = {
-                        icon: response.result.icon,
-                        nick_name: response.result.nick_name,
-                        broker_id: response.result.to_uid
-                    };
+            // function processFriendInfo(response) {
+            //     if (!response) return;
+            //     if (response.status = 'OK' && response.result) {
+            //         friendInfo = {
+            //             icon: response.result.icon,
+            //             nick_name: response.result.nick_name,
+            //             broker_id: response.result.to_uid
+            //         };
 
-                    return friendInfo;//???????????????????????
-                }
-            }
-            window.processFriendInfo = processFriendInfo;
+            //         return friendInfo;//???????????????????????
+            //     }
+            // }
+            // window.processFriendInfo = processFriendInfo;
         }
 
 
         /**
          *
          */
-        function getPollListener(){
-            var sendUrl = longdomain + '/' + '11' + '/w-ajk-user-chat/' + userId + '?auth=1';
+        function getPollListener(callback){
             J.get({
-                url: sendUrl,
+                url: buildUrl('poll'),
                 type: 'jsonp',
-                callback: 'processLongPolling'
+                callback: callback
             });
 
-            window.processLongPolling = processLongPolling;
+            // window.processLongPolling = processLongPolling;
 
-            function processLongPolling(response) {
-                if (!response) return;
-                if (response.status == 'OK') {
-                    if (typeof(response.result) == 'object') { //表示有消息返回
-                        getChatList();
-                        getPollListener();
-                    }
-                }
-            }
+            // function processLongPolling(response) {
+            //     if (!response) return;
+            //     if (response.status == 'OK') {
+            //         if (typeof(response.result) == 'object') { //表示有消息返回
+            //             getChatList();
+            //             getPollListener();
+            //         }
+            //     }
+            // }
         }
 
         /**
          *获取推荐信息[若无propId，则传空值]
          */
-        function getRecomm(brokerId, propId){
-            var sendurl = '/api/rec',
-                param = {
+        function getRecomm(brokerId, propId, callback){
+            var param = {
                     broker_id: brokerId
                 };
             if (propId) {
                 param.prop_id = propId;
             }
             J.get({
-                url: sendurl,
+                url: buildUrl('recomm'),
                 data: param,
                 type: 'json',
-                onSuccess: function(response) { 
-                    if (!response.retcode) {
-
-                    }
-                }
-
+                onSuccess: callback
             });
         }
 
         /**
          *获取房源信息
          */
-        function getPropertyInfo(propId){
-            var sendurl = '/property/info',
-                param = {
+        function getPropertyInfo(propId, callback){
+            var param = {
                     property_id: propId
                 };
             J.get({
-                url: sendurl,
+                url: buildUrl('property'),
                 data: param,
                 type: 'json',
-                onSuccess: function(response) {  
-                    if (!response.retcode) {
-
-                    }
-                }
+                onSuccess: callback
             });
         }
 
         /**
          *获取房源信息
          */
-        function getBrokerInfo(brokerId){
-            var sendurl = '/broker/info',
-                param = {
+        function getBrokerInfo(brokerId, callback){
+            var param = {
                     broker_id: brokerId
                 };
             J.get({
-                url: sendurl,
+                url: buildUrl('broker'),
                 data: param,
                 type: 'json',
-                onSuccess: function(response) { 
-                    if (!response.retcode) {
-
-                    }
-                }
+                onSuccess: callback
             });
         }
 
         /*
         *获取房源卡片
+        *houseUrl:只需要传propId，后端自己ping单页地址
         */
-        function getHouseCard() {
+        function getHouseCard(hosueUrl, callback) {
             var sendurl = '/property/card/ershou',
             param = {
                 'request_url': hosueUrl
             };
             J.get({
-                url: sendurl,
+                url: buildUrl('house'),
                 data: param,
                 type: 'json',
-                onSuccess: function(response) { 
-                    if (response.retcode) return;
-
-                }
+                onSuccess: callback
             });
         }
 
@@ -247,23 +222,18 @@
         *消息发送
         *@param:msgObject包含字段：msg_type, body
         */
-        function sendMsgToBroker(msgObject, brokerId) {
-            var sendurl = '/api/sendmsg',
-                param = {
-                    phone: optss.phone,
+        function sendMsgToBroker(msgObject, brokerId, callback) {
+            var param = {
+                    phone: C.phone,
                     body: msgObject.body,
                     msg_type: msgObject.msg_type,
                     to_uid: brokerId
                 };
             J.post({
-                url: sendurl,
+                url: buildUrl('sendmessage'),
                 data: param,
                 type: 'json',
-                onSuccess: function(response) {  console.log('sendMsgToBroker:'); console.log(response);
-                    if (!response.retcode) {
-
-                    }
-                }
+                onSuccess: callback
             });
         }
 
