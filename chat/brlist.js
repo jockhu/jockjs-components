@@ -23,26 +23,19 @@
     function Brlist(){
 
 
-        var BROKERSCACHE = {}, TMPECACHE = {}, arrHtml = [], newBroker = {}, brLen = 0, listBox = J.container.brlist;//联系人列表数组，每个元素是borker实例
+        var BROKERSCACHE = [], TMPECACHE = [], arrHtml = [], newBroker = {}, brLen = 0, listBox = J.container.brlist;//联系人列表数组，每个元素是borker实例
 
         /**
          * 初始化：只初始化BROKERSCACHE数组
          * @param：friends元素需要字段brokerId, icon, nick_name（获取的数据作处理）
          */
         (function init(){
-           /* listBox = J.create('div',{
-                //'class':'event_broker_click'
-            });*/
             C.pdata.getFriends('J.chat.brlist.fillList');
-
             eventBind();
-//            J.container.brlist.append(listBox);
-
         })();
 
 
         function fillData(friends){
-            //var i, length = friends.length, brokerId, brokerInfo = {};
             J.each(friends, function(i, v){
                 if( v.user_type == 2 ){
                     BROKERSCACHE[v.to_uid] = new C.Broker({
@@ -52,30 +45,13 @@
                     });
                 }
             });
-            /*for(i = 0; i < length; i++) {
-                if (friends[i].user_type == 2) {
-                    brokerId = friends[i].to_uid;
-                    brokerInfo = {
-                        icon: friends[i].icon,
-                        nick_name: friends[i].nick_name,
-                        broker_id: brokerId
-                    };
-                    BROKERSCACHE[brokerId] = new Broker(brokerInfo);
-                }
-            }*/
         }
 
 
         function fillList(data){
             if (data.status == 'OK' && data.result && data.result.length) {
-                fillData(data.result.friends)
+                fillData(data.result.friends);
             }
-        }
-
-
-        function removeTab(){
-            var openTabs = C.tabs.getOpenerTabs();
-
         }
 
 
@@ -100,21 +76,27 @@
          *@param:chatList（getChatList接口返回数据）元素需要字段from_uid(brokerId), new_msg_count, last_active_time
          @数据分析：1.已有联系人的未读消息有变化，box变化
                    2.联系人变化（add+remove）
-                   3.右侧未读消息显示[获取当前Tab]
-                   4."所有经纪人"按钮上显示的未读消息数
+                   3.若有联系人删除，则需要发送消息给tabs，判断是否需要关闭当前tab
+                   4.右侧未读消息显示[获取当前Tab]
+                   5."所有经纪人"按钮上显示的未读消息数
          */
         function update(chatList){
-            var brObj;
+            var brObj, curBrokerId, boxMsgList = [], brokersNum = 0, allUnreadMsgNum = 0;
 
             if( chatList.status == 'OK' ){
                 arrHtml = [];
                 brLen = chatList.result.length;
-
+                brokersNum = BROKERSCACHE.length;
+                curBrokerId = J.chat.tabs.getActiveTab();//???????????
                 J.each(chatList.result, function(i, v){
+                    if (curBrokerId != v.from_uid) {
+                        allUnreadMsgNum += v.new_msg_count;
+                    }
                     brObj = BROKERSCACHE[v.from_uid];
                     if( brObj ){
                         arrHtml.push( brObj.getHtml(v.new_msg_count, v.last_active_time) );
                         TMPECACHE[v.from_uid] = brObj;
+                        boxMsgList[brokerId] = v.new_msg_count;  //key[uid]-value[new_msg_count]
                     }else{
                         arrHtml.push('');
                         newBroker = {
@@ -129,6 +111,15 @@
                     BROKERSCACHE = TMPECACHE;
                     listBox.html(arrHtml.join(''));
                 }
+
+                //"所有经纪人"按钮显示未读消息数
+                showAllUnreadMsgCount(allUnreadMsgNum);
+                //显示共多少名经纪人
+                J.chat.container.brlistNum.innerHTML = '共' + brLen + '名';
+                //多个tab显示未读消息数
+                J.chat.tabs.xxx(boxMsgList); //???????????????????????
+                //若有联系人删除，则需要发送消息给tabs，判断是否需要关闭当前tab
+                sendMsgToTabs(brLen, brokersNum);
             }
 
 
@@ -172,38 +163,27 @@
         }
 
         /*
-        清除联系人列表的html
-        */
-        function clearListbox() {
-            var eles = J.s('.listbox');
-            eles.length && eles.eq(0).html('');
-        }
-
-        /*
         "所有经纪人"按钮显示未读消息数
         */
         function showAllUnreadMsgCount(allUnreadMsgNum) {
             allUnreadMsgNum = (allUnreadMsgNum > 99) ? '99+' : allUnreadMsgNum;
-            J.g('allUnreadMsg').innerHTML = allUnreadMsgNum;
+            J.chat.container.allUnreadMsg.innerHTML = allUnreadMsgNum;
         }
 
         /*
-        共xx名：显示
+        *若有联系人删除，则需要发送消息给tabs，判断是否需要关闭当前tab
         */
-        function showBrokersCount(brokersCount) {
-            var ele = J.g('brokersCount');
-            ele.innerHTML = '共' + brokersCount + '名';
-        }
-
-        function event_broker_click(brokerElm){
-
+        function sendMsgToTabs(brLen, brokersNum){
+            if (brLen != brokersNum) { //表明有联系人删除
+                J.fire();//触发tabs那边监听处理该情况的事件???????????????????
+            }
         }
 
         /*
         事件代理
         */
         function eventBind() {
-            var brokerEle, eventTarget, event_broker_click = 'event_broker_click',
+            var brokerEle, eventTarget, event_broker_click = 'event_broker_click', hoverClassName = 'hover',
 
             hasClass = function (element, className) {
                 var elementClassName = element.className;
@@ -216,7 +196,7 @@
                 eventTarget = e.target;
                 while( eventTarget != listBox ){
                     if( hasClass(eventTarget, event_broker_click)){
-                        C.tabs.show( BROKERSCACHE[ J.g(eventTarget).attr('brokerId') ] );
+                        C.tabs.show( BROKERSCACHE[ J.g(eventTarget).attr('brokerId') ] ); //??????????????????????????
                         return false;
                     }
                     brokerEle = e.target.parentNode;
@@ -227,36 +207,23 @@
                 eventTarget = e.target;
                 while( eventTarget != listBox ){
                     if( hasClass(eventTarget, event_broker_click)){
-                        BROKERSCACHE[ J.g(eventTarget).attr('brokerId') ].mouseenter();
+                        J.g(eventTarget).addClass(hoverClassName);
                         return false;
                     }
                     brokerEle = e.target.parentNode;
                 }
             });
 
-
-            var eles = J.s('.listbox'), dlClassName = 'cf', brokerEle, dlHoverClass = 'hover';
-            eles.length && eles.eq(0).on('click', function(e) {
-                brokerEle = e.target;
-                if (brokerEle.className == dlClassName) {
-                    //打开tab,传递brokerId
-
+            listBox.on('mouseleave' ,function(e){
+                eventTarget = e.target;
+                while( eventTarget != listBox ){
+                    if( hasClass(eventTarget, event_broker_click)){
+                        J.g(eventTarget).removeClass(hoverClassName);
+                        return false;
+                    }
+                    brokerEle = e.target.parentNode;
                 }
-
             });
-            eles.length && eles.eq(0).on('mouseenter', function(e) {
-                brokerEle = e.target;
-                if (brokerEle.className == dlClassName) {
-                    J.g(brokerEle).addClass(dlHoverClass);
-                }
-
-            });
-            eles.length && eles.eq(0).on('mosueleave', function(e) {
-                brokerEle = e.target;
-                if (brokerEle.className == dlClassName) {
-                    J.g(brokerEle).removeClass(dlHoverClass);
-                }
-            })
         }
 
 

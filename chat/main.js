@@ -23,9 +23,9 @@
     function Main(){
 
         function init(){
-            C.container.brlist = J.g('c-brlist');
-            //C.activeId = 0;
-
+            C.container.brlist = J.g('c-brlist'); //联系人列表的box
+            C.container.brlistNum = J.g('brlistNum'); //共xx名
+            C.container.allUnreadMsg = J.g('allUnreadMsg'); //显示“所有经纪人”按钮的未读消息数
         }
 
 

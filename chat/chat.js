@@ -40,6 +40,8 @@ J.add('chat', {
         'copyhistory=no,menubar=no',
     windowOpener:null,
     container:{
-        brlist:''
+        brlist:'',
+        brlistNum: '',
+        allUnreadMsg: ''
     }
 });
