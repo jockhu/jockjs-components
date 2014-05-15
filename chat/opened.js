@@ -25,7 +25,7 @@
     function Opened(){
 
 
-        document.getElementById('dv').innerHTML = +new Date();
+        /*document.getElementById('dv').innerHTML = +new Date();
 
         J.g('bt').on('click',function(){
             console.log('click')
@@ -69,11 +69,11 @@
             //window.focus(window.opener.openWindow1());
         }, 500)
 
-        /**
+        *//**
          * 打开聊天窗口，客户端入口
          * @param brokerId 经纪人ID
          * @param propertyId 房源ID
-         */
+         *//*
         function open(brokerId, propertyId){
             var pId = propertyId || '', hours = (new Date).getHours();
             bId = brokerId || '';
@@ -87,18 +87,18 @@
                 windowOpenr.focus();
             }
 
-            /**
+            *//**
              * cookie 保存的格式为 15|12345|23456
              * chat窗口如果在后台保持1小时，哪怕窗口存在，也强制open一个新窗口，反之是激活后台窗口
-             */
+             *//*
             cookieObj.setCookie(cookie.name, hours + '|' + bId + '|' + pId, 0, cookie.domain);
         }
 
-        /**
+        *//**
          * 获取chat是否已经被打开
          * @param hours 当前时间（小时数）
          * @returns {boolean}
-         */
+         *//*
         function windowIsOpend(hours){
             return false;
             var cks;
@@ -108,15 +108,15 @@
             return false;
         }
 
-        /**
+        *//**
          * 获取Open.Window的窗口属性字符串
          * @returns {string}
-         */
+         *//*
         function getAttrString(){
             var wSize = windowSize[ bId ? 'dialog' : 'list'];
             return C.windowAttrs + ',width=' + wSize.width + 'px,left=' + wSize.left +
                 ',top='+ wSize.top +',height=' + wSize.height + 'px'
-        }
+        }*/
 
 
         return {
