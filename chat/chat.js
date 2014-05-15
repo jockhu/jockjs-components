@@ -12,7 +12,7 @@
 
 J.add('chat', {
     version:'1.0.0',
-    url:'http://jsapi.jockhu.dev.anjuke.com/test/b.html',
+    url:'//shanghai.app-chat-web.jockhu.dev.anjuke.com/',
     cookie:{
         name:'chat_conf', //轮询的cookie名字
         domain:'anjuke.com'
@@ -22,12 +22,16 @@ J.add('chat', {
         //会话窗口尺寸
         dialog:{
             width:800,
-            height:500
+            height:500,
+            left:200,
+            top:200
         },
         //经纪人列表窗口尺寸
         list:{
             width:200,
-            height:500
+            height:500,
+            left:200,
+            top:200
         }
     },
     windowAttrs:'status=no,resizable=no,' +

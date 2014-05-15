@@ -2,7 +2,7 @@
  * Anjuke Javascript Framework.
  * Copyright 2014 ANJUKE Inc. All rights reserved.
  *
- * @path: chat/business.js
+ * @path: chat/opener.js
  * @author: Jock
  * @version: 1.0.0
  * @date: 2014/05/07
@@ -15,14 +15,14 @@
 (function(C){
 
     var cookieObj = J.cookie, cookie= C.cookie, windowOpenr = C.windowOpener,
-        windowSize = C.windowSize.dialog;
+        windowSize = C.windowSize, bId = '';
 
     /**
      *
      * @returns {{open: open}}
      * @constructor
      */
-    function Business(){
+    function Opener(){
 
         /**
          * 打开聊天窗口，客户端入口
@@ -30,7 +30,9 @@
          * @param propertyId 房源ID
          */
         function open(brokerId, propertyId){
-            var bId = brokerId || '',pId = propertyId || '', hours = (new Date).getHours();
+            var pId = propertyId || '', hours = (new Date).getHours();
+            bId = brokerId || '';
+            console.log(windowIsOpend(hours))
             if(windowIsOpend(hours)){
                 if(windowOpenr){
                     windowOpenr.focus();
@@ -53,6 +55,7 @@
          * @returns {boolean}
          */
         function windowIsOpend(hours){
+            return false;
             var cks;
             if(cks = cookieObj.getCookie(cookie.name)){
                 return cks.split('|')[0] == hours ? true : false;
@@ -65,10 +68,9 @@
          * @returns {string}
          */
         function getAttrString(){
-            var width = windowSize.width, height = windowSize.height,
-                left = 150, top = 150;
-            return C.windowAttrs + ',width=' + width + 'px,left=' + left +
-                ',top='+ top +',height=' + windowSize.height + 'px'
+            var wSize = windowSize[ bId ? 'dialog' : 'list'];
+            return C.windowAttrs + ',width=' + wSize.width + 'px,left=' + wSize.left +
+                ',top='+ wSize.top +',height=' + wSize.height + 'px'
         }
 
 
@@ -77,7 +79,7 @@
         }
     }
 
-    C.business = new Business();
+    C.opener = new opener();
 
 })(J.chat);
 
