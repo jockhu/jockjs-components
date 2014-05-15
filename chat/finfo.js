@@ -19,24 +19,31 @@
      * Finfo 函数
      * @param opts
      *      container:信息
-     *      brokerObject:
-     *      property_id:房源id
-     *      broker_id:经纪人id
+     *      brokerId:经纪人id
+     *      propId:房源id
      *
      * @constructor
      */
     function Finfo(){
-        /**
-         * 初始化
-         */
-        function init(){
-        }
-        var pdata = J.chat.Pdata;
+
         /**
          * 获取房源信息
          */
         function getPropertyInfo(opts){
-            var getprop = pdata.getPropertyInfo({
+            C.pdata.getPropertyInfo(opts.propId, function(data){
+                if(d.retcode === 0){
+                    var data = d.retdata,
+                        html = '<img src="'+data.pic +'" width="120" height="90">'+
+                            '<a href="'+(data.url||'') + '" target="_blank">'+data.title+'</a>'+
+                            '<p>'+data.community+'</p>'+
+                            '<p>'+data.size+'</p>'+
+                            '<strong class="ylw">'+data.price/10000+'万</strong>'+
+                            '</div>';
+                    opts.container.html(html);
+                }
+            })
+
+            /*var getprop = pdata.getPropertyInfo({
                 container : opts.container,
                 property_id : opts.property_id
             },function(d){
@@ -52,14 +59,32 @@
                 }else{
                 }
                 opts.container.s('.finfo').eq(0).html(html);
-            });
+            });*/
         }
 
         /**
          * 获取经纪人信息
          */
         function getBrokerInfo(opts){
-            var getbro = pdata.getBrokerInfo({
+            C.pdata.getBrokerInfo(opts.brokerId, function(data){
+                if(d.retcode === 0){
+                    var data = d.retdata,
+                        html = '<dl class="cf">'+
+                            '<dt><img src="'+data.photo+'" width="100" height="135"></dt>'+
+                            '<dd>'+data.name+'</dd>'+
+                            '<dd>'+data.phone+'</dd>'+
+                            '<dd><a href="'+(data.companyUrl||'')+'" target="_blank">'+data.company+'</a></dd>'+
+                            '<dd><a href="'+(data.addressUrl||'')+'" target="_blank">'+(data.address||'')+'</a></dd>'+
+                            '</dl>'+
+                            '<div class="ct"><a href="'+(data.moreUrl||'')+'" class="btn_more" target="_blank">查看TA的更多房源</a></div>'+
+                            '</div>';
+                    opts.container.html(html);
+                }
+            });
+
+
+
+            /*var getbro = pdata.getBrokerInfo({
                 container :opts.container,
                 broker_id : opts.broker_id
             },function(d){
@@ -78,7 +103,7 @@
 
                 }
                 opts.container.s('.binfo').eq(0).html(html);
-            });
+            });*/
         }
 
         return {
@@ -87,7 +112,7 @@
         }
     }
 
-    C.Finfo = Finfo;
+    C.finfo = new Finfo();
 
 })(J.chat);
 

@@ -17,11 +17,10 @@
 
     /**
      * Recomm 函数
-     * @param opts
      *
      * @constructor
      */
-    function Template(opts){
+    function Template(){
 
         var FUNS = {
             '1' : getTextTpl,
@@ -32,20 +31,14 @@
             '106' : getSysTpl
         };
 
-        /**
-         * 初始化
-         */
-        function init(){
-
-        }
 
         /**
          * 获取发送者的消息模板
-         * @param type
+         * @param type 消息
          * @param content
          */
         function getSendMessageTpl(type, content){
-            return FUNS[type]('me',content);
+            return FUNS[type]('me', content);
         }
 
         /**
@@ -102,8 +95,6 @@
                 time = '昨天 ' + formateTime(content);
             }else if(content < yesTime ){
                 time = setDate(content) +' ' + formateTime(content);
-            }else{
-
             }
             var dom = J.create('div',{
                 class : 'timebar ct'
@@ -118,38 +109,33 @@
          * 获取系统的消息模板
          * @param content
          */
-        function geSysMessageTpl(type,content,callback){
+        function getSysMessageTpl(type,content,callback){
             return FUNS[type](content,callback);
         }
 
-        /**
-         * 获取消息模板
-         * @param position
-         * @param content
-         */
-         function getTpl(position,content){
-            var dom = J.create('div',{
-                class : position + ' cf'
-            }).html('<dl class="cf"><dt><img src="'+'xx'+'" width="48" height="48"></dt>'+ content +'</dl>');
-            return dom;
-        }
+
 
 
         /**
          * 获取文本的模板
-         * @param position
+         * @param className
          * @param content
          * @returns {string}
          */
-        function getTextTpl(position, content){
-            var content = formateTxt(encodeTxt(content));
+        function getTextTpl(className, content){
+            content = formateTxt( encodeTxt(content) );
             var html = '<dd>'+
                             '<em class="ico_arw"></em>'+
                             '<p>' + content + '</p>'+
                         '</dd>';
-            var dom = getTpl(position,html);
-            return dom;
+            return getTpl(className, html);
         }
+
+        /**
+         *
+         * @param content
+         * @returns {*|XML|string|void}
+         */
         function formateTxt(content){
             var reg = /(https?|ftp|mms):\/\/([A-z0-9]+[_\-]?[A-z0-9]+\.)*[A-z0-9]+\-?[A-z0-9]+\.[A-z]{2,}(\/.*)*\/?/ig;
             
@@ -167,56 +153,54 @@
                 .replace(/'/g, "&#39;");
         }
 
-        function decodeTxt(content){
+        /*function decodeTxt(content){
             return content
                 .replace(/&quot;/g,'"')
                 .replace(/&lt;/g,'<')
                 .replace(/&gt;/g,'>')
                 .replace(/&amp;/g, "&");
-        }
+        }*/
 
         /**
          * 获取图片的模板
-         * @param position
+         * @param className
          * @param content
          * @returns {string}
          */
-        function getPicTpl(position, content){
+        function getPicTpl(className, content){
             var html = '<dd>'+
                             '<em class="ico_arw"></em>'+
-                            '<a href="javascript:void(0);" title="点击查看大图"><img src="'+content+'" width="120" height="90" alt=""></a>'+
+                            '<a href="javascript:void(0);" title="点击查看大图" class="event_image_click"><img src="'+content+'" width="120" height="90" alt=""></a>'+
                         '</dd>';
-            var dom = getTpl(position,html);
-            return dom;
+            return getTpl(className, html);
         }
         
         /**
          * 获取地图的模板
-         * @param position
+         * @param className
          * @param content
          * @returns {string}
          */
-        function getMapTpl(position, content){
+        function getMapTpl(className, content){
             var html = '<dd>'+
                             '<em class="ico_arw"></em>'+
-                            '<a href="javascript:void(0);" title="点击查看地图" class="map">'+
+                            '<a href="javascript:void(0);" title="点击查看地图" class="map event_map_click">'+
                                 '<img src="http://api.map.baidu.com/staticimage?center='+ content.baidu_lat + ',' + content.baidu_lng +'&width=300&height=200&zoom=11" width="120" height="120" alt="">'+
                                 '<i class="ico_c"></i>'+
                                 '<span class="msk"></span>'+
                                 '<em class="msk_txt">'+ content.city + content.region + content.address +'</em>'+
                             '</a>'+
                         '</dd>';
-            var dom = getTpl(position,html);
-            return dom;
+            return getTpl(className,html);
         }
 
         /**
          * 获取房源卡片的模板
-         * @param position
+         * @param className
          * @param content
          * @returns {string}
          */
-        function getCardTpl(position, content){
+        function getCardTpl(className, content){
             var h6 = {
                 '1' : '二手房 （所有）',
                 '2' : '租房 (经纪人)',
@@ -229,8 +213,7 @@
                 '9' : '商铺出售 （所有）',
                 '10' : '写字楼出租 （所有）',
                 '11' : '写字楼出售 （所有）' ,
-                '12' : '租房 (个人)',
-
+                '12' : '租房 (个人)'
             };
             var html = '<dd class="card">'+
                             '<em class="ico_arw"></em>'+
@@ -244,35 +227,45 @@
                                 '</a>'+
                             '</div>'+
                         '</dd>';
-            var dom = getTpl(position,html);
-            return dom;
+            return getTpl(className, html);
         }
         
         /**
          * 获取语音的模板
-         * @param position
+         * @param className
          * @param content
          * @returns {string}
          */
-        function getVoiceTpl(position, content){
+        function getVoiceTpl(className, content){
             var html = '<dd>'+
                             '<em class="ico_arw"></em>'+
-                            '<p>本功能不支持经纪人发布的语音，请<a href="http://shanghai.anjuke.com/mobile?from=RightBar" target="_blank">下载手机版</a></p>'+
+                            '<p>本功能不支持经纪人发布的语音，请<a href="'+ content +'" target="_blank">下载手机版</a></p>'+
                         '</dd>';
-            var dom = getTpl(position,html);
-            return dom;
+            return getTpl(className,html);
         }
 
         /**
          * 获取系统的模板
-         * @param position
+         * @param className
          * @param content
          * @returns {string}
          */
         function getSysTpl(content){
             var dom = J.create('div',{
                 class : 'ct'
-            }).html('<div class="notice">' + content.content + '</div>');
+            }).html('<div class="notice">' + content + '</div>');
+            return dom;
+        }
+
+        /**
+         * 获取消息模板
+         * @param className
+         * @param content
+         */
+        function getTpl(className, content){
+            var dom = J.create('div',{
+                class : className + ' cf'
+            }).html('<dl class="cf"><dt><img src="'+'xx'+'" width="48" height="48"></dt>'+ content +'</dl>');
             return dom;
         }
         
@@ -280,11 +273,12 @@
         return {
             getSendMessageTpl :getSendMessageTpl,
             getShiftMessageTpl : getShiftMessageTpl,
-            getTimeTpl : getTimeTpl
+            getTimeTpl : getTimeTpl,
+            getSysMessageTpl: getSysMessageTpl
         }
     }
 
-    C.Template = Template();
+    C.template = new Template();
 
 })(J.chat);
 
