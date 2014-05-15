@@ -20,17 +20,28 @@
      * Brlist
      * @constructor
      */
-    function Brlist(friends){
+    function Brlist(){
 
-        init(friends);
 
-        var bList = [];//联系人列表数组，每个元素是borker实例
+        var BROKERSCACHE = [], listBox;//联系人列表数组，每个元素是borker实例
 
         /**
-         * 初始化：只初始化bList数组
+         * 初始化：只初始化BROKERSCACHE数组
          * @param：friends元素需要字段brokerId, icon, nick_name（获取的数据作处理）
          */
-        function init(friends){
+        (function init(friends){
+            listBox = J.create('div',{
+                //'class':'event_broker_click'
+            });
+            C.pdata.getFriends('J.chat.brlist.fillList');
+
+            eventBind();
+
+
+        })();
+
+
+        function fillData(friends){
             var i, length = friends.length, brokerId, brokerInfo = {};
             for(i = 0; i < length; i++) {
                 if (friends[i].user_type == 2) {
@@ -40,11 +51,18 @@
                         nick_name: friends[i].nick_name,
                         broker_id: brokerId
                     };
-                    bList[brokerId] = new Broker(brokerInfo);
+                    BROKERSCACHE[brokerId] = new Broker(brokerInfo);
                 }
             }
-            eventBind();
         }
+
+
+        function fillList(data){
+            if (data.status == 'OK' && data.result && data.result.length) {
+                fillData(data.result.friends)
+            }
+        }
+
 
         /**
          *@param:chatList（getChatList接口返回数据）元素需要字段from_uid(brokerId), new_msg_count, last_active_time
@@ -54,7 +72,12 @@
                    4."所有经纪人"按钮上显示的未读消息数
          */
         function update(chatList){
-            var bList_new = [], i, chatSession, brokerId, boxMsgList = [], data = {}, allUnreadMsgNum = 0, friendInfo = {}, curBrokerId;
+            J.container.brlist.append(listBox);
+
+
+
+
+            var BROKERSCACHE_new = [], i, chatSession, brokerId, boxMsgList = [], data = {}, allUnreadMsgNum = 0, friendInfo = {}, curBrokerId;
             curBrokerId = J.chat.tabs.getActiveTab();
             clearListbox();
             for (i = 0; i < chatList.length; i++) {
@@ -63,20 +86,20 @@
                 if (curBrokerId != brokerId) {
                     allUnreadMsgNum += chatSession.new_msg_count;
                 }
-                if (bList[brokerId]) { //已有联系人
-                    bList_new[brokerId] = bList[brokerId];
+                if (BROKERSCACHE[brokerId]) { //已有联系人
+                    BROKERSCACHE_new[brokerId] = BROKERSCACHE[brokerId];
                     boxMsgList[brokerId] = chatSession.new_msg_count;  //key[uid]-value[new_msg_count]
 
                 } else { //新增联系人
                     //请求getFriendInfo接口，对返回接口做处理？？？？？？？？？？？？
                     friendInfo = getFriendInfo(brokerId);
-                    bList_new[brokerId] = new Broker(friendInfo);
+                    BROKERSCACHE_new[brokerId] = new Broker(friendInfo);
                 }
                 data = {
                     new_msg_count: chatSession.new_msg_count,
                     last_active_time: chatSession.last_active_time
                 };
-                bList[brokerId].update(data);//包含联系人元素的插入
+                BROKERSCACHE[brokerId].update(data);//包含联系人元素的插入
                 
             }
             //
@@ -85,9 +108,9 @@
             //"所有经纪人"按钮显示未读消息数
             showAllUnreadMsgCount(allUnreadMsgNum);
             //显示共多少名经纪人
-            showBrokersCount(bList_new.length);
+            showBrokersCount(BROKERSCACHE_new.length);
             //更新联系人列表数据缓存
-            bList = bList_new;
+            BROKERSCACHE = BROKERSCACHE_new;
 
         }
 
@@ -115,10 +138,46 @@
             ele.innerHTML = '共' + brokersCount + '名';
         }
 
+        function event_broker_click(brokerElm){
+
+        }
+
         /*
         事件代理
         */
         function eventBind() {
+            var brokerEle, eventTarget, event_broker_click = 'event_broker_click',
+
+            hasClass = function (element, className) {
+                var elementClassName = element.className;
+                return (elementClassName.length > 0 && (elementClassName == className ||
+                    new RegExp("(^|\\s)" + className + "(\\s|$)").test(elementClassName)));
+            }
+
+
+            listBox.on('click' ,function(e){
+                eventTarget = e.target;
+                while( eventTarget != listBox ){
+                    if( hasClass(eventTarget, event_broker_click)){
+                        C.tabs.show( BROKERSCACHE[ J.g(eventTarget).attr('brokerId') ] );
+                        return false;
+                    }
+                    brokerEle = e.target.parentNode;
+                }
+            });
+
+            listBox.on('mouseenter' ,function(e){
+                eventTarget = e.target;
+                while( eventTarget != listBox ){
+                    if( hasClass(eventTarget, event_broker_click)){
+                        BROKERSCACHE[ J.g(eventTarget).attr('brokerId') ].mouseenter();
+                        return false;
+                    }
+                    brokerEle = e.target.parentNode;
+                }
+            });
+
+
             var eles = J.s('.listbox'), dlClassName = 'cf', brokerEle, dlHoverClass = 'hover';
             eles.length && eles.eq(0).on('click', function(e) {
                 brokerEle = e.target;
@@ -145,11 +204,12 @@
 
 
         return {
+            fillList: fillList,
             update: update
         }
     }
 
-    C.Brlist = Brlist;
+    C.brlist = new Brlist();
 
 })(J.chat);
 

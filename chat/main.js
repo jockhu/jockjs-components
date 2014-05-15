@@ -23,6 +23,7 @@
     function Main(){
 
         function init(){
+            C.container.brlist = J.g('c-brlist');
 
         }
 

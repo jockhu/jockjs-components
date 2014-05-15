@@ -12,7 +12,7 @@
 
 J.add('chat', {
     version:'1.0.0',
-    url:'//shanghai.app-chat-web.jockhu.dev.anjuke.com/',
+    chatDomain:'//shanghai.app-chat-web.jockhu.dev.anjuke.com/',
     cookie:{
         name:'chat_conf', //轮询的cookie名字
         domain:'anjuke.com'
@@ -38,5 +38,8 @@ J.add('chat', {
         'scrollbars=no,toolbar=no,titlebar=no,' +
         'location=no,directories=no,menubar=no,' +
         'copyhistory=no,menubar=no',
-    windowOpener:null
+    windowOpener:null,
+    container:{
+        brlist:''
+    }
 });

@@ -14,41 +14,47 @@
 
 (function(C){
 
-
     /**
      * Pdata
      * @constructor
      */
-    function Pdata(options){
-        var apidomain = 'http://chatapi.dev.anjuke.com',
-            longdomain = 'http://dev.aifang.com:8080/register';
-        var opts = {
-            phone: '',
-            userId: '',
-            hosueUrl: 'http://shanghai.anjuke.com/prop/view/213787510',
-            brList: {}
+    function Pdata(){
+
+        var isDev = /\.(dev\.|test)/.test(J.D.location.host), opts = {
+            apiDomain : isDev ? 'http://chatapi.dev.anjuke.com' : '',
+            longDomain: isDev ? 'http://dev.aifang.com:8080/register' : ''
         }
 
-        init(options);
-        /**
-         * 初始化
-         */
-        function init(options){
-            opts = J.mix(opts, options || {});
+        function buildUrl(type, opt){
+            var urls = {
+                'friends': opt.apiDomain + '/user/getFriends/' + C.phone,
+                'chatlist': opt.apiDomain + '/message/getChatList',
+                'friend': opt.apiDomain + '/user/getFriendInfo/' + C.phone + '/' + C.userId,
+                'poll': opt.longDomain + '/' + C.guid + '/w-ajk-user-chat/' + C.userId,
+                'recomm': '/api/rec',
+                'property': '/property/info',
+                'house': '/property/card/ershou',
+                'broker': '/broker/info',
+                'sendmessage': '/api/sendmsg'
+            }
+            return urls[type];
         }
 
         /**
          *
          */
-        function getFriends(){
-            var sendUrl = apidomain + '/user/getFriends/' + opts.phone;
+        /**
+         * 获取经纪人列表
+         * @param phone 登录的手机号码
+         * @param callback 回调函数的字符串形式
+         */
+        function getFriends(callback){
             J.get({
-                url: sendUrl,
+                url: buildUrl('friends',phone),
                 type: 'jsonp',
-                async: 'false',
-                callback: 'processGetFriends'
+                callback: callback
             });
-
+/*
             window.processGetFriends = processGetFriends;
 
             function processGetFriends(response) {
@@ -56,7 +62,7 @@
                 if (response.status == 'OK' && response.result && (response.result.length > 0)) {
                     opts.brList = new Brlist(response.result.friends);
                 }
-            }            
+            }            */
         }
 
 
@@ -276,7 +282,7 @@
         }
     }
 
-    C.Pdata = Pdata;
+    C.pdata = new Pdata();
 
 })(J.chat);
 
