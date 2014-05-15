@@ -20,17 +20,17 @@
      */
     function Pdata(){
 
-        var isDev = /\.(dev\.|test)/.test(J.D.location.host), opts = {
+        var isDev = /\.(dev\.|test)/.test(J.D.location.host), optss = {
             apiDomain : isDev ? 'http://chatapi.dev.anjuke.com' : '',
             longDomain: isDev ? 'http://dev.aifang.com:8080/register' : ''
         }
 
-        function buildUrl(type, opt){
+        function buildUrl(type){
             var urls = {
-                'friends': opt.apiDomain + '/user/getFriends/' + C.phone,
-                'chatlist': opt.apiDomain + '/message/getChatList',
-                'friend': opt.apiDomain + '/user/getFriendInfo/' + C.phone + '/' + C.userId,
-                'poll': opt.longDomain + '/' + C.guid + '/w-ajk-user-chat/' + C.userId,
+                'friends': opts.apiDomain + '/user/getFriends/' + C.phone,
+                'chatlist': opts.apiDomain + '/message/getChatList',
+                'friend': opts.apiDomain + '/user/getFriendInfo/' + C.phone + '/' + C.userId,
+                'poll': opts.longDomain + '/' + C.guid + '/w-ajk-user-chat/' + C.userId,
                 'recomm': '/api/rec',
                 'property': '/property/info',
                 'house': '/property/card/ershou',
@@ -60,7 +60,7 @@
             function processGetFriends(response) {
                 if (!response) return;
                 if (response.status == 'OK' && response.result && (response.result.length > 0)) {
-                    opts.brList = new Brlist(response.result.friends);
+                    optss.brList = new Brlist(response.result.friends);
                 }
             }            */
         }
@@ -83,7 +83,7 @@
             function processGetUnreadChat(response) {
                 if (!response) return;
                 if (response.status == 'OK' && response.result && (response.result.length > 0)) {
-                    opts.brList && opts.brList.update(response.result);
+                    optss.brList && optss.brList.update(response.result);
                 }
             }
         }
@@ -112,7 +112,7 @@
          *
          */
         function getFriendInfo(uid){
-            var sendUrl = apidomain + '/user/getFriendInfo/' + opts.phone + '/' + uid, friendInfo = {};
+            var sendUrl = apidomain + '/user/getFriendInfo/' + optss.phone + '/' + uid, friendInfo = {};
             J.get({
                 url: sendUrl,
                 type: 'jsonp',
@@ -250,7 +250,7 @@
         function sendMsgToBroker(msgObject, brokerId) {
             var sendurl = '/api/sendmsg',
                 param = {
-                    phone: opts.phone,
+                    phone: optss.phone,
                     body: msgObject.body,
                     msg_type: msgObject.msg_type,
                     to_uid: brokerId

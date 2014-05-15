@@ -24,6 +24,7 @@
 
         function init(){
             C.container.brlist = J.g('c-brlist');
+            //C.activeId = 0;
 
         }
 

@@ -23,20 +23,20 @@
     function Brlist(){
 
 
-        var BROKERSCACHE = [], listBox;//联系人列表数组，每个元素是borker实例
+        var BROKERSCACHE = {}, TMPECACHE = {}, arrHtml = [], newBroker = {}, brLen = 0, listBox = J.container.brlist;//联系人列表数组，每个元素是borker实例
 
         /**
          * 初始化：只初始化BROKERSCACHE数组
          * @param：friends元素需要字段brokerId, icon, nick_name（获取的数据作处理）
          */
-        (function init(friends){
-            listBox = J.create('div',{
+        (function init(){
+           /* listBox = J.create('div',{
                 //'class':'event_broker_click'
-            });
+            });*/
             C.pdata.getFriends('J.chat.brlist.fillList');
 
             eventBind();
-
+//            J.container.brlist.append(listBox);
 
         })();
 
@@ -73,6 +73,29 @@
         }
 
 
+        function removeTab(){
+            var openTabs = C.tabs.getOpenerTabs();
+
+        }
+
+
+        function brCallback(data){
+            if(!data || !data.result) return;
+            var result = data.result, brObj, v = newBroker.chatInfo;
+            TMPECACHE[result.user_id] = brObj = new C.Broker({
+                id:result.user_id,
+                name: result.nick_name,
+                icon: result.icon
+            });
+            arrHtml[newBrokerIndex] = brObj.getHtml(v.new_msg_count, v.last_active_time);
+            if(brLen == arrHtml.length){
+                BROKERSCACHE = TMPECACHE;
+                listBox.html(arrHtml.join(''));
+            }
+            newBroker = {};
+        }
+
+
         /**
          *@param:chatList（getChatList接口返回数据）元素需要字段from_uid(brokerId), new_msg_count, last_active_time
          @数据分析：1.已有联系人的未读消息有变化，box变化
@@ -81,10 +104,35 @@
                    4."所有经纪人"按钮上显示的未读消息数
          */
         function update(chatList){
-            J.container.brlist.append(listBox);
+            var brObj;
+
+            if( chatList.status == 'OK' ){
+                arrHtml = [];
+                brLen = chatList.result.length;
+
+                J.each(chatList.result, function(i, v){
+                    brObj = BROKERSCACHE[v.from_uid];
+                    if( brObj ){
+                        arrHtml.push( brObj.getHtml(v.new_msg_count, v.last_active_time) );
+                        TMPECACHE[v.from_uid] = brObj;
+                    }else{
+                        arrHtml.push('');
+                        newBroker = {
+                            index: i,
+                            chatInfo: v
+                        };
+                        C.pdata.getFriendInfo('J.chat.brlist.brCallback');
+                    }
+                });
+
+                if(!newBroker['index']){
+                    BROKERSCACHE = TMPECACHE;
+                    listBox.html(arrHtml.join(''));
+                }
+            }
 
 
-
+/*
 
             var BROKERSCACHE_new = [], i, chatSession, brokerId, boxMsgList = [], data = {}, allUnreadMsgNum = 0, friendInfo = {}, curBrokerId;
             curBrokerId = J.chat.tabs.getActiveTab();
@@ -119,7 +167,7 @@
             //显示共多少名经纪人
             showBrokersCount(BROKERSCACHE_new.length);
             //更新联系人列表数据缓存
-            BROKERSCACHE = BROKERSCACHE_new;
+            BROKERSCACHE = BROKERSCACHE_new;*/
 
         }
 

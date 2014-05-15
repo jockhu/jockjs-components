@@ -22,22 +22,37 @@
     function Broker(options){
         var opts = {
             icon: '',
-            nick_name: '',
-            broker_id: '',
-            //以上为静态数据
-            new_msg_count: 0,
-            last_active_time: '',
-            itemEle: ''  
+            name: '',
+            id: '',
+            count: 0,
+            lasttime: '',
+            html: ''
         };
 
-        init(options);
-        
         /**
          * 初始化
          */
-        function init(options){
+        (function init(options){
             opts = J.mix(opts, options || {});
+        })(options);
+
+
+
+        function getHtml(count, time){
+            if(count){
+                return buildHtml()
+            }
+            return opts.html;
         }
+
+
+        function buildHtml(){
+
+        }
+
+
+
+
 
         /**
          *
@@ -116,7 +131,7 @@
 
 
         return {
-            update: update
+            getHtml: getHtml
         }
     }
 
