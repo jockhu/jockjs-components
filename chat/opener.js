@@ -79,7 +79,7 @@
         }
     }
 
-    C.opener = new opener();
+    C.opener = new Opener();
 
 })(J.chat);
 

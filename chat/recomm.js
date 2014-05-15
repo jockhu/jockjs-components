@@ -18,37 +18,40 @@
     /**
      * Recomm 函数
      * @param opts
-     *      container:
-     *      brokerObject:
-     *      propertyId
-            callback
+     *      container:推荐位容器
+     *      broker_id:经纪人id
+     *      prop_id:房源id
      *
      * @constructor
      */
-    function Recomm(){
+    function Recomm(opts){
+        var options = {
+            container : '',
+            broker_id : '',
+            prop_id : '',
+            city_id : '',
+            price_int : ''
+        }
+        init(opts);
         /**
          * 初始化
          */
-
-        function init(opts,callback){
-            var defaults = {
-                broker_id : opts.broker_id || '',
-                city_id : opts.city_id || '',
-                price_int : opts.price_int || '',
-                prop_id : opts.prop_id || ''
-            };
-            getRecommList(defaults,callback);
+        function init(options){
+            options = J.mix(options,opts||{});
+            getRecommList(options);
         };
 
         /**
          * 获取房源推荐列表
+         * @param opts
          */
-        function getRecommList(opts,callback){
+        function getRecommList(opts){
             var pdata = J.chat.Pdata.getRecomm({
-                broker_id : opts.broker_id ,
+                container : opts.container,
+                broker_id : opts.broker_id,
+                prop_id : opts.prop_id,
                 city_id : opts.city_id,
-                price_int : opts.price_int,
-                prop_id : opts.prop_id
+                price_int : opts.price_int
             },function(d){
                 if(d.retcode === 0){
                     var html = '';
@@ -69,12 +72,11 @@
                 }else{
                     html = '<p>暂无推荐房源</p>';
                 }
-                return callback&&callback(html);
+                opts.container.s('.othslist').eq(0).html(html);
             });
         }
 
         return {
-            init:init
         }
        
     }

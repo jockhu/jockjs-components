@@ -18,26 +18,26 @@
     /**
      * Finfo 函数
      * @param opts
-     *      container:
+     *      container:信息
      *      brokerObject:
-     *      propertyId
+     *      property_id:房源id
+     *      broker_id:经纪人id
      *
      * @constructor
      */
-    function Finfo(opts){
-
+    function Finfo(){
         /**
          * 初始化
          */
         function init(){
-            
         }
         var pdata = J.chat.Pdata;
         /**
          * 获取房源信息
          */
-        function getPropertyInfo(opts,callback){
+        function getPropertyInfo(opts){
             var getprop = pdata.getPropertyInfo({
+                container : opts.container,
                 property_id : opts.property_id
             },function(d){
                 if(d.retcode === 0){
@@ -50,18 +50,18 @@
                             '</div>';
 
                 }else{
-
                 }
-                return callback&&callback(html);
+                opts.container.s('.finfo').eq(0).html(html);
             });
         }
 
         /**
          * 获取经纪人信息
          */
-        function getBrokerInfo(opts,callback){
+        function getBrokerInfo(opts){
             var getbro = pdata.getBrokerInfo({
-                'broker_id' : opts.broker_id
+                container :opts.container,
+                broker_id : opts.broker_id
             },function(d){
                 if(d.retcode === 0){
                     var data = d.retdata,
@@ -77,7 +77,7 @@
                 }else{
 
                 }
-                return callback&&callback(html);
+                opts.container.s('.binfo').eq(0).html(html);
             });
         }
 

@@ -44,8 +44,8 @@
          * @param type
          * @param content
          */
-        function getSendMessageTpl(type, content,callback){
-            return FUNS[type]('me',content,callback);
+        function getSendMessageTpl(type, content){
+            return FUNS[type]('me',content);
         }
 
         /**
@@ -53,11 +53,11 @@
          * @param type
          * @param content
          */
-        function getShiftMessageTpl(type, content,callback){
+        function getShiftMessageTpl(type, content){
             if(type!=106){
-                return FUNS[type]('jjr',content,callback);
+                return FUNS[type]('jjr',content);
             }else{
-                return FUNS[type](content,callback);
+                return FUNS[type](content);
             }
         }
 
@@ -66,7 +66,7 @@
          * @param type
          * @param content
          */
-        function getTimeTpl(content,callback){
+        function getTimeTpl(content){
             var day = new Date(),
             year = day.getFullYear(),
             month = day.getMonth(),
@@ -97,11 +97,11 @@
                return year + '年' + month + '月' + date + '日';
             }
             if(content >= todayTime && content <= tomTime){
-                time = formateTime(content,callback);
+                time = formateTime(content);
             }else if(content >= yesTime && content < todayTime){
-                time = '昨天 ' + formateTime(content,callback);
+                time = '昨天 ' + formateTime(content);
             }else if(content < yesTime ){
-                time = setDate(content) +' ' + formateTime(content,callback);
+                time = setDate(content) +' ' + formateTime(content);
             }else{
 
             }
@@ -110,7 +110,7 @@
             }).html('<div class="timebar ct">'+
                         '<em></em><div class="timeTip">'+ time + '</div><em></em>'+
                     '</div>');
-            return callback&&callback(dom);
+            return dom;
         }
 
 
@@ -127,11 +127,11 @@
          * @param position
          * @param content
          */
-         function getTpl(position,content,callback){
+         function getTpl(position,content){
             var dom = J.create('div',{
                 class : position + ' cf'
             }).html('<dl class="cf"><dt><img src="'+'xx'+'" width="48" height="48"></dt>'+ content +'</dl>');
-            return callback&&callback(dom);
+            return dom;
         }
 
 
@@ -141,15 +141,14 @@
          * @param content
          * @returns {string}
          */
-        function getTextTpl(position, content,callback){
+        function getTextTpl(position, content){
             var content = formateTxt(encodeTxt(content));
             var html = '<dd>'+
                             '<em class="ico_arw"></em>'+
                             '<p>' + content + '</p>'+
                         '</dd>';
-            getTpl(position,html,function(d){
-                  return callback&&callback(d);
-            });
+            var dom = getTpl(position,html);
+            return dom;
         }
         function formateTxt(content){
             var reg = /(https?|ftp|mms):\/\/([A-z0-9]+[_\-]?[A-z0-9]+\.)*[A-z0-9]+\-?[A-z0-9]+\.[A-z]{2,}(\/.*)*\/?/ig;
@@ -182,14 +181,13 @@
          * @param content
          * @returns {string}
          */
-        function getPicTpl(position, content,callback){
+        function getPicTpl(position, content){
             var html = '<dd>'+
                             '<em class="ico_arw"></em>'+
                             '<a href="javascript:void(0);" title="点击查看大图"><img src="'+content+'" width="120" height="90" alt=""></a>'+
                         '</dd>';
-            getTpl(position,html,function(d){
-                  return callback&&callback(d);
-            });
+            var dom = getTpl(position,html);
+            return dom;
         }
         
         /**
@@ -198,7 +196,7 @@
          * @param content
          * @returns {string}
          */
-        function getMapTpl(position, content,callback){
+        function getMapTpl(position, content){
             var html = '<dd>'+
                             '<em class="ico_arw"></em>'+
                             '<a href="javascript:void(0);" title="点击查看地图" class="map">'+
@@ -208,9 +206,8 @@
                                 '<em class="msk_txt">'+ content.city + content.region + content.address +'</em>'+
                             '</a>'+
                         '</dd>';
-            getTpl(position,html,function(d){
-                  return callback&&callback(d);
-            });
+            var dom = getTpl(position,html);
+            return dom;
         }
 
         /**
@@ -219,7 +216,7 @@
          * @param content
          * @returns {string}
          */
-        function getCardTpl(position, content,callback){
+        function getCardTpl(position, content){
             var h6 = {
                 '1' : '二手房 （所有）',
                 '2' : '租房 (经纪人)',
@@ -247,9 +244,8 @@
                                 '</a>'+
                             '</div>'+
                         '</dd>';
-            getTpl(position,html,function(d){
-                  return callback&&callback(d);
-            });
+            var dom = getTpl(position,html);
+            return dom;
         }
         
         /**
@@ -258,14 +254,13 @@
          * @param content
          * @returns {string}
          */
-        function getVoiceTpl(position, content,callback){
+        function getVoiceTpl(position, content){
             var html = '<dd>'+
                             '<em class="ico_arw"></em>'+
                             '<p>本功能不支持经纪人发布的语音，请<a href="http://shanghai.anjuke.com/mobile?from=RightBar" target="_blank">下载手机版</a></p>'+
                         '</dd>';
-            getTpl(position,html,function(d){
-                  return callback&&callback(d);
-            });
+            var dom = getTpl(position,html);
+            return dom;
         }
 
         /**
@@ -274,26 +269,13 @@
          * @param content
          * @returns {string}
          */
-        function getSysTpl(content,callback){
+        function getSysTpl(content){
             var dom = J.create('div',{
                 class : 'ct'
             }).html('<div class="notice">' + content.content + '</div>');
-            return callback&&callback(dom);
+            return dom;
         }
         
-        /**
-         * 获取链接的模板
-         * @param position
-         * @param content
-         * @returns {string}
-         */
-        function getLinkTpl(position, content,callback){
-            var html = '<dd>'+
-                            '<em class="ico_arw"></em>'+
-                            '<p><a href="'+'xx'+'" target="_blank">'+'xx'+'</a></p>'+
-                        '</dd>';
-            return ''
-        }
 
         return {
             getSendMessageTpl :getSendMessageTpl,
