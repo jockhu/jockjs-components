@@ -14,9 +14,6 @@
 
 (function(C){
 
-    var cookieObj = J.cookie, cookie= C.cookie, windowOpenr = C.windowOpener,
-        windowSize = C.windowSize, bId = '';
-
     /**
      *
      * @returns {{open: open}}
@@ -24,43 +21,83 @@
      */
     function Opener(){
 
+        var cookieObj = J.cookie, cookie= C.cookie, windowOpenr = C.windowOpener,
+            windowSize = C.windowSize, pId = '', bId = '', timer = null;
+
         /**
          * 打开聊天窗口，客户端入口
          * @param brokerId 经纪人ID
          * @param propertyId 房源ID
          */
         function open(brokerId, propertyId){
-            var pId = propertyId || '', hours = (new Date).getHours();
-            bId = brokerId || '';
-            console.log(windowIsOpend(hours))
-            if(windowIsOpend(hours)){
-                if(windowOpenr){
-                    windowOpenr.focus();
-                }
-            }else{
-                windowOpenr = window.open(C.url, C.windowName, getAttrString());
-                windowOpenr.focus();
-            }
+            var time = (+new Date());
+            bId = brokerId || '', pId = propertyId || '';
+            openWindow( getConf(), time);
+        }
 
-            /**
-             * cookie 保存的格式为 15|12345|23456
-             * chat窗口如果在后台保持1小时，哪怕窗口存在，也强制open一个新窗口，反之是激活后台窗口
-             */
-            cookieObj.setCookie(cookie.name, hours + '|' + bId + '|' + pId, 0, cookie.domain);
+
+        /**
+         * 获取cookie配置
+         * @returns {*}
+         */
+        function getConf(){
+            var cks;
+            if(cks = cookieObj.getCookie(cookie.name)){
+                cks = cks.split('.');
+                return {
+                    status:cks[0],
+                    time:cks[1]
+                }
+            }
+            return null;
         }
 
         /**
          * 获取chat是否已经被打开
-         * @param hours 当前时间（小时数）
+         * @param conf
          * @returns {boolean}
          */
-        function windowIsOpend(hours){
-            return false;
-            var cks;
-            if(cks = cookieObj.getCookie(cookie.name)){
-                return cks.split('|')[0] == hours ? true : false;
+        function windowIsOpend(conf){
+            return conf && conf.status != '0' && conf.status != '1' ? true : false;
+        }
+
+        /**
+         * 打开或激活窗口
+         * @param conf {
+         *          status: 0 | 1 | 2 | 3,
+         *          time: 1400235736365
+         *        }
+         * @param time
+         */
+        function openWindow(conf, time){
+            function newWindow(){
+                windowOpenr = J.W.open(C.chatDomain, C.windowName, getAttrString());
+                windowOpenr.focus();
             }
-            return false;
+            if(windowIsOpend(conf)){
+
+                if(windowOpenr){
+                    windowOpenr.focus();
+                }
+                // 处理意外关闭cookie没有被重置的二次验证
+                clearTimeout(timer);
+                updateConf(conf.status, time);
+                conf = getConf();
+                timer = setTimeout(function(){
+                    console.log(conf.time , getConf().time)
+                    if(conf.time == getConf().time){
+                        updateConf(1, time);
+                        newWindow();
+                    }
+                },1500);
+            }else{
+                updateConf(1, time);
+                newWindow();
+            }
+        }
+
+        function updateConf(status, time){
+            cookieObj.setCookie(cookie.name, status + '.' + time + '.' + bId + '.' + pId, 1, cookie.domain);
         }
 
         /**

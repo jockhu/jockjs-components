@@ -14,9 +14,6 @@
 
 (function(C){
 
-    var cookieObj = J.cookie, cookie= C.cookie, windowOpenr = C.windowOpener,
-        windowSize = C.windowSize, bId = '';
-
     /**
      *
      * @returns {{open: open}}
@@ -24,103 +21,102 @@
      */
     function Opened(){
 
+        var onSuccess = null, win = J.W, timerI = null, timerO = null, cookieValue = '', cookieObj = J.cookie, cookie= C.cookie;
 
-        /*document.getElementById('dv').innerHTML = +new Date();
+        (function(){
+            // 如果cookie配置为null直接退出
+            if(!(cookieValue=getOpenedConf())) win.close();
 
-        J.g('bt').on('click',function(){
-            console.log('click')
-            ///window.opener.close();
-            window.close();
-        });
+            // 不管什么情况，打开聊天对话框就设置为打开状态
+            listener(true)
 
-        J.g('bt1').on('click',function(){
-            J.cookie.rmCookie('chat_conf','anjuke.com');
-        });
-
-        J.on(window,'load',function(){
-            J.on(window,'beforeunload', function(){
-                J.cookie.rmCookie('chat_conf','anjuke.com');
+            J.on(win,'focus',function(){
+                listener(false)
             });
-        });
+            J.on(win,'blur',function(){
+                listener(true)
+            });
+            J.on(J.D,'click',function(){
+                listener(false)
+            });
+            J.on(win,'beforeunload', function(){
+                setOpenedStatus(0);
+            });
 
-        J.on(window,'focus',function(){
-            console.log('focus')
-        });
-        J.on(window,'blur',function(){
-            console.log('blur')
-        });
-        J.on(window,'beforeunload',function(){
-            (new Image()).src = 'http://jockjs.jockhu.dev.anjuke.com/pjs/base/a.js';
-        });
+        })();
 
 
-        window.setInterval(function () {
-
-            document.getElementById('dv').innerHTML = J.cookie.getCookie('chat_poll');
-
-            //window.focus('abc');
-            //window.opener.openWindow();
-            //window.opener.document.getElementById('bt').fireEvent('click');
-
-            //console.log(window)
-            //alert(0)
-            //window.opener.openWindow1().focus();
-            //window.opener.location.focus();
-            //window.focus(window.opener.openWindow1());
-        }, 500)
-
-        *//**
-         * 打开聊天窗口，客户端入口
-         * @param brokerId 经纪人ID
-         * @param propertyId 房源ID
-         *//*
-        function open(brokerId, propertyId){
-            var pId = propertyId || '', hours = (new Date).getHours();
-            bId = brokerId || '';
-            console.log(windowIsOpend(hours))
-            if(windowIsOpend(hours)){
-                if(windowOpenr){
-                    windowOpenr.focus();
-                }
-            }else{
-                windowOpenr = window.open(C.url, C.windowName, getAttrString());
-                windowOpenr.focus();
-            }
-
-            *//**
-             * cookie 保存的格式为 15|12345|23456
-             * chat窗口如果在后台保持1小时，哪怕窗口存在，也强制open一个新窗口，反之是激活后台窗口
-             *//*
-            cookieObj.setCookie(cookie.name, hours + '|' + bId + '|' + pId, 0, cookie.domain);
+        /**
+         * 设置窗口状态
+         * @param statusCode 0 窗口关闭，1 窗口后台打开 2|3 窗口 前台激活
+         */
+        function setOpenedStatus(statusCode){
+            cookieObj.setCookie(cookie.name, (cookieValue = cookieValue.replace(/^\d{1}\.\d+/, statusCode+'.'+(+new Date()))), 1, cookie.domain);
         }
 
-        *//**
-         * 获取chat是否已经被打开
-         * @param hours 当前时间（小时数）
+        /**
+         * 获取窗口配置
+         * @returns {String}
+         */
+        function getOpenedConf(){
+            return cookieObj.getCookie( cookie.name )
+        }
+
+        /**
+         * 监听函数
+         * @param isListened 是否要监听
          * @returns {boolean}
-         *//*
-        function windowIsOpend(hours){
-            return false;
-            var cks;
-            if(cks = cookieObj.getCookie(cookie.name)){
-                return cks.split('|')[0] == hours ? true : false;
+         */
+        function listener(isListened){
+            clearInterval(timerI);
+            clearTimeout(timerO);
+            if(!isListened){
+                // 前台激活
+                setOpenedStatus(3);
+                return false;
             }
-            return false;
+            // 后台激活
+            setOpenedStatus(2);
+            timerI = setInterval(function(){
+                if( cookieValue != getOpenedConf() ){
+                    cookieValue = getOpenedConf();
+                    clearTimeout(timerO);
+                    win.focus();
+                    if( onSuccess ){
+                        var conf = cookieValue.match(/(\d+)\.(\d+)$/);
+                        onSuccess({
+                            brokerId:conf[1],
+                            propId:conf[2]
+                        });
+                    }
+                    activeWindow();
+                }
+                //console.log('poll')
+            },500);
         }
 
-        *//**
-         * 获取Open.Window的窗口属性字符串
-         * @returns {string}
-         *//*
-        function getAttrString(){
-            var wSize = windowSize[ bId ? 'dialog' : 'list'];
-            return C.windowAttrs + ',width=' + wSize.width + 'px,left=' + wSize.left +
-                ',top='+ wSize.top +',height=' + wSize.height + 'px'
-        }*/
+        /**
+         * 非IE浏览器强制激活窗口
+         */
+        function activeWindow(){
+            if(!J.ua.ie){
+                timerO = setTimeout(function(){
+                    listener(false)
+                    alert('聊天窗口被激活!');
+                },0);
+            }
+        }
 
+        /**
+         * 公开接口，设置监听cookie发生变化时候调用的回调函数
+         * @param callback
+         */
+        function setListener(callback){
+            onSuccess = callback;
+        }
 
         return {
-            open:open
+            setListener:setListener
         }
     }
 
