@@ -89,9 +89,8 @@
                 brokersNum = BROKERSCACHE.length;
                 curBrokerId = J.chat.tabs.getActiveTab();//???????????
                 J.each(chatList.result, function(i, v){
-                    if (curBrokerId != v.from_uid) {
-                        allUnreadMsgNum += v.new_msg_count;
-                    }
+                    v.new_msg_count = (curBrokerId!= v.from_uid) ? v.new_msg_count : 0;
+                    allUnreadMsgNum += v.new_msg_count;
                     brObj = BROKERSCACHE[v.from_uid];
                     if( brObj ){
                         arrHtml.push( brObj.getHtml(v.new_msg_count, v.last_active_time) );
