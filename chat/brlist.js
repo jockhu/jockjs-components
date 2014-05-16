@@ -12,6 +12,7 @@
 /// require('chat.pdata');
 /// require('chat.chat');
 /// require('chat.broker');
+/// require('chat.pdata');
 
 (function(C){
 
@@ -21,8 +22,6 @@
      * @constructor
      */
     function Brlist(){
-
-
         var BROKERSCACHE = [], TMPECACHE = [], arrHtml = [], newBroker = {}, brLen = 0, listBox = J.container.brlist;//联系人列表数组，每个元素是borker实例
 
         /**

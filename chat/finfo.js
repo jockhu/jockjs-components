@@ -11,6 +11,7 @@
 
 
 /// require('chat.chat');
+/// require('chat.Pdata');
 
 (function(C){
 

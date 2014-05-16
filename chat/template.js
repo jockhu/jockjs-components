@@ -67,7 +67,7 @@
             dayTime = 1000*60*60*24,
             todayTime = new Date(year,month,date).getTime(),
             tomTime = todayTime + dayTime,
-            yesTime = todayTime - dayTime,
+            yesTime = todayTime-dayTime,
             time;
 
             function formateTime(content,time){
