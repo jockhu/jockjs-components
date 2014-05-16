@@ -84,7 +84,7 @@
                 updateConf(conf.status, time);
                 conf = getConf();
                 timer = setTimeout(function(){
-                    console.log(conf.time , getConf().time)
+                    //console.log(conf.time , getConf().time)
                     if(conf.time == getConf().time){
                         updateConf(1, time);
                         newWindow();
