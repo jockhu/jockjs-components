@@ -37,6 +37,7 @@
             Recommend,
             FInfo,
             chatList,
+            txtSend,
             BrokerInfo,
             container;
 
@@ -77,7 +78,7 @@
              chatList = container.s(".chatlist").eq(0);
             var btnSend =  container.s(".btn_sub").eq(0);
 
-            var txtSend = container.s(".tarea").eq(0).s('textarea').eq(0);
+            txtSend = container.s(".tarea").eq(0).s('textarea').eq(0);
 
 
 
@@ -90,13 +91,43 @@
             })
             //发送消息事件
             btnSend.on('click',function(){
+                var txt;
+                txt=txtSend.val();
+                if(!txt){
+                    return false;
+                }
                 sendMessage(1,txtSend.val());
                 txtSend.val('')
             })
 
+            if(!+[1,]){
+                txtSend.get().onpropertychange =calcTextLength;
+            }else{
+                txtSend.get().oninput = calcTextLength;
+            }
+
 
 
         }
+
+        /**
+         * 计算input框的字数
+         */
+        function calcTextLength(){
+            var labTip = container.s(".inputTip").eq(0);
+            var len =2000;
+            var leaveChatCount = len-txtSend.val().length;
+            if(leaveChatCount<=0){
+                leaveChatCount=0;
+                txtSend.val(txtSend.val().substr(0,len));
+            }
+
+            calcTextLength = function(){
+                labTip.html(labTip.html().replace(/\d+/g,leaveChatCount))
+            }
+            calcTextLength();
+        }
+
 
 
         /**
@@ -126,6 +157,10 @@
                     body:content,
                     type:1
                 });
+                //如果是房源卡面，要转换为ｊｓｏｎ
+                if(type == 3){
+                    content = eval('('+content+')');
+                }
                 pushMessage(type,content,true);
             }
             !houseId&&sendMessage(1,content);
@@ -160,7 +195,6 @@
             fn = isSend ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
             console.log('sendText:',content)
             messageBox = fn(type,content);
-            console.log(messageBox,11)
             chatList.append(messageBox);
             return messageBox
         }
