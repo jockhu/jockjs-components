@@ -388,6 +388,6 @@
             getFavoriteCount:getFavoriteCount
         }
     }
-    (function(){}.require([''], ['ui.login'], true))
+    ;(function(){}.require([''], ['ui.login'], true))
     J.ui.login = LoginPanel;
 })(J, document);

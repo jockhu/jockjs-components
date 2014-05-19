@@ -26,7 +26,7 @@
      * @constructor
      */
     function Recomm(){
-      /*  var options = {
+        var options = {
             container : '',
             broker_id : '',
             prop_id : '',
@@ -34,14 +34,13 @@
             price_int : ''
         }
         init(opts);
-        *//**
+       /* *
          * 初始化
-         *//*
+*/
         function init(options){
             options = J.mix(options,opts||{});
             getRecommList(options);
         };
-*/
 
         function buildHtml(item){
             return '<dl class="cf">'+
@@ -75,7 +74,7 @@
 
 
 
-            /*var pdata = J.chat.Pdata.getRecomm({
+            var pdata = J.chat.Pdata.getRecomm({
                 container : opts.container,
                 broker_id : opts.broker_id,
                 prop_id : opts.prop_id,
@@ -102,15 +101,12 @@
                     html = '<p>暂无推荐房源</p>';
                 }
                 opts.container.s('.othslist').eq(0).html(html);
-            });*/
+            });
         }
-
         return {
             getRecomm:getRecomm
         }
-       
     }
-
-    C.recomm = new Recomm();
+    C.recomm = Recomm;
 
 })(J.chat);

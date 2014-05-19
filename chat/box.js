@@ -14,6 +14,7 @@
 /// require('chat.finfo');
 /// require('chat.recomm');
 /// require('chat.broker');
+/// require('chat.template');
 /// require('chat.tab');
 
 ;(function(C){
@@ -28,12 +29,14 @@
         var defOpts={
             brokerId:0,
             brokerName:'万钟玲',
-            unReadNum:0
+            unReadNum:0,//消息未读数
+            houseId:216097039//如果房源单过页，首次聊天需要发送房源卡片
             },opts;
 
         var Tab,
             Recommend,
             FInfo,
+            chatList,
             BrokerInfo,
             container;
 
@@ -45,10 +48,12 @@
             opts = J.mix(defOpts,option);
             container = createElement();
             opts.container = container;
-            Tab = new J.chat.Tab(opts);
-            Recommend = new J.chat.Recomm(opts);
-            BrokerInfo = new J.chat.Broker(opts);
-            FInfo = new J.chat.Finfo(opts);
+            Tab = new C.Tab(opts);
+
+
+            /*    Recommend = new C.Recomm(opts);
+                BrokerInfo = new C.Broker(opts);
+                FInfo = new C.Finfo(opts);*/
             eventBind();
         })();
 
@@ -69,11 +74,10 @@
          * 绑定事件
          */
         function eventBind(){
-             var chatList = container.s(".chatlist").eq(0);
+             chatList = container.s(".chatlist").eq(0);
             var btnSend =  container.s(".btn_sub").eq(0);
 
-            var txtSend = container.s(".txtbox").eq(0);
-            var txtMessageBox = container.s(".chatlist").eq(0);
+            var txtSend = container.s(".tarea").eq(0).s('textarea').eq(0);
 
 
 
@@ -86,20 +90,45 @@
             })
             //发送消息事件
             btnSend.on('click',function(){
-                sendMessage(txtSend.val(),txtMessageBox);
+                sendMessage(1,txtSend.val());
+                txtSend.val('')
             })
 
 
 
         }
 
+
         /**
          * 发送消息
          * @param content 消息内容
          * @param messageBox 消息盒子，可为空
          */
-        function sendMessage(content, messageBox){
+        function sendMessage(type,content){
+            var houseId = opts.houseId;
+            houseId&&(function(){
+                J.chat.pdata.getHouseCard(houseId,function(data){
+                    data =  {
+                        retcode: 0,
+                        retmsg: "",
+                        retdata: '{"id":202080197,"des":"2\u5ba41\u53851\u536b 100.00\u5e73","img":"http:\/\/include.app-chat-web.haipengchen.dev.anjuke.com\/anjuke\/img\/global\/1\/gallery_img_default.png","name":"\u94fe\u5bb6\u6d4b\u8bd5","price":"305.00\u4e07\u5143","url":"http:\/\/www.anjuke.com\/prop\/view\/202080197?from=card","jsonVersion":1,"tradeType":"1"}'
+                     };
+                    if(!data.retcode){
+                        //返回正确的房源卡片
+                        sendMessage(3,data.retdata);
+                        sendMessage(1,content);
+                    }
+                });
 
+            })();
+            sendMessage =function(type,content){
+                J.chat.pdata.sendMsgToBroker({
+                    body:content,
+                    type:1
+                });
+                pushMessage(type,content,true);
+            }
+            !houseId&&sendMessage(1,content);
         }
 
         /**
@@ -123,10 +152,16 @@
          * 发送新消息
          * @param type 消息类型
          * @param content 消息内容
+         * @param isSend 是发送还是接收
          * @returns {HTMLObject}
          */
-        function pushMessage(type, content){
-            var messageBox;
+        function pushMessage(type, content,isSend){
+            var messageBox,fn;
+            fn = isSend ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
+            console.log('sendText:',content)
+            messageBox = fn(type,content);
+            console.log(messageBox,11)
+            chatList.append(messageBox);
             return messageBox
         }
 
@@ -162,6 +197,9 @@
          * @param brokerObject
          */
         function show(brokerObject){
+            tab.show(opts);
+            container.show();
+
             
         }
 

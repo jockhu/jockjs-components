@@ -206,8 +206,7 @@
         *houseUrl:只需要传propId，后端自己ping单页地址
         */
         function getHouseCard(hosueUrl, callback) {
-            var sendurl = '/property/card/ershou',
-            param = {
+            var param = {
                 'request_url': hosueUrl
             };
             J.get({
