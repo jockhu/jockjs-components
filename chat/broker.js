@@ -40,6 +40,8 @@
 
         function getHtml(count, lasttime){
             if(count != opts.count || lasttime != opts.lasttime){
+                opts.count = count;
+                opts.lasttime = lasttime;
                 return buildHtml(count, lasttime);
             }
             return opts.html;
@@ -49,13 +51,39 @@
         function buildHtml(count, lasttime){
             var msg_html = '';
             count = (count > 99) ? '99+' : count;
+            lasttime = translateTime(lasttime);
             if (count > 0) {
                 msg_html = '<dd class="infos cf"><p class="new"><span class="ylw">' + count + '</span>"条新回复"</p><p>' + lasttime + '</p></dd>';
             } else {
                 msg_html = '<dd class="infos cf"><p>上次聊天：</p><p>' + lasttime + '</p></dd>';
             }
-            opts.html = '<dl class="cf" brokerId="' + opts.id + '"><dt><img src="' + opts.icon + '" width="28" height="36"></dt><dd class="name"><a href="javascript:void(0);">' + opts.name + '</a></dd>' + msg_html + '</dl>';
+            opts.html = '<dl class="cf event_broker_click" brokerId="' + opts.id + '"><dt><img src="' + opts.icon + '" width="28" height="36"></dt><dd class="name"><a href="javascript:void(0);">' + opts.name + '</a></dd>' + msg_html + '</dl>';
             return opts.html;
+        }
+
+        /*
+        将时间戳转为可显示的时间，如：03.28.19：00
+        */
+        function translateTime(lasttime) {  
+            var time = new Date(parseInt(lasttime)), 
+                month = time.getMonth() + 1, 
+                date = time.getDate(),   
+                hour = time.getHours(),     
+                minute = time.getMinutes(), str; 
+            if (month < 10) { //一位
+                month = '0' + month;
+            }
+            if (date < 10) {
+                date = '0' + date;
+            }
+            if (hour < 10) {
+                hour = '0' + hour;
+            }
+            if (minute < 10) {
+                minute = '0' + minute;
+            }
+            str = month + '.' + date + '.' + hour + ':' + minute; 
+            return str; 
         }
 
 

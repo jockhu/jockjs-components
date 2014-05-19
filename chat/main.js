@@ -22,19 +22,26 @@
      */
     function Main(){
 
-        function init(){
-            C.container.brlist = J.g('c-brlist'); //联系人列表的box
-            C.container.brlistNum = J.g('brlistNum'); //共xx名
+        // function init(){
+           
+        // }
+
+        (function() {
+            C.container.brlist = J.g('c_brlist'); //联系人列表的box
+            C.container.brlistNum = J.g('brokersCount'); //共xx名
             C.container.allUnreadMsg = J.g('allUnreadMsg'); //显示“所有经纪人”按钮的未读消息数
-        }
+            
+        })();
 
 
-        return {
-            init:init
-        }
+        // return {
+        //     init:init
+        // }
     }
 
-    C.Main = Main;
+    // C.Main = Main;
+    // C.Main.init();
+    C.main = new Main();
 
 })(J.chat);
 

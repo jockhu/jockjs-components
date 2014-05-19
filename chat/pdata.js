@@ -9,6 +9,7 @@
  *
  */
 
+/// require('chat.main');
 
 /// require('chat.chat');
 
@@ -48,7 +49,7 @@
          * @param phone 登录的手机号码
          * @param callback 回调函数的字符串形式
          */
-        function getFriends(phone,callback){
+        function getFriends(callback){
             J.get({
                 url: buildUrl('friends'),
                 type: 'jsonp',
@@ -61,7 +62,7 @@
             //     if (response.status == 'OK' && response.result && (response.result.length > 0)) {
             //         opts.brList = new Brlist(response.result.friends);
             //     }
-            // }            
+            // }
         }
 
 

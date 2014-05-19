@@ -2,7 +2,7 @@
  * Anjuke Javascript Framework.
  * Copyright 2014 ANJUKE Inc. All rights reserved.
  *
- * @path: chat/caht.js
+ * @path: chat/chat.js
  * @author: Jock
  * @version: 1.0.0
  * @date: 2014/05/07
@@ -43,5 +43,6 @@ J.add('chat', {
         brlist:'',
         brlistNum: '',
         allUnreadMsg: ''
-    }
+    },
+    phone: '18721381560'
 });
