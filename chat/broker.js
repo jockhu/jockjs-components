@@ -48,6 +48,7 @@
         }
 
 
+
         function buildHtml(count, lasttime){
             var msg_html = '';
             count = (count > 99) ? '99+' : count;

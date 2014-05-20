@@ -116,7 +116,6 @@
          */
         function update(data){
             var tip = dom.s(".tip").eq(0);
-            data = parseInt(data)>99?'99+':data;
             tip.html(data);
             update=function(data){
                 tip.html(data);

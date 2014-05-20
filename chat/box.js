@@ -41,6 +41,7 @@
             txtSend,
             BrokerInfo,
             maxMsgId,//最大消息的id
+            minMsgId,
             container;
 
 
@@ -246,49 +247,48 @@
          * @returns {HTMLObject}
          */
         function pushMessage(msg){
-            console.log(msg,'msg')
-            var messageBox,fn;
+            var messageBox,fn,timerDom;
             fn = msg.from_uid == C.uid ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
-            messageBox = fn(msg.type,msg.body);
+            messageBox = fn(msg.msg_type,msg.body);
             chatList.append(messageBox);
             chatBox.get().scrollTop =1000000;
-            timerTasker(msg.created);
+            timerDom = timerTasker(msg.created);
+            timerDom&&chatList.append(timerDom);
+            maxMsgId = msg.msg_id;
             return messageBox
         }
 
         /**
          * 查看历史消息
-         * @param type 消息类型
-         * @param content 消息内容
+         * @param msg
+         * {
+                "msg_id": "2000019285",
+                "msg_type": "1",
+                "to_uid": "2000000029",
+                "from_uid": "2000000028",
+                "status": "9",
+                "is_pushed": "0",
+                "created": "1398840350",
+                "account_type": "1",
+                "sync_status": "2",
+                "last_update": "2014-04-30 14:45:52",
+                "body": "哈哈！"
+            };
+         * @param
          * @returns {HTMLObject}
          */
-        function shiftMessage(type, content){
-            var msg = {
-                "msg_id":"2000019970",
-                "msg_type":"1",
-                "to_uid":"2000000029",
-                "from_uid":"2000132514",
-                "status":"1",
-                "is_read":"1",
-                "is_pushed":"0",
-                "created":"1399520522",
-                "account_type":"1",
-                "sync_status":"0",
-                "is_web_recieve":"1",
-                "is_web_sync":"1",
-                "source":"1",
-                "last_update":"2014-05-08 11:42:14",
-                "body":"哈哈！"
-            };
-
-            var messageBox,fn;
+        function shiftMessage(msg){
+            var messageBox,fn,timerDom;
             fn = msg.from_uid != C.uid ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
-            messageBox = fn(type,content);
-            chatList.append(messageBox);
-            chatBox.get().scrollTop =1000000;
-            timerTasker();
+            messageBox = fn(msg.msg_type,msg.body);
+            var dom = chatList.first();
+            timerDom = timerTasker(parseInt(msg.created));
+            dom ? dom.insertBefore(messageBox):chatList.append(messageBox);
+            timerDom&&messageBox.insertBefore(timerDom);
+            minMsgId = msg.msg_id;
             return messageBox
         }
+        window.shiftMessage = shiftMessage;
 
         /**
          * 显示消息（消息，提醒，时间...）
@@ -319,8 +319,7 @@
                 var curTime = t;
                 if(curTime -begainTime > 600000){
                     begainTime = curTime;
-                    var dom = J.chat.template.getTimeTpl(curTime);
-                    chatList.append(dom);
+                    return J.chat.template.getTimeTpl(curTime);
                 }
             }
         }

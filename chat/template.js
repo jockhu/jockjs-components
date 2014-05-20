@@ -124,7 +124,7 @@
          */
         function getTextTpl(className, content){
             //先转化表情
-            content = formateEmoji(content);
+            //content = formateEmoji(content);
             //超链接
             content = formateTxt( encodeTxt(content) );
             var html = '<dd>'+
@@ -133,7 +133,6 @@
                         '</dd>';
             return getTpl(className, html);
         }
-
         function formateEmoji(content) {
             emoji.img_path = "<?php echo User_Common_Util_PageHelper::getPureStaticUrl('/img/chat/images/unicode/');?>";
             emoji.sheet_path = "<?php echo User_Common_Util_PageHelper::getPureStaticUrl('/img/chat/images/sheet_64.png');?>";
