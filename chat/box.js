@@ -114,7 +114,9 @@
                 //滚动到顶部显示更多消息,向上查看，最小消息id应该为空
                 if(!chatBox.get().scrollTop){
                     J.chat.pdata.getChatDetail(opts.brokerId, 0,maxMsgId,20,function(data){
+                        J.each(data,function(k,v){
 
+                        })
                     });
                 }
             });
@@ -183,6 +185,10 @@
                     //发送失败处理逻辑
                     if ( ret.retcode == -1) {
                         sendError(msg.body,messageBox);
+                        return false;
+                    }
+                    if(!ret.retcode){
+                        !maxMsgId&&(maxMsgId = ret.retdata.result)
                     }
                 });
                 //如果是房源卡面，要转换为ｊｓｏｎ
@@ -286,10 +292,9 @@
             dom ? dom.insertBefore(messageBox):chatList.append(messageBox);
             timerDom&&messageBox.insertBefore(timerDom);
             minMsgId = msg.msg_id;
+            !maxMsgId&&(maxMsgId=msg.msg.msg_id);
             return messageBox
         }
-        window.shiftMessage = shiftMessage;
-
         /**
          * 显示消息（消息，提醒，时间...）
          * @param content 信息内容
