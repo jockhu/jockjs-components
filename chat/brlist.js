@@ -21,7 +21,7 @@
      * @constructor
      */
     function Brlist(){  
-        var BROKERSCACHE = [], TMPECACHE = [], arrHtml = [], newBroker = {}, brLen = 0, listBox = J.chat.container.brlist;//联系人列表数组，每个元素是borker实例
+        var BROKERSCACHE = [], TMPECACHE = [], arrHtml = [], newBroker = {}, brLen = 0, listBox = C.container.brlist;//联系人列表数组，每个元素是borker实例
 
         /**
          * 初始化：只初始化BROKERSCACHE数组
@@ -91,7 +91,7 @@
                 brLen = chatList.result.length;
                 brokersNum = BROKERSCACHE.length;
                 curBrokerId = '2000132440';
-                // curBrokerId = J.chat.tabs.getActiveTab();//???????????
+                curBrokerId = C.tabs.getActiveBrokerId();
                 J.each(chatList.result, function(i, v){
                     v.new_msg_count = (curBrokerId!= v.from_uid) ? v.new_msg_count : 0;
                     allUnreadMsgNum += v.new_msg_count;
@@ -118,9 +118,9 @@
                 //"所有经纪人"按钮显示未读消息数
                 showAllUnreadMsgCount(allUnreadMsgNum);
                 //显示共多少名经纪人
-                J.chat.container.brlistNum.innerHTML = '共' + brLen + '名';
+                C.container.brlistNum.innerHTML = '共' + brLen + '名';
                 //多个tab显示未读消息数
-                // J.chat.tabs.xxx(boxMsgList); //???????????????????????
+                C.tabs.updateUnreadMsg(boxMsgList); //???????????????????????
                 //若有联系人删除，则需要发送消息给tabs，判断是否需要关闭当前tab
                 sendMsgToTabs(brLen, brokersNum);
                 updateEvent();
@@ -132,7 +132,7 @@
         */
         function showAllUnreadMsgCount(allUnreadMsgNum) {
             allUnreadMsgNum = (allUnreadMsgNum > 99) ? '99+' : allUnreadMsgNum;
-            J.chat.container.allUnreadMsg.innerHTML = allUnreadMsgNum;
+            C.container.allUnreadMsg.innerHTML = allUnreadMsgNum;
         }
 
         /*
@@ -162,38 +162,13 @@
                 eventTarget = e.target ||  e.srcElement;  
                 while( eventTarget != listBox.get() ){
                     if( hasClass(eventTarget, event_broker_click)){ alert('jsdfsd');
-                        // C.tabs.show( BROKERSCACHE[ J.g(eventTarget).attr('brokerId') ] ); //??????????????????????????
+                        C.tabs.show( BROKERSCACHE[ J.g(eventTarget).attr('brokerId') ] ); //??????????????????????????
                         return false;
                     }
                     if (!eventTarget) return;
                     eventTarget = eventTarget.parentNode;
                 }
             });
-            updateEvent();
-
-            // listBox.on('mouseenter' ,function(e){  console.log('111');
-            //     eventTarget = e.target || e.srcElement;  console.log(eventTarget); console.log(e.relatedTarget); console.log(e.fromTarget);
-            //     while( eventTarget ){ 
-            //         if( hasClass(eventTarget, event_broker_click)){ 
-            //             J.g(eventTarget).addClass(hoverClassName);
-            //             return false;
-            //         }
-            //         if (!eventTarget) return;
-            //         eventTarget = eventTarget.parentNode;
-            //     }
-            // });
-
-            // listBox.on('mouseleave' ,function(e){
-            //     eventTarget = e.target || e.srcElement;  console.log('leave:');console.log(eventTarget);
-            //     while( eventTarget != listBox.get() ){
-            //         if( hasClass(eventTarget, event_broker_click)){ alert('leave');
-            //             J.g(eventTarget).removeClass(hoverClassName);
-            //             return false;
-            //         }
-            //         if (!eventTarget) return;
-            //         eventTarget = eventTarget.parentNode;
-            //     }
-            // });
         }
 
         function updateEvent() {

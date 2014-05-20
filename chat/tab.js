@@ -21,23 +21,14 @@
      * @returns {{show: show, remove: remove}}
      * @constructor
      */
-    function Tab(option){
+    function Tab(_brokerObject){
 
-        var
-            defOPts={
-               brokerId:0,
-               borkerName:'',
-               unReadNum:0
-            },
-            opts,
-            dom,
-            //当前的经纪人ID
-            currentBrokerId = 0;
+        var brokerObject, dom, tabContainer = J.chat.container.tabContainer;
 
         ;(function(){
-            opts = J.mix(option,defOPts);
-            dom = createElement(opts.broker_id,opts.brokerName,opts.unReadNum);
-
+            brokerObject = _brokerObject; console.log(_brokerObject);
+            var opts = brokerObject.getOpts(); console.log('opts:'); console.log(opts);
+            dom = createElement(opts.id, opts.name, opts.count);
         })();
 
 
@@ -45,19 +36,15 @@
          * type priveate
          */
         function bindEvent(){
-
-            dom.on('click',function(e){
-                var e = e || window.event;
-                if(e.target.className=='btn_close'){
-                    remove();
+            dom.on('click', function(e){
+                var e = e || window.event, eventTarget = e.target || e.srcElement;
+                if(eventTarget.className == 'btn_close') {  //关闭tab
+                    C.remove(brokerObject);//???????????????????????
                     return true;
+                } else { //切换tab
+                    C.tabs.switchTab(brokerObject);
                 }
-                show();
             });
-
-
-
-
         }
 
         /**
@@ -67,58 +54,64 @@
          * @param num　　未读消息数
          * @returns {li|*}
          */
-        function createElement(id,name,num){
+        function createElement(id, name, num){
             var dom = J.create("li",{
                 className:'now'
-            })
-            var html ='<em class="tab_l"></em><strong class="name">'+name+'</strong><em class="tab_r"></em>' +
+            });
+            dom.attr('brokderId', id);
+
+            var html = '<em class="tab_l"></em><strong class="name">' + name + '</strong><em class="tab_r"></em>' +
                 '<a href="javascript:void(0);" class="btn_close" title="关闭"></a>' +
-                '<span>'+num+'</span>'
+                '<span class="tip">' + num + '</span>';
+
             dom.html(html);
-            J.g("tab_container").append(dom);
+            tabContainer.append(dom);
+            bindEvent();
             return dom;
         }
-
-
-
 
         /**
          * 显示或激活和经纪人的聊天会话tab
          * @param brokerObject
          */
-        function show(brokerObject){
-            dom.addClass('now')
-            return dom;
+        function show(){
+            //同时将未读消息数隐藏
+            var tip = dom.s(".tip").eq(0);
+            tip.setStyle('display', 'none');
+            dom.addClass('now');
         }
 
         /**
          * 隐藏和经纪人的对话tab
          * @param brokerObject
          */
-        function hide(brokerObject){
-            dom.removeClass('now')
-            return dom;
-        }
+        // function hide(){
+        //     dom.removeClass('now');
+        // }
 
         /**
          * 移除和经纪人的对话tab
          * @param brokerObject
          */
-        function remove(brokerObject){
-            J.un(dom)
+        function remove(){
+            J.un(dom);
             dom.remove();
-            J.fire(opts.container,'chat:tabclick',{id:opts.id});
+            // J.fire(opts.container,'chat:tabclick',{id:opts.id});//###############################
         }
 
         /**
          * 更新tab消息数
-         * @param data
+         * @param new_msg_count
          */
-        function update(data){
+        function update(new_msg_count){
             var tip = dom.s(".tip").eq(0);
-            tip.html(data);
-            update=function(data){
-                tip.html(data);
+            new_msg_count = parseInt(new_msg_count) > 99 ? '99+' : data;
+            tip.html(new_msg_count);
+            tip.setStyle('display', 'block');
+            update = function(new_msg_count){
+                new_msg_count = parseInt(new_msg_count) > 99 ? '99+' : data;
+                tip.html(new_msg_count);
+                tip.setStyle('display', 'block');
             }
         }
 
@@ -140,9 +133,10 @@
 
 
         return {
-            show:show,
-            remove:remove,
-            update:update
+            show: show,
+            // hide: hide,
+            remove: remove,
+            update: update
         }
     }
 

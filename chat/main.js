@@ -30,7 +30,8 @@
             C.container.brlist = J.g('c_brlist'); //联系人列表的box
             C.container.brlistNum = J.g('brokersCount'); //共xx名
             C.container.allUnreadMsg = J.g('allUnreadMsg'); //显示“所有经纪人”按钮的未读消息数
-            
+            //tab
+            C.container.tabContainer = J.g('tab_container');
         })();
 
         // return {

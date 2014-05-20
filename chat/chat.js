@@ -21,8 +21,8 @@ J.add('chat', {
     windowSize:{
         //会话窗口尺寸
         dialog:{
-            width:800,
-            height:500,
+            width:985,
+            height:600,
             left:200,
             top:200
         },
@@ -42,7 +42,8 @@ J.add('chat', {
     container:{
         brlist:'',
         brlistNum: '',
-        allUnreadMsg: ''
+        allUnreadMsg: '',
+        tabContainer: ''
     },
     phone: '18721381560'
 });

@@ -87,7 +87,9 @@
             return str; 
         }
 
-
+        function getOpts() {
+            return opts;
+        }
 
 
 
@@ -168,7 +170,8 @@
 
 
         return {
-            getHtml: getHtml
+            getHtml: getHtml,
+            getOpts: getOpts
         }
     }
 
