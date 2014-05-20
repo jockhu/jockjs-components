@@ -27,18 +27,20 @@
      */
     function Box(option){
         var defOpts={
-            brokerId:0,
+            brokerId:2001230,
             brokerName:'万钟玲',
             unReadNum:0,//消息未读数
-            houseId:216097039//如果房源单过页，首次聊天需要发送房源卡片
+            houseId:0//如果房源单过页，首次聊天需要发送房源卡片
             },opts;
 
         var Tab,
             Recommend,
             FInfo,
             chatList,
+            chatBox,
             txtSend,
             BrokerInfo,
+            maxMsgId,//最大消息的id
             container;
 
 
@@ -77,7 +79,7 @@
         function eventBind(){
              chatList = container.s(".chatlist").eq(0);
             var btnSend =  container.s(".btn_sub").eq(0);
-
+            chatBox = container.s(".chatbox").eq(0);
             txtSend = container.s(".tarea").eq(0).s('textarea').eq(0);
 
 
@@ -100,11 +102,21 @@
                 txtSend.val('')
             })
 
+            //每次输入总数时时减少
             if(!+[1,]){
                 txtSend.get().onpropertychange =calcTextLength;
             }else{
                 txtSend.get().oninput = calcTextLength;
             }
+
+            chatBox.on('scroll',function(){
+                //滚动到顶部显示更多消息,向上查看，最小消息id应该为空
+                if(!chatBox.get().scrollTop){
+                    J.chat.pdata.getChatDetail(opts.brokerId, 0,maxMsgId,20,function(data){
+
+                    });
+                }
+            });
 
 
 
@@ -153,25 +165,51 @@
 
             })();
             sendMessage =function(type,content){
-                J.chat.pdata.sendMsgToBroker({
+                var messageBox;
+                var msg;
+                msg = {
+                    msg_type:type,
                     body:content,
-                    type:1
+                    from_uid: C.uid,
+                    to_uid:opts.brokerId,
+                    created:new Date().getTime()
+                };
+                messageBox = pushMessage(msg);
+                J.chat.pdata.sendMsgToBroker({
+                    body: msg.body,
+                    type: msg.msg_type
+                }, function (ret) {
+                    //发送失败处理逻辑
+                    if ( ret.retcode == -1) {
+                        sendError(msg.body,messageBox);
+                    }
                 });
                 //如果是房源卡面，要转换为ｊｓｏｎ
-                if(type == 3){
-                    content = eval('('+content+')');
+                if (type == 3) {
+                    content = eval('(' + msg.body + ')');
                 }
-                pushMessage(type,content,true);
             }
-            !houseId&&sendMessage(1,content);
+            !houseId&&sendMessage(type,content);
         }
 
         /**
          * 消息发送正常回掉
          * @param statusCode 状态吗
          */
-        function sendSuccess(statusCode){
+        function sendSuccess(ret){
+            switch (ret.retcode){
+                case -1:
 
+                    //message send wrong
+                    break;
+                case  -2:
+                    //message send empty
+                    break;
+                case 0:
+                    //message send success;
+
+
+            }
         }
 
         /**
@@ -180,7 +218,24 @@
          * @param messageBox 消息盒子，可为空
          */
         function sendError(content, messageBox){
+            var aWrong = document.createElement('a');
+            aWrong.href = 'javascript:void(0)';
+            aWrong.className = 'btn_re';
+            aWrong.title = '点击重发';
+            messageBox.append(aWrong)
+            aWrong.onclick = function(){
+                var ret = window.confirm('是否重新发送？');
+                ret&&J.chat.pdata.sendMsgToBroker({
+                    body: content,
+                    type: 1
+                },function(data){
+                    if (data&&!data.retcode) {
+                        aWrong.parentNode.removeChild(aWrong);
+                        aWrong.onclick = null;
+                    }
 
+                });
+            }
         }
 
         /**
@@ -190,12 +245,14 @@
          * @param isSend 是发送还是接收
          * @returns {HTMLObject}
          */
-        function pushMessage(type, content,isSend){
+        function pushMessage(msg){
+            console.log(msg,'msg')
             var messageBox,fn;
-            fn = isSend ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
-            console.log('sendText:',content)
-            messageBox = fn(type,content);
+            fn = msg.from_uid == C.uid ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
+            messageBox = fn(msg.type,msg.body);
             chatList.append(messageBox);
+            chatBox.get().scrollTop =1000000;
+            timerTasker(msg.created);
             return messageBox
         }
 
@@ -206,7 +263,30 @@
          * @returns {HTMLObject}
          */
         function shiftMessage(type, content){
-            var messageBox;
+            var msg = {
+                "msg_id":"2000019970",
+                "msg_type":"1",
+                "to_uid":"2000000029",
+                "from_uid":"2000132514",
+                "status":"1",
+                "is_read":"1",
+                "is_pushed":"0",
+                "created":"1399520522",
+                "account_type":"1",
+                "sync_status":"0",
+                "is_web_recieve":"1",
+                "is_web_sync":"1",
+                "source":"1",
+                "last_update":"2014-05-08 11:42:14",
+                "body":"哈哈！"
+            };
+
+            var messageBox,fn;
+            fn = msg.from_uid != C.uid ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
+            messageBox = fn(type,content);
+            chatList.append(messageBox);
+            chatBox.get().scrollTop =1000000;
+            timerTasker();
             return messageBox
         }
 
@@ -216,14 +296,33 @@
          * @param showType 0:新消息，1:历史消息（取决显示的位置）
          */
         function showMessage(content, showType){
+            //新消息
+            var messageBox;
+            if(!showType){
 
+                return messageBox;
+            }
+            //历史消息
+
+
+
+
+            return messageBox;
         }
 
         /**
          * 时间任务处理
          */
-        function timerTasker(){
-
+        function timerTasker(t){
+            var begainTime = t;
+            timerTasker = function(t){
+                var curTime = t;
+                if(curTime -begainTime > 600000){
+                    begainTime = curTime;
+                    var dom = J.chat.template.getTimeTpl(curTime);
+                    chatList.append(dom);
+                }
+            }
         }
 
         /**
@@ -231,10 +330,8 @@
          * @param brokerObject
          */
         function show(brokerObject){
-            tab.show(opts);
+            Tab.show();
             container.show();
-
-            
         }
 
         /**
@@ -242,6 +339,8 @@
          * @param brokerObject
          */
         function hide(brokerObject){
+            Tab.hide();
+            container.hide();
 
         }
 
@@ -250,6 +349,8 @@
          * @param brokerObject
          */
         function remove(brokerObject){
+            Tab.remove();
+            container.remove();
 
         }
 
@@ -260,6 +361,7 @@
             remove:remove
         }
     }
+    C.uid = 123123;
     C.Box = Box;
     new C.Box();
 
