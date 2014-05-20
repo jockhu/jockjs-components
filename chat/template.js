@@ -123,12 +123,24 @@
          * @returns {string}
          */
         function getTextTpl(className, content){
+            //先转化表情
+            content = formateEmoji(content);
+            //超链接
             content = formateTxt( encodeTxt(content) );
             var html = '<dd>'+
                             '<em class="ico_arw"></em>'+
                             '<p>' + content + '</p>'+
                         '</dd>';
             return getTpl(className, html);
+        }
+
+        function formateEmoji(content) {
+            emoji.img_path = "<?php echo User_Common_Util_PageHelper::getPureStaticUrl('/img/chat/images/unicode/');?>";
+            emoji.sheet_path = "<?php echo User_Common_Util_PageHelper::getPureStaticUrl('/img/chat/images/sheet_64.png');?>";
+            emoji.use_sheet = true;
+            emoji.init_env();
+            var auto_mode = emoji.replace_mode; 
+            return emoji.replace_unified(content);
         }
 
         /**
