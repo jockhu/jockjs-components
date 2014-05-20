@@ -353,10 +353,16 @@
 
         }
 
+        function updateUnreadMsg(new_msg_count) {
+            Tab.update(new_msg_count);
+        }
+
+
 
 
         return {
             show:show,
+            updateUnreadMsg: updateUnreadMsg,
             remove:remove
         }
     }
