@@ -65,7 +65,7 @@
 
         function createElement(isFromList){
             var dom = J.create('div',{
-                'class':'tab_conf_cf'
+                'class':'tab_con cf'
             })
             var html= J.g("tpl_chat_box").html();
             dom.html(html);
