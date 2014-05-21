@@ -53,11 +53,10 @@
             opts = brokerObject.getOpts();
             container = createElement();
             opts.container = container;
-
-           // Tab = new C.Tab(brokerObject);
+           Tab = new C.Tab(brokerObject);
             //opts brokerId 经纪人id propId 房源id container 容器
-            recomm = new C.recomm;
-            Recomm = recomm.getRecomm({
+            Recommend = new C.recomm();
+            recomend = Recommend.getRecomm({
                 brokerId : 147468,
                 propId : 205133226,
                 container : J.s('.othslist').eq(0)
@@ -291,9 +290,6 @@
                     }
                 });
                 //如果是房源卡面，要转换为ｊｓｏｎ
-                if (type == 3) {
-                    content = eval('(' + msg.body + ')');
-                }
             }
             !houseId&&sendMessage(type,content);
         }
@@ -354,7 +350,7 @@
         function pushMessage(msg){
             var messageBox,fn,timerDom;
             fn = msg.from_uid == C.uid ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
-            (msg.msg_type!=1||msg.msg_type!=2)&&(msg.body = eval('('+ msg.body+')'));
+            (msg.msg_type!=1&&msg.msg_type!=2)&&(msg.body = eval('('+ msg.body+')'));
             messageBox = fn(msg.msg_type,msg.body);
             chatList.append(messageBox);
             chatBox.get().scrollTop =1000000;
@@ -386,7 +382,7 @@
         function shiftMessage(msg){
             var messageBox,fn,timerDom;
             fn = msg.from_uid != C.uid ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
-            (msg.msg_type!=1||msg.msg_type!=2)&&(msg.body = eval('('+ msg.body+')'));
+            (msg.msg_type!=1&&msg.msg_type!=2)&&(msg.body = eval('('+ msg.body+')'));
             messageBox = fn(msg.msg_type,msg.body);
             var dom = chatList.first();
             timerDom = timerTasker(parseInt(msg.created));
@@ -475,7 +471,7 @@
         }
     }
     C.Box = Box;
-    var brokerObject = new J.chat.Broker({
+   /* var brokerObject = new J.chat.Broker({
         icon: '',
         name: '万钟宁',
         id: '123456',
@@ -484,7 +480,7 @@
         lasttime:'',
         html: ''
     });
-    new C.Box(brokerObject);
+    new C.Box(brokerObject);*/
 
 })(J.chat);
 

@@ -27,8 +27,8 @@
 
         ;(function(){
             var opts = brokerObject.getOpts(); 
-            createElement(opts.id, opts.name, opts.count);
-            bindEvent();
+            dom = createElement(opts.id, opts.name, opts.count);
+            bindEvent(dom);
         })();
 
 
@@ -64,7 +64,7 @@
 
             dom.html(html);
             tabContainer.append(dom);
-            // return dom;
+            return dom;
         }
 
         /**

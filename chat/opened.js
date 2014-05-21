@@ -120,7 +120,7 @@
         }
     }
 
-    C.opened = new Opened();
+   // C.opened = new Opened();
 
 })(J.chat);
 

@@ -190,7 +190,7 @@
         }
     }
 
-    C.brlist = new Brlist();
+    //C.brlist = new Brlist();
 
 })(J.chat);
 

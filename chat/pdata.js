@@ -134,6 +134,7 @@
             J.get({
                 url: buildUrl('recomm'),
                 data: param,
+                timeout:20000,
                 type: 'json',
                 onSuccess: callback
             });
@@ -150,6 +151,7 @@
                 url: buildUrl('property'),
                 data: param,
                 type: 'json',
+                timeout:20000,
                 onSuccess: callback
             });
         }
@@ -165,6 +167,7 @@
                 url: buildUrl('broker'),
                 data: param,
                 type: 'json',
+                timeout:20000,
                 onSuccess: callback
             });
         }
