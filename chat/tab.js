@@ -35,7 +35,7 @@
         /**
          * type priveate
          */
-        function bindEvent(dom){
+        function bindEvent(){
             dom.on('click', function(e){
                 var e = e || window.event, eventTarget = e.target || e.srcElement;
                 if(eventTarget.className == 'btn_close') {  //关闭tab
@@ -99,11 +99,15 @@
          * 更新tab消息数
          * @param new_msg_count
          */
-        function update(new_msg_count){
+        function update(new_msg_count){  
             tip = tip || dom.s(".tip").eq(0);
             new_msg_count = parseInt(new_msg_count) > 99 ? '99+' : data;
             tip.html(new_msg_count);
-            tip.show();
+            if (new_msg_count > 0) {
+                tip.show();
+            } else if (new_msg_count == 0) {
+                tip.hide();
+            }
         }
 
         /**

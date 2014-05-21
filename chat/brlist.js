@@ -12,7 +12,7 @@
 /// require('chat.pdata');
 /// require('chat.chat');
 /// require('chat.broker');
-/// require('chat.pdata');
+/// require('chat.tabs');
 
 (function(C){
 
@@ -84,7 +84,7 @@
                    5."所有经纪人"按钮上显示的未读消息数
          */
         function update(chatList){ 
-            var brObj, curBrokerId, boxMsgList = [], brokersNum = 0, allUnreadMsgNum = 0;
+            var brObj, curBrokerId, boxMsgList = {}, brokersNum = 0, allUnreadMsgNum = 0;
 
             if( chatList.status == 'OK' ){
                 arrHtml = [];

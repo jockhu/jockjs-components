@@ -49,10 +49,11 @@
         /**
          * 初始化
          */
-        (function(){
+        (function(){ 
             opts = brokerObject.getOpts();
             container = createElement();
             opts.container = container;
+
            // Tab = new C.Tab(brokerObject);
             //opts brokerId 经纪人id propId 房源id container 容器
             recomm = new C.recomm;
@@ -70,6 +71,14 @@
                 brokerId : 100,
                 container : J.s('.binfo').eq(0)
             });
+
+            Tab = new C.Tab(brokerObject);  
+
+
+           /* Recommend = new C.Recomm(opts);
+            BrokerInfo = new C.Broker(opts);*/
+       //     FInfo = new C.Finfo(opts);
+
             eventBind();
         })();
 
@@ -451,7 +460,7 @@
 
         }
 
-        function updateUnreadMsg(new_msg_count) {
+        function updateUnreadMsg(new_msg_count) {  
             Tab.update(new_msg_count);
         }
 

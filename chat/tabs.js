@@ -44,6 +44,7 @@
                 currentBrokerId && CACHE[brokerId].prev = CACHE[currentBrokerId];
                 currentBrokerId && CACHE[currentBrokerId] && (CACHE[currentBrokerId].next = CACHE[brokerId]);
             }
+            currentBrokerId && CACHE[currentBrokerId].hide();
             boxObject.show();
             currentBrokerId = brokerId;
             return boxObject;
@@ -113,20 +114,20 @@
         *实时更新tab上的未读消息数，且若是当前窗口实时获取消息内容
         *@param boxMsgList：[brokerid]-[new_msg_count]数组
         */
-        function updateUnreadMsg(boxMsgList) {
+        function updateUnreadMsg(boxMsgList) { 
             var i, brokerid, new_msg_count;
-            for (i = 0; i < boxMsgList.length; i++) {
-                brokerid = boxMsgList[i][0];
-                if (CACHE[brokerid]) {
-                    if (brokerid != currentBrokerId) {
-                        new_msg_count = boxMsgList[i][1];
-                        CACHE[brokerid].updateUnreadMsg(new_msg_count);
-                    } else {
-                        //实时获取对应聊天内容
-                        //?????????????????????????
+            for (i in boxMsgList) {  
+                if (boxMsgList.hasOwnProperty(i)) {
+                    if (CACHE[i]) {  
+                        if (i != currentBrokerId) {
+                            new_msg_count = boxMsgList[i] = 3;  
+                            CACHE[i].updateUnreadMsg(new_msg_count);
+                        } else {
+                            //实时获取对应聊天内容
+                            //?????????????????????????
+                        }
                     }
                 }
-                
             }
         }
 
@@ -140,7 +141,7 @@
         }
     }
 
-    C.Tabs = Tabs;
+    C.tabs = new Tabs();
 
 })(J.chat);
 
