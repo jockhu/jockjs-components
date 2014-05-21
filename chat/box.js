@@ -53,12 +53,23 @@
             opts = brokerObject.getOpts();
             container = createElement();
             opts.container = container;
-            Tab = new C.Tab(brokerObject);
-
-
-           /* Recommend = new C.Recomm(opts);
-            BrokerInfo = new C.Broker(opts);*/
-       //     FInfo = new C.Finfo(opts);
+           // Tab = new C.Tab(brokerObject);
+            //opts brokerId 经纪人id propId 房源id container 容器
+            recomm = new C.recomm;
+            Recomm = recomm.getRecomm({
+                brokerId : 147468,
+                propId : 205133226,
+                container : J.s('.othslist').eq(0)
+            });
+            BrokerInfo = new C.Broker(opts);
+            FInfo = C.finfo.getPropertyInfo({
+                propId : 202080197,
+                container : J.s('.finfo').eq(0)
+            });
+            BInfo = C.finfo.getBrokerInfo({
+                brokerId : 100,
+                container : J.s('.binfo').eq(0)
+            });
             eventBind();
         })();
 
