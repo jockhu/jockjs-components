@@ -90,12 +90,17 @@
          *
          */
         function getChatDetail(to_uid, min_msg_id, max_msg_id, limit, callback){
-            var sendUrl = apidomain + '/message/getChatDetail/' + to_uid + '/' + min_msg_id + '/' + max_msg_id + '/' + limit;
+            var sendUrl = opts.apidomain + '/message/getChatDetail/' + to_uid + '/' + min_msg_id + '/' + max_msg_id + '/' + limit;
             J.get({
                 url: sendUrl,
                 type: 'jsonp',
-                callback: callback
+                callback: 'J.chat.pdata.callbackDetail'
             });
+            J.chat.pdata.callbackDetail = function(){
+                var args = Array.prototype.slice(arguments);
+                callback.apply(this,args);
+            }
+
             // function processChatDetail(response) {
             //     if (!response) return;
             //     if (response.status == 'OK' && response.result && (response.result.length > 0)) {

@@ -24,6 +24,7 @@
             icon: '',
             name: '',
             id: '',
+            houseId:'',
             count: 0,
             lasttime: '',
             html: ''

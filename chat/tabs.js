@@ -79,7 +79,7 @@
          * 隐藏和经纪人的对话tab
          * @param brokerObject
          */
-        // function hide(brokerObject){
+        // function hide(){
         //     var activeObj = CACHE[brokerObject.id];
         //     if(!activeObj)return false;
         //     activeObj.hide();

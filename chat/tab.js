@@ -27,8 +27,9 @@
 
         ;(function(){
             brokerObject = _brokerObject; console.log(_brokerObject);
-            var opts = brokerObject.getOpts(); console.log('opts:'); console.log(opts);
+            var opts = brokerObject.getOpts();
             dom = createElement(opts.id, opts.name, opts.count);
+            bindEvent();
         })();
 
 
@@ -58,15 +59,13 @@
             var dom = J.create("li",{
                 className:'now'
             });
-            dom.attr('brokderId', id);
-
             var html = '<em class="tab_l"></em><strong class="name">' + name + '</strong><em class="tab_r"></em>' +
                 '<a href="javascript:void(0);" class="btn_close" title="关闭"></a>' +
                 '<span class="tip">' + num + '</span>';
 
             dom.html(html);
             tabContainer.append(dom);
-            bindEvent();
+            //bindEvent();
             return dom;
         }
 
@@ -85,9 +84,9 @@
          * 隐藏和经纪人的对话tab
          * @param brokerObject
          */
-        // function hide(){
-        //     dom.removeClass('now');
-        // }
+        function hide(){
+             dom.removeClass('now');
+        }
 
         /**
          * 移除和经纪人的对话tab
@@ -134,7 +133,7 @@
 
         return {
             show: show,
-            // hide: hide,
+             hide: hide,
             remove: remove,
             update: update
         }

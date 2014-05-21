@@ -25,11 +25,11 @@
      * @returns {{show: show, remove: remove}}
      * @constructor
      */
-    function Box(option){
+    function Box(brokerObject){
         var defOpts={
             brokerId:2001230,
-            brokerName:'万钟玲',
-            unReadNum:0,//消息未读数
+            name:'万钟玲',
+            count:0,//消息未读数
             houseId:0//如果房源单过页，首次聊天需要发送房源卡片
             },opts;
 
@@ -49,15 +49,15 @@
          * 初始化
          */
         (function(){
-            opts = J.mix(defOpts,option);
+            opts = brokerObject.getOpts();
             container = createElement();
             opts.container = container;
-            Tab = new C.Tab(opts);
+            Tab = new C.Tab(brokerObject);
 
 
-            /*    Recommend = new C.Recomm(opts);
-                BrokerInfo = new C.Broker(opts);
-                FInfo = new C.Finfo(opts);*/
+           /* Recommend = new C.Recomm(opts);
+            BrokerInfo = new C.Broker(opts);*/
+       //     FInfo = new C.Finfo(opts);
             eventBind();
         })();
 
@@ -82,6 +82,11 @@
             var btnSend =  container.s(".btn_sub").eq(0);
             chatBox = container.s(".chatbox").eq(0);
             txtSend = container.s(".tarea").eq(0).s('textarea').eq(0);
+            var mask = J.s(".p_msk").eq(0);
+
+
+
+            var scrollIsReturn = false;
 
 
 
@@ -89,7 +94,23 @@
             chatList.on('click',function(e){
                 var e = e || window.event;
                 var target = e.target;
-                //while(target.className=='map'||target.className=='map')
+                while(target !== chatList.get()){
+                    if(target.className.indexOf('event_map_click')>-1){
+
+                        mask.show();
+
+
+                        return true;
+                        //map click
+                    }
+                    if(target.className.indexOf('event_image_click')>-1){
+                        //image click
+                        alert('image click');
+                        mask.show();
+                        return true;
+                    }
+                    target = target.parentNode;
+                }
 
             })
             //发送消息事件
@@ -112,10 +133,41 @@
 
             chatBox.on('scroll',function(){
                 //滚动到顶部显示更多消息,向上查看，最小消息id应该为空
-                if(!chatBox.get().scrollTop){
-                    J.chat.pdata.getChatDetail(opts.brokerId, 0,maxMsgId,20,function(data){
+                if(!scrollIsReturn&&!chatBox.get().scrollTop){
+                    scrollIsReturn = true;
+                    J.chat.pdata.getChatDetail(opts.id, 0,maxMsgId,20,function(data){
+                        scrollIsReturn = false;
+                      /*  var data =  [
+                            {
+                                "msg_id": "2000019285",
+                                "msg_type": "1",
+                                "to_uid": "2000000029",
+                                "from_uid": "2000000028",
+                                "status": "9",
+                                "is_pushed": "0",
+                                "created": "1398840350",
+                                "account_type": "1",
+                                "sync_status": "2",
+                                "last_update": "2014-04-30 14:45:52",
+                                "body": "哈哈！"
+                            },
+                            {
+                                "msg_id": "2000019284",
+                                "msg_type": "1",
+                                "to_uid": "2000000029",
+                                "from_uid": "2000000028",
+                                "status": "9",
+                                "is_pushed": "0",
+                                "created": "1398839983",
+                                "account_type": "1",
+                                "sync_status": "2",
+                                "last_update": "2014-04-30 14:39:48",
+                                "body": "哈哈！"
+                            }
+                        ];*/
                         J.each(data,function(k,v){
-
+                            shiftMessage(v);
+                            maxMsgId= v.msg_id;
                         })
                     });
                 }
@@ -123,7 +175,14 @@
 
 
 
+
         }
+
+        /**
+         * 生成
+         */
+
+
 
         /**
          * 计算input框的字数
@@ -174,7 +233,7 @@
                     msg_type:type,
                     body:content,
                     from_uid: C.uid,
-                    to_uid:opts.brokerId,
+                    to_uid:opts.id,
                     created:new Date().getTime()
                 };
                 messageBox = pushMessage(msg);
@@ -295,6 +354,7 @@
             !maxMsgId&&(maxMsgId=msg.msg.msg_id);
             return messageBox
         }
+        window.shiftMessage = shiftMessage;
         /**
          * 显示消息（消息，提醒，时间...）
          * @param content 信息内容
@@ -368,12 +428,21 @@
         return {
             show:show,
             updateUnreadMsg: updateUnreadMsg,
-            remove:remove
+            remove:remove,
+            shiftMessage:shiftMessage
         }
     }
-    C.uid = 123123;
     C.Box = Box;
-    new C.Box();
+    var brokerObject = new J.chat.Broker({
+        icon: '',
+        name: '万钟宁',
+        id: '123456',
+        houseId:'123456789',
+        count: 0,
+        lasttime:'',
+        html: ''
+    });
+    new C.Box(brokerObject);
 
 })(J.chat);
 
