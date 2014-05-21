@@ -53,16 +53,12 @@
             J.get({
                 url: buildUrl('friends'),
                 type: 'jsonp',
-                callback: callback
+                callback: 'J.chat.pdata.callbackFriends'
             });
-            // window.processGetFriends = processGetFriends;
 
-            // function processGetFriends(response) {
-            //     if (!response) return;
-            //     if (response.status == 'OK' && response.result && (response.result.length > 0)) {
-            //         opts.brList = new Brlist(response.result.friends);
-            //     }
-            // }
+            J.chat.pdata.callbackFriends = function(){ 
+                callback.apply(this, arguments);
+            }
         }
 
 
@@ -73,17 +69,11 @@
             J.get({
                 url: buildUrl('chatlist'),
                 type: 'jsonp',
-                callback: callback
+                callback: 'J.chat.pdata.callbackChatList'
             });
-
-            // window.processGetFriends = processGetFriends;
-
-            // function processGetUnreadChat(response) {
-            //     if (!response) return;
-            //     if (response.status == 'OK' && response.result && (response.result.length > 0)) {
-            //         opts.brList && opts.brList.update(response.result);
-            //     }
-            // }
+            J.chat.pdata.callbackChatList = function() {
+                callback.apply(this, arguments);
+            }
         }
 
         /**
@@ -100,14 +90,6 @@
                 var args = Array.prototype.slice(arguments);
                 callback.apply(this,args);
             }
-
-            // function processChatDetail(response) {
-            //     if (!response) return;
-            //     if (response.status == 'OK' && response.result && (response.result.length > 0)) {
-            //         //返回数据???????????????????????
-            //     }
-            // }
-            // window.processChatDetail = processChatDetail;
         }
 
         /**
@@ -117,22 +99,11 @@
             J.get({
                 url: buildUrl('friend'),
                 type: 'jsonp',
-                callback: callback
+                callback: 'J.chat.pdata.callbackFriendInfo'
             });
-
-            // function processFriendInfo(response) {
-            //     if (!response) return;
-            //     if (response.status = 'OK' && response.result) {
-            //         friendInfo = {
-            //             icon: response.result.icon,
-            //             nick_name: response.result.nick_name,
-            //             broker_id: response.result.to_uid
-            //         };
-
-            //         return friendInfo;//???????????????????????
-            //     }
-            // }
-            // window.processFriendInfo = processFriendInfo;
+            J.chat.pdata.callbackFriendInfo = function() {
+                callback.apply(this, arguments);
+            }
         }
 
 
@@ -145,18 +116,9 @@
                 type: 'jsonp',
                 callback: callback
             });
-
-            // window.processLongPolling = processLongPolling;
-
-            // function processLongPolling(response) {
-            //     if (!response) return;
-            //     if (response.status == 'OK') {
-            //         if (typeof(response.result) == 'object') { //表示有消息返回
-            //             getChatList();
-            //             getPollListener();
-            //         }
-            //     }
-            // }
+            J.chat.pdata.callbackPoll = function() {
+                callback.apply(this, arguments);
+            }
         }
 
         /**

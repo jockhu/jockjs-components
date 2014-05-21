@@ -28,7 +28,7 @@
          * @param：friends元素需要字段brokerId, icon, nick_name（获取的数据作处理）
          */
         (function init(){
-            C.pdata.getFriends('J.chat.brlist.fillList');
+            C.pdata.getFriends(fillList);
             eventBind();
         })();
 
@@ -50,10 +50,10 @@
         }
 
 
-        function fillList(data){    
+        function fillList(data){ 
             if (data.status == 'OK' && data.result) {
                 fillData(data.result); 
-                C.pdata.getChatList('J.chat.brlist.update');
+                C.pdata.getChatList(update);
             }
         }
 
@@ -106,7 +106,7 @@
                             index: i,
                             chatInfo: v
                         };
-                        C.pdata.getFriendInfo('J.chat.brlist.brCallback');
+                        C.pdata.getFriendInfo(brCallback);
                     }
                 });
 
@@ -185,8 +185,8 @@
 
 
         return {
-            fillList: fillList,
-            update: update
+            // fillList: fillList,
+            // update: update
         }
     }
 

@@ -26,9 +26,8 @@
         var dom, tip, tabContainer = J.chat.container.tabContainer;
 
         ;(function(){
-            brokerObject = _brokerObject; console.log(_brokerObject);
-            var opts = brokerObject.getOpts();
-            dom = createElement(opts.id, opts.name, opts.count);
+            var opts = brokerObject.getOpts(); 
+            createElement(opts.id, opts.name, opts.count);
             bindEvent();
         })();
 
@@ -56,7 +55,7 @@
          * @returns {li|*}
          */
         function createElement(id, name, num){
-            var dom = J.create("li",{
+            dom = J.create("li",{
                 className:'now'
             });
             var html = '<em class="tab_l"></em><strong class="name">' + name + '</strong><em class="tab_r"></em>' +
@@ -65,7 +64,7 @@
 
             dom.html(html);
             tabContainer.append(dom);
-            return dom;
+            // return dom;
         }
 
         /**
