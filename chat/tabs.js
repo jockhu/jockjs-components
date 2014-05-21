@@ -36,19 +36,18 @@
          * 显示或激活和经纪人的聊天会话tab
          * @param brokerObject:broker的实例（icon: '', name: '', id: ''）
          */
-        function show(brokerObject){
-            var brokerId = (typeof brokerObject == 'object') ? brokerObject.id : brokerObject;
-            var brokerObject = CACHE[brokerId];
-            if(!brokerObject){
+        function show(brObject){
+            var brokerId = brObject.getOpts().id, boxObject = CACHE[brokerId];
+            if(!boxObject){
                 // brokerObject.container = container;
-                CACHE[brokerId] = new C.Box(brokerObject);
+                boxObject = CACHE[brokerId] = new C.Box(brObject); 
                 tabCount++;
-                CACHE[brokerId].prev= CACHE[currentBrokerId];//????????????????????????????
-                CACHE[currentBrokerId]&&(CACHE[currentBrokerId].next = CACHE[brokerId]);
+                currentBrokerId && CACHE[brokerId].prev = CACHE[currentBrokerId];
+                currentBrokerId && CACHE[currentBrokerId] && (CACHE[currentBrokerId].next = CACHE[brokerId]);
             }
-            brokerObject.show()
+            boxObject.show();
             currentBrokerId = brokerId;
-            return brokerObject;
+            return boxObject;
         }
 
         /**

@@ -21,9 +21,9 @@
      * @returns {{show: show, remove: remove}}
      * @constructor
      */
-    function Tab(_brokerObject){
+    function Tab(brokerObject){
 
-        var brokerObject, dom, tabContainer = J.chat.container.tabContainer;
+        var dom, tip, tabContainer = J.chat.container.tabContainer;
 
         ;(function(){
             brokerObject = _brokerObject; console.log(_brokerObject);
@@ -36,11 +36,11 @@
         /**
          * type priveate
          */
-        function bindEvent(){
+        function bindEvent(dom){
             dom.on('click', function(e){
                 var e = e || window.event, eventTarget = e.target || e.srcElement;
                 if(eventTarget.className == 'btn_close') {  //关闭tab
-                    C.remove(brokerObject);//???????????????????????
+                    C.tabs.remove(brokerObject);//???????????????????????
                     return true;
                 } else { //切换tab
                     C.tabs.switchTab(brokerObject);
@@ -65,7 +65,6 @@
 
             dom.html(html);
             tabContainer.append(dom);
-            //bindEvent();
             return dom;
         }
 
@@ -75,8 +74,7 @@
          */
         function show(){
             //同时将未读消息数隐藏
-            var tip = dom.s(".tip").eq(0);
-            tip.setStyle('display', 'none');
+            (tip || dom.s(".tip").eq(0)).hide();
             dom.addClass('now');
         }
 
@@ -103,15 +101,10 @@
          * @param new_msg_count
          */
         function update(new_msg_count){
-            var tip = dom.s(".tip").eq(0);
+            tip = tip || dom.s(".tip").eq(0);
             new_msg_count = parseInt(new_msg_count) > 99 ? '99+' : data;
             tip.html(new_msg_count);
-            tip.setStyle('display', 'block');
-            update = function(new_msg_count){
-                new_msg_count = parseInt(new_msg_count) > 99 ? '99+' : data;
-                tip.html(new_msg_count);
-                tip.setStyle('display', 'block');
-            }
+            tip.show();
         }
 
         /**

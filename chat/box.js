@@ -34,6 +34,7 @@
             },opts;
 
         var Tab,
+            brokerObject, //broker的实例
             Recommend,
             FInfo,
             chatList,
