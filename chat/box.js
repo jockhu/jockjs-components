@@ -95,7 +95,8 @@
             chatBox = container.s(".chatbox").eq(0);
             txtSend = container.s(".tarea").eq(0).s('textarea').eq(0);
             var mask = J.s(".p_msk").eq(0);
-
+            var mapPanel = J.g('map_panel');
+            var imgPanel = J.g('img_panel');
 
 
             var scrollIsReturn = false;
@@ -109,22 +110,40 @@
                 while(target !== chatList.get()){
                     if(target.className.indexOf('event_map_click')>-1){
 
+                        var center = target.getAttribute('data-center');
+                        var text = target.getAttribute('data-content')
                         mask.show();
-
-
+                        mapPanel.show();
+                        mapPanel.s('img').eq(0).attr('src','http://api.map.baidu.com/staticimage?center='+center+'&width=600&height=500&zoom=11')
+                        mapPanel.s('.msktxt').eq(0).html(text)
                         return true;
                         //map click
                     }
                     if(target.className.indexOf('event_image_click')>-1){
                         //image click
-                        alert('image click');
                         mask.show();
+                        imgPanel.show();
                         return true;
                     }
                     target = target.parentNode;
                 }
+                e.stop()
 
             })
+
+            mapPanel.s('.btn_close').eq(0).on('click',function(){
+                mapPanel.hide();
+                mask.hide();
+            })
+
+
+            imgPanel.s('.btn_close').eq(0).on('click',function(){
+                imgPanel.hide();
+                mask.hide();
+            })
+
+
+
             //发送消息事件
             btnSend.on('click',function(){
                 var txt;
@@ -326,6 +345,7 @@
         function pushMessage(msg){
             var messageBox,fn,timerDom;
             fn = msg.from_uid == C.uid ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
+            (msg.msg_type!=1||msg.msg_type!=2)&&(msg.body = eval('('+ msg.body+')'));
             messageBox = fn(msg.msg_type,msg.body);
             chatList.append(messageBox);
             chatBox.get().scrollTop =1000000;
@@ -357,6 +377,7 @@
         function shiftMessage(msg){
             var messageBox,fn,timerDom;
             fn = msg.from_uid != C.uid ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
+            (msg.msg_type!=1||msg.msg_type!=2)&&(msg.body = eval('('+ msg.body+')'));
             messageBox = fn(msg.msg_type,msg.body);
             var dom = chatList.first();
             timerDom = timerTasker(parseInt(msg.created));
