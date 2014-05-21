@@ -37,10 +37,9 @@
          * @param brokerObject:broker的实例（icon: '', name: '', id: ''）
          */
         function show(brObject){
-            var brokerId = brObject.getOpts().id, boxObject = CACHE[brokerId];
+            var opts = brObject.getOpts(), brokerId = opts.id, boxObject = CACHE[brokerId];
             if(!boxObject){
-                // brokerObject.container = container;
-                boxObject = CACHE[brokerId] = new C.Box(brObject); 
+                boxObject = CACHE[brokerId] = new C.Box(opts); 
                 tabCount++;
                 currentBrokerId && CACHE[brokerId].prev = CACHE[currentBrokerId];
                 currentBrokerId && CACHE[currentBrokerId] && (CACHE[currentBrokerId].next = CACHE[brokerId]);
