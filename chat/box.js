@@ -111,7 +111,7 @@
             //聊天信息点击事件
             chatList.on('click',function(e){
                 var e = e || window.event;
-                var target = e.target;
+                var target = e.target || e.srcElement;
                 while(target !== chatList.get()){
                     if(target.className.indexOf('event_map_click')>-1){
                         var center = target.getAttribute('data-center');
@@ -209,15 +209,31 @@
             });
 
 
-    /*        var FB = container.s(".tabs").eq(0).s("a");
-            var aF = FB.eq(0);
-            var aB = FB.eq(1);*/
+            var FB = container.s(".tabs").eq(0).s("a");
+            var FB_Block = container.s(".tabcon");
 
-            container.s(".tabs").eq(0).s("a").each(function(k,v){
-                v.on('click',function(){
-                    v.addClass('now')
-                })
-            })
+            var aF = FB.eq(0);
+            var aB = FB.eq(1);
+
+
+            var FBlock = FB_Block.eq(0);
+            var BBlock = FB_Block.eq(1);
+
+
+
+            aF.on('click',function(){
+               aF.addClass('now');
+               aB.removeClass('now');
+                FBlock.show();
+                BBlock.hide();
+            });
+
+            aB.on('click',function(){
+                aB.addClass('now');
+                aF.removeClass('now');
+                BBlock.show();
+                FBlock.hide();
+            });
 
         }
 

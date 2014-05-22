@@ -48,6 +48,33 @@
         // return {
         //     init:init
         // }
+        function closeWindow(){
+
+            J.on(window,'beforeunload',function(e){
+                var e = e || window.event;
+                e.returnValue = '暂时关闭这次微聊？您可点击屏幕右侧微聊按钮继续进入';
+                J.un(window,'beforeunload')
+            })
+        }
+        closeWindow();
+
+
+        function docIsVisiable(){
+            var hidden, visibilityChange;
+            if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
+                hidden = "hidden";
+                visibilityChange = "visibilitychange";
+            } else if (typeof document.mozHidden !== "undefined") {
+                hidden = "mozHidden";
+                visibilityChange = "mozvisibilitychange";
+            } else if (typeof document.msHidden !== "undefined") {
+                hidden = "msHidden";
+                visibilityChange = "msvisibilitychange";
+            } else if (typeof document.webkitHidden !== "undefined") {
+                hidden = "webkitHidden";
+                visibilityChange = "webkitvisibilitychange";
+            }
+        }
     }
 
     // C.Main = Main;

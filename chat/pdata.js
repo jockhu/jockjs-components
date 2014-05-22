@@ -24,7 +24,7 @@
         var isDev = /\.(dev\.|test)/.test(J.D.location.host), opts = {
             apiDomain : isDev ? 'http://chatapi.dev.anjuke.com' : 'http://api.anjuke.com/weiliao',
             longDomain: isDev ? 'http://dev.aifang.com:8080/register' : 'http://push10.anjuke.com'
-        }
+            },guid=0;
 
         function buildUrl(type){
             var urls = {
@@ -66,12 +66,16 @@
          *
          */
         function getChatList(callback){
+            var fnName;
+            guid++;
+            fnName = 'J.chat.pdata.callbackChatList'+guid;
             J.get({
                 url: buildUrl('chatlist'),
                 type: 'jsonp',
-                callback: 'J.chat.pdata.callbackChatList'
+                callback: fnName
             });
-            J.chat.pdata.callbackChatList = function() {
+            J.chat.pdata['callbackChatList'+(guid-1)] = function(){};
+            J.chat.pdata[fnName] = function() {
                 callback.apply(this, arguments);
             }
         }

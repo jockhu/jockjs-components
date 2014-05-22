@@ -97,7 +97,7 @@
                 time = setDate(content) +' ' + formateTime(content);
             }
             var dom = J.create('div',{
-                class : 'timebar ct'
+                'class' : 'timebar ct'
             }).html('<div class="timebar ct">'+
                         '<em></em><div class="timeTip">'+ time + '</div><em></em>'+
                     '</div>');
@@ -264,7 +264,7 @@
          */
         function getSysTpl(content){
             var dom = J.create('div',{
-                class : 'ct'
+                'class' : 'ct'
             }).html('<div class="notice">' + content + '</div>');
             return dom;
         }
@@ -276,7 +276,7 @@
          */
         function getTpl(className, content){
             var dom = J.create('div',{
-                class : className + ' cf'
+                'class' : className + ' cf'
             }).html('<dl class="cf"><dt><img src="'+'xx'+'" width="48" height="48"></dt>'+ content +'</dl>');
             return dom;
         }
