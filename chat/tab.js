@@ -23,12 +23,16 @@
      */
     function Tab(brokerObject){
 
-        var dom, tip, tabContainer = J.chat.container.tabContainer;
+        var dom,
+            tip,
+            tabContainer = J.chat.container.tabContainer,
+            closeDom;
 
         ;(function(){
             var opts = brokerObject.getOpts(); 
             dom = createElement(opts.id, opts.name, opts.count);
-            bindEvent(dom);
+            closeDom = dom.s('.btn_close').eq(0);
+            bindEvent();
         })();
 
 
@@ -38,11 +42,12 @@
         function bindEvent(){
             dom.on('click', function(e){
                 var e = e || window.event, eventTarget = e.target || e.srcElement;
+                console.log(eventTarget)
                 if(eventTarget.className == 'btn_close') {  //关闭tab
                     C.tabs.remove(brokerObject);//???????????????????????
                     return true;
                 } else { //切换tab
-                    C.tabs.switchTab(brokerObject);
+                    C.tabs.show(brokerObject);
                 }
             });
         }
@@ -110,6 +115,17 @@
             }
         }
 
+
+        function showCloseButton(){
+            closeDom.show();
+        }
+
+
+        function hideCloseButton(){
+            closeDom.hide();
+        }
+
+
         /**
          * 向打开的所有tab发消息
          */
@@ -130,6 +146,8 @@
         return {
             show: show,
              hide: hide,
+            showCloseButton:showCloseButton,
+            hideCloseButton:hideCloseButton,
             remove: remove,
             update: update
         }

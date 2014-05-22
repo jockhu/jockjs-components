@@ -43,6 +43,8 @@
             BrokerInfo,
             maxMsgId,//最大消息的id
             minMsgId,
+            BBlock,//经济人版块
+            FBlock,//房源消息版块
             container;
 
 
@@ -56,22 +58,17 @@
            Tab = new C.Tab(brokerObject);
             //opts brokerId 经纪人id propId 房源id container 容器
             Recommend = new C.recomm();
-            recomend = Recommend.getRecomm({
-                brokerId : 147468,
-                propId : 205133226,
-                container : J.s('.othslist').eq(0)
-            });
+            //拿推荐数据
+            opts.container = container.s('.othslist').eq(0);
+            Recommend.getRecomm(opts);
             BrokerInfo = new C.Broker(opts);
-            FInfo = C.finfo.getPropertyInfo({
-                propId : 202080197,
-                container : J.s('.finfo').eq(0)
-            });
-            BInfo = C.finfo.getBrokerInfo({
-                brokerId : 100,
-                container : J.s('.binfo').eq(0)
-            });
+            //拿经济人消息
+            BBlock =opts.container = container.s('.binfo').eq(0);
+            C.finfo.getPropertyInfo(opts);
 
-            Tab = new C.Tab(brokerObject);  
+            FBlock = opts.container = container.s('.binfo').eq(0)
+            C.finfo.getBrokerInfo(opts);
+
 
 
            /* Recommend = new C.Recomm(opts);
@@ -117,7 +114,6 @@
                 var target = e.target;
                 while(target !== chatList.get()){
                     if(target.className.indexOf('event_map_click')>-1){
-
                         var center = target.getAttribute('data-center');
                         var text = target.getAttribute('data-content')
                         mask.show();
@@ -213,7 +209,15 @@
             });
 
 
+    /*        var FB = container.s(".tabs").eq(0).s("a");
+            var aF = FB.eq(0);
+            var aB = FB.eq(1);*/
 
+            container.s(".tabs").eq(0).s("a").each(function(k,v){
+                v.on('click',function(){
+                    v.addClass('now')
+                })
+            })
 
         }
 
@@ -252,11 +256,11 @@
             var houseId = opts.houseId;
             houseId&&(function(){
                 J.chat.pdata.getHouseCard(houseId,function(data){
-                    data =  {
+                    /*data =  {
                         retcode: 0,
                         retmsg: "",
                         retdata: '{"id":202080197,"des":"2\u5ba41\u53851\u536b 100.00\u5e73","img":"http:\/\/include.app-chat-web.haipengchen.dev.anjuke.com\/anjuke\/img\/global\/1\/gallery_img_default.png","name":"\u94fe\u5bb6\u6d4b\u8bd5","price":"305.00\u4e07\u5143","url":"http:\/\/www.anjuke.com\/prop\/view\/202080197?from=card","jsonVersion":1,"tradeType":"1"}'
-                     };
+                     };*/
                     if(!data.retcode){
                         //返回正确的房源卡片
                         sendMessage(3,data.retdata);
@@ -443,7 +447,6 @@
         function hide(brokerObject){
             Tab.hide();
             container.hide();
-
         }
 
         /**
@@ -461,13 +464,15 @@
         }
 
 
-
-
         return {
             show:show,
+            hide:hide,
             updateUnreadMsg: updateUnreadMsg,
             remove:remove,
-            shiftMessage:shiftMessage
+            shiftMessage:shiftMessage,
+            id:opts.id,
+            showCloseButton:Tab.showCloseButton,
+            hideCloseButton:Tab.hideCloseButton
         }
     }
     C.Box = Box;

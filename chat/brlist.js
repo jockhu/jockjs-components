@@ -149,6 +149,9 @@
         */
         function eventBind() {  
             var eventTarget, event_broker_click = 'event_broker_click',
+                peoList = J.g('peoList');
+                btn_up = peoList.s('.btn_up').eq(0),
+                btnShowAll = J.g("btnShowAll");
 
             hasClass = function (element, className) {
                 if (!element) return false;
@@ -161,7 +164,7 @@
             listBox.on('click', function(e){  
                 eventTarget = e.target ||  e.srcElement;  
                 while( eventTarget != listBox.get() ){
-                    if( hasClass(eventTarget, event_broker_click)){ alert('jsdfsd');
+                    if( hasClass(eventTarget, event_broker_click)){
                         C.tabs.show( BROKERSCACHE[ J.g(eventTarget).attr('brokerId') ] ); //??????????????????????????
                         return false;
                     }
@@ -169,6 +172,26 @@
                     eventTarget = eventTarget.parentNode;
                 }
             });
+
+            btn_up.on('click',function(){
+                peoList.hide();
+            });
+
+            btnShowAll.on('click',function(e){
+                peoList.show();
+                e.stop();
+            })
+
+            peoList.on('click',function(e){
+                e.stop();
+            });
+            J.g(document).on('click',function(){
+                peoList.hide();
+            });
+
+
+
+
         }
 
         function updateEvent() {
@@ -190,7 +213,7 @@
         }
     }
 
-    //C.brlist = new Brlist();
+    C.brlist = new Brlist();
 
 })(J.chat);
 

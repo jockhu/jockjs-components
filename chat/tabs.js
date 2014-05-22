@@ -39,9 +39,11 @@
         function show(brObject){
             var opts = brObject.getOpts(), brokerId = opts.id, boxObject = CACHE[brokerId];
             if(!boxObject){
-                boxObject = CACHE[brokerId] = new C.Box(opts); 
+                boxObject = CACHE[brokerId] = new C.Box(brObject);
+                //如果只有一个ｔａｂ　,则不显示关闭
                 tabCount++;
-                currentBrokerId && CACHE[brokerId].prev = CACHE[currentBrokerId];
+                autoHideCloseTab();
+                currentBrokerId && (CACHE[brokerId].prev = CACHE[currentBrokerId]);
                 currentBrokerId && CACHE[currentBrokerId] && (CACHE[currentBrokerId].next = CACHE[brokerId]);
             }
             currentBrokerId && CACHE[currentBrokerId].hide();
@@ -50,17 +52,36 @@
             return boxObject;
         }
 
+
+        /**
+         * 只有一个ｔａｂ时，不让关闭
+         */
+        function autoHideCloseTab(){
+            if(tabCount == 1){
+                J.each(CACHE,function(k,v){
+                    v.hideCloseButton();
+                })
+            }else{
+                J.each(CACHE,function(k,v){
+                    v.showCloseButton();
+                })
+            }
+
+        }
+
+
+
         /**
         * 切换tab
         * @param brokerObject: 切换到的当前broker
         */
-        function switchTab(brokerObject) {  
+       /* function switchTab(brokerObject) {
             var opts = brokerObject.getOpts(), curBox, switchedBox;
             curBox = CACHE[currentBrokerId];
             switchedBox = CACHE[opts.id];
             curBox.hide();
             switchedBox.show();//除了tab+box的显示，还需要请求未读消息内容
-        }
+        }*/
 
         /**
         * 计算各个tab的宽度[浏览器宽度变化或者添加tab时]
@@ -90,15 +111,19 @@
          * @param brokerObject
          */
         function remove(brokerObject){
-            var brokerId = brokerObject.id;
+            var opts = brokerObject.getOpts();
+            var brokerId = opts.id;
             var obj = CACHE[brokerId];
             var next = obj.next;
             var prev = obj.prev;
             obj.remove();
-            next?next.show():prev.show();
+            next?next.show():prev&&prev.show();
+            currentBrokerId = next?next.id:prev&&prev.id;
             delete CACHE[brokerId];
             next&&(next.prev = prev);
             prev&&(prev.next = next);
+            tabCount--;
+            autoHideCloseTab();
         }
 
 

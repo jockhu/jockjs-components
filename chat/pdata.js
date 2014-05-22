@@ -56,7 +56,7 @@
                 callback: 'J.chat.pdata.callbackFriends'
             });
 
-            J.chat.pdata.callbackFriends = function(){ 
+            J.chat.pdata.callbackFriends = function(){
                 callback.apply(this, arguments);
             }
         }
