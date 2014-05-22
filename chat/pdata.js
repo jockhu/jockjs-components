@@ -60,7 +60,7 @@
             });
 
             J.chat.pdata.callbackFriends = function(){
-                var arg = Array.prototype.slice(arguments); console.log('opopop:'); console.log(arguments); console.log(arg);
+                var arg = Array.prototype.slice(arguments); 
                 callback.apply(this, arguments);
             }
         }
@@ -117,7 +117,7 @@
         /**
          *
          */
-        function getPollListener(callback){  console.log('getPollListener');
+        function getPollListener(callback){  
             J.get({
                 url: buildUrl('poll'),
                 data: {

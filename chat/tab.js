@@ -42,9 +42,8 @@
         function bindEvent(){
             dom.on('click', function(e){
                 var e = e || window.event, eventTarget = e.target || e.srcElement;
-                console.log(eventTarget)
                 if(eventTarget.className == 'btn_close') {  //关闭tab
-                    C.tabs.remove(brokerObject);//???????????????????????
+                    C.tabs.remove(brokerObject);
                     return true;
                 } else { //切换tab
                     C.tabs.show(brokerObject);

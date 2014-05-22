@@ -46,7 +46,7 @@
             
         })();
 
-        function callbackPollListener(data) { console.log('poll'); console.log(data);
+        function callbackPollListener(data) { 
             //当data.result返回的是string时，它表示某种原因断开
             if (data.status == 'OK' && (typeof data.result == 'object')) {  
                 C.pdata.getChatList(C.brlist.update);

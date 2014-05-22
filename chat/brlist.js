@@ -27,7 +27,7 @@
          * 初始化：只初始化BROKERSCACHE数组
          * @param：friends元素需要字段brokerId, icon, nick_name（获取的数据作处理）
          */
-        (function init(){ console.log(C.pdata);
+        (function init(){ 
             C.pdata.getFriends(fillList);
             eventBind();
         })();
@@ -50,7 +50,7 @@
         }
 
 
-        function fillList(data){   console.log('fillList'); console.log(data);
+        function fillList(data){   
             if (data.status == 'OK' && data.result) {
                 fillData(data.result); 
                 C.pdata.getChatList(update);
@@ -83,7 +83,7 @@
                    4.右侧未读消息显示[获取当前Tab]
                    5."所有经纪人"按钮上显示的未读消息数
          */
-        function update(chatList){  console.log('chatList:');  console.log(chatList);
+        function update(chatList){  
             var brObj, curBrokerId, boxMsgList = {}, brokersNum = 0, allUnreadMsgNum = 0;
 
             if( chatList.status == 'OK' ){
