@@ -39,7 +39,7 @@
         /**
          * type priveate
          */
-        function bindEvent(dom){
+        function bindEvent(){
             dom.on('click', function(e){
                 var e = e || window.event, eventTarget = e.target || e.srcElement;
                 console.log(eventTarget)

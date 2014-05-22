@@ -9,7 +9,7 @@
  *
  */
 
-/// require('chat.main');
+//chat.main
 
 /// require('chat.chat');
 
@@ -31,7 +31,7 @@
                 'friends': opts.apiDomain + '/user/getFriends/' + C.phone,
                 'chatlist': opts.apiDomain + '/message/getChatList',
                 'friend': opts.apiDomain + '/user/getFriendInfo/' + C.phone + '/' + C.userId,
-                'poll': opts.longDomain + '/' + C.guid + '/w-ajk-user-chat/' + C.userId,
+                'poll': opts.longDomain + '/' + C.guid + '/w-ajk-user-chat/' + C.userId+'?auth='+C.auth,
                 'recomm': '/api/rec',
                 'property': '/property/info',
                 'house': '/property/card/ershou',
@@ -52,11 +52,15 @@
         function getFriends(callback){
             J.get({
                 url: buildUrl('friends'),
+                data: {
+                    'r': Math.random()
+                },
                 type: 'jsonp',
                 callback: 'J.chat.pdata.callbackFriends'
             });
 
             J.chat.pdata.callbackFriends = function(){
+                var arg = Array.prototype.slice(arguments); console.log('opopop:'); console.log(arguments); console.log(arg);
                 callback.apply(this, arguments);
             }
         }
@@ -113,9 +117,12 @@
         /**
          *
          */
-        function getPollListener(callback){
+        function getPollListener(callback){  console.log('getPollListener');
             J.get({
                 url: buildUrl('poll'),
+                data: {
+                    'r': Math.random()
+                },
                 type: 'jsonp',
                 callback: 'J.chat.pdata.callbackPoll'
             });

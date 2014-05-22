@@ -11,7 +11,7 @@
 
 
 /// require('chat.chat');
-/// require('chat.brlist');
+/// require('chat.pdata');
 
 (function(C){
 
@@ -28,6 +28,7 @@
         // }
 
         (function() {
+            C.connect = true;//表示是否连接
             C.container.brlist = J.g('c_brlist'); //联系人列表的box
             C.container.brlistNum = J.g('brokersCount'); //共xx名
             C.container.allUnreadMsg = J.g('allUnreadMsg'); //显示“所有经纪人”按钮的未读消息数
@@ -35,15 +36,33 @@
             C.container.tabContainer = J.g('tab_container');
 
             //长轮询
-            C.pdata.getPollListener(callbackPollListener);
+            C.userId = getCookie('chat_uid');
+            C.guid = getCookie('aQQ_ajkguid');
+            C.auth = 1;  
+
+            if (C.userId && C.guid) {
+                C.pdata.getPollListener(callbackPollListener);
+            }
+            
         })();
 
-        function callbackPollListener(data) {
+        function callbackPollListener(data) { console.log('poll'); console.log(data);
             //当data.result返回的是string时，它表示某种原因断开
-            if (data.status == 'OK' && (typeof data.result == 'object')) {
+            if (data.status == 'OK' && (typeof data.result == 'object')) {  
                 C.pdata.getChatList(C.brlist.update);
+                C.pdata.getPollListener(callbackPollListener);
             }
         }
+
+        function getCookie(name)
+        {
+            var arr,reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");  
+            if(arr = document.cookie.match(reg)) {
+                return unescape(arr[2]);
+            }
+            else
+                return null;
+        } 
 
         // return {
         //     init:init
