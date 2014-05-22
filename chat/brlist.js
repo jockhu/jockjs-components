@@ -91,7 +91,6 @@
                 brLen = chatList.result.length;
                 brokersNum = BROKERSCACHE.length;
                 curBrokerId = C.tabs.getActiveBrokerId();
-                                curBrokerId = '2000132440';
                 J.each(chatList.result, function(i, v){
                     v.new_msg_count = (curBrokerId!= v.from_uid) ? v.new_msg_count : 0;
                     allUnreadMsgNum += v.new_msg_count;
