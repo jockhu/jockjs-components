@@ -12,7 +12,7 @@
 
 /// require('chat.chat');
 
-(function(C){
+(function(C, W, D){
 
     /**
      *
@@ -30,9 +30,31 @@
          * @param propertyId 房源ID
          */
         function open(brokerId, propertyId){
-            var time = (+new Date());
-            bId = brokerId || '', pId = propertyId || '';
-            openWindow( getConf(), time);
+            var conf = J.mix(getConf(), {
+                brId: brokerId || '',
+                prId: propertyId || ''
+            });
+            function newWindow(){
+                updateConf(conf, 1);
+                windowOpenr = J.W.open(C.chatDomain, C.windowName, getAttrString(conf));
+                windowOpenr.focus();
+            }
+            if(windowIsOpend(conf)){
+                if(windowOpenr){
+                    windowOpenr.focus();
+                }
+                // 处理意外关闭cookie没有被重置的二次验证
+                clearTimeout(timer);
+                updateConf(conf);
+                conf = getConf();
+                timer = setTimeout(function(){
+                    if(conf.time == getConf().time){
+                        newWindow();
+                    }
+                },1500);
+            }else{
+                newWindow();
+            }
         }
 
 
@@ -42,72 +64,49 @@
          */
         function getConf(){
             var cks;
-            if(cks = cookieObj.getCookie(cookie.name)){
+            if(cks = cookieObj.getCookie(cookie.name) || []){
                 cks = cks.split('.');
-                return {
-                    status:cks[0],
-                    time:cks[1]
-                }
             }
-            return null;
+            return {
+                status:cks[0],
+                time:cks[1],
+                brId:cks[2]||'',
+                prId:cks[3]||''
+            };
         }
 
         /**
-         * 获取chat是否已经被打开
-         * @param conf
+         * 获取chat窗口是否已经被打开
          * @returns {boolean}
          */
-        function windowIsOpend(conf){
-            return conf && conf.status != '0' && conf.status != '1' ? true : false;
+        function windowIsOpend(){
+            var conf = getConf();
+            return conf.status != '0' && conf.status != '1' ? true : false;
         }
+
 
         /**
-         * 打开或激活窗口
-         * @param conf {
-         *          status: 0 | 1 | 2 | 3,
-         *          time: 1400235736365
-         *        }
-         * @param time
+         * 更新配置
+         * @param conf
+         * @param status
          */
-        function openWindow(conf, time){
-            function newWindow(){
-                windowOpenr = J.W.open(C.chatDomain, C.windowName, getAttrString());
-                windowOpenr.focus();
-            }
-            if(windowIsOpend(conf)){
-
-                if(windowOpenr){
-                    windowOpenr.focus();
-                }
-                // 处理意外关闭cookie没有被重置的二次验证
-                clearTimeout(timer);
-                updateConf(conf.status, time);
-                conf = getConf();
-                timer = setTimeout(function(){
-                    //console.log(conf.time , getConf().time)
-                    if(conf.time == getConf().time){
-                        updateConf(1, time);
-                        newWindow();
-                    }
-                },1500);
-            }else{
-                updateConf(1, time);
-                newWindow();
-            }
-        }
-
-        function updateConf(status, time){
-            cookieObj.setCookie(cookie.name, status + '.' + time + '.' + bId + '.' + pId, 1, cookie.domain);
+        function updateConf(conf, status){
+            cookieObj.setCookie(cookie.name, (status ? status : conf.status) + '.' + (+new Date()) + '.' + conf.bId + '.' + conf.pId, 1, cookie.domain);
         }
 
         /**
          * 获取Open.Window的窗口属性字符串
          * @returns {string}
          */
-        function getAttrString(){
-            var wSize = windowSize[ bId ? 'dialog' : 'list'];
-            return C.windowAttrs + ',width=' + wSize.width + 'px,left=' + wSize.left +
-                ',top='+ wSize.top +',height=' + wSize.height + 'px'
+        function getAttrString(conf){
+            var wSize = windowSize[ conf.bId ? 'dialog' : 'list'],
+                viewPage = (D.compatMode == 'BackCompat') ? D.body : D.documentElement,
+                width = wSize.width, height = wSize.height, left = wSize.left, top = wSize.top;
+            return C.windowAttrs +
+                ',width=' + width +
+                ',height=' + height +
+                ',left=' + (left ? left : (viewPage.clientWidth / 2 - width / 2)) +
+                ',top=' + (top ? top : (viewPage.clientHeight / 2 - height / 2))
         }
 
 
@@ -118,5 +117,5 @@
 
     C.opener = new Opener();
 
-})(J.chat);
+})(J.chat, J.W, J.D);
 
