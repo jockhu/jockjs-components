@@ -106,7 +106,6 @@
             }
         }
 
-
         /**
          *
          */
@@ -114,7 +113,7 @@
             J.get({
                 url: buildUrl('poll'),
                 type: 'jsonp',
-                callback: callback
+                callback: 'J.chat.pdata.callbackPoll'
             });
             J.chat.pdata.callbackPoll = function() {
                 callback.apply(this, arguments);

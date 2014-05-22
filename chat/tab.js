@@ -39,7 +39,7 @@
         /**
          * type priveate
          */
-        function bindEvent(){
+        function bindEvent(dom){
             dom.on('click', function(e){
                 var e = e || window.event, eventTarget = e.target || e.srcElement;
                 console.log(eventTarget)
@@ -71,6 +71,7 @@
             tabContainer.append(dom);
             return dom;
         }
+
 
         /**
          * 显示或激活和经纪人的聊天会话tab

@@ -11,6 +11,7 @@
 
 
 /// require('chat.chat');
+/// require('chat.brlist');
 
 (function(C){
 
@@ -32,7 +33,17 @@
             C.container.allUnreadMsg = J.g('allUnreadMsg'); //显示“所有经纪人”按钮的未读消息数
             //tab
             C.container.tabContainer = J.g('tab_container');
+
+            //长轮询
+            C.pdata.getPollListener(callbackPollListener);
         })();
+
+        function callbackPollListener(data) {
+            //当data.result返回的是string时，它表示某种原因断开
+            if (data.status == 'OK' && (typeof data.result == 'object')) {
+                C.pdata.getChatList(C.brlist.update);
+            }
+        }
 
         // return {
         //     init:init
