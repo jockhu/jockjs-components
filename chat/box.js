@@ -26,12 +26,7 @@
      * @constructor
      */
     function Box(brokerObject){
-        var defOpts={
-            brokerId:2001230,
-            name:'万钟玲',
-            count:0,//消息未读数
-            houseId:0//如果房源单过页，首次聊天需要发送房源卡片
-            },opts;
+        var opts;
 
         var Tab,
             brokerObject, //broker的实例
@@ -103,7 +98,7 @@
          * 绑定事件
          */
         function eventBind(){
-             chatList = container.s(".chatlist").eq(0);
+            chatList = container.s(".chatlist").eq(0);
             var btnSend =  container.s(".btn_sub").eq(0);
             chatBox = container.s(".chatbox").eq(0);
             txtSend = container.s(".tarea").eq(0).s('textarea').eq(0);
