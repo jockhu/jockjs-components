@@ -242,6 +242,7 @@
                 url: buildUrl('sendmessage'),
                 data: param,
                 type: 'json',
+                timeout:20000,
                 onSuccess: callback
             });
         }

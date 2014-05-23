@@ -103,6 +103,7 @@
                     '</div>');
             return dom;
         }
+        window.getTimeTpl = getTimeTpl;
 
 
         /**
@@ -181,7 +182,7 @@
         function getPicTpl(className, content){
             var html = '<dd>'+
                             '<em class="ico_arw"></em>'+
-                            '<a href="javascript:void(0);" title="点击查看大图" class="event_image_click"><img src="'+content+'" width="120" height="90" alt=""></a>'+
+                            '<a href="javascript:void(0);" title="点击查看大图" data-src="'+content+'" class="event_image_click"><img src="'+content+'" width="120" height="90" alt=""></a>'+
                         '</dd>';
             return getTpl(className, html);
         }
@@ -193,11 +194,15 @@
          * @returns {string}
          */
         function getMapTpl(className, content){
-            var text = content.city + content.region + content.address;
+            var text = (content.city|| '') + (content.region||'') + content.address;
+            var lat,lng;
+            lat = content.baidu_lat || content.google_lat;
+            lng = content.baidu_lng || content.google_lng;
+
             var html = '<dd>'+
                             '<em class="ico_arw"></em>'+
-                            '<a href="javascript:void(0);" title="点击查看地图" data-content="'+text +'" data-center="'+ content.baidu_lat + ',' + content.baidu_lng +'" class="map event_map_click">'+
-                                '<img src="http://api.map.baidu.com/staticimage?center='+ content.baidu_lat + ',' + content.baidu_lng +'&width=300&height=200&zoom=11" width="120" height="120" alt="">'+
+                            '<a href="javascript:void(0);" title="点击查看地图" data-content="'+text +'" data-center="'+ lng + ',' + lat +'" class="map event_map_click">'+
+                                '<img src="http://api.map.baidu.com/staticimage?center='+ lng + ',' + lat +'&width=300&height=200&zoom=17" width="120" height="120" alt="">'+
                                 '<i class="ico_c"></i>'+
                                 '<span class="msk"></span>'+
                                 '<em class="msk_txt">'+text +'</em>'+

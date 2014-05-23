@@ -121,13 +121,26 @@
                         var text = target.getAttribute('data-content')
                         mask.show();
                         mapPanel.show();
-                        mapPanel.s('img').eq(0).attr('src','http://api.map.baidu.com/staticimage?center='+center+'&width=600&height=500&zoom=11')
+                        mapPanel.s('img').eq(0).attr('src','http://api.map.baidu.com/staticimage?center='+center+'&width=600&height=500&zoom=17')
                         mapPanel.s('.msktxt').eq(0).html(text)
                         return true;
                         //map click
                     }
                     if(target.className.indexOf('event_image_click')>-1){
                         //image click
+                        var src = target.getAttribute('data-src');
+                        var wh =src.match(/(\d+)x(\d+).jpg$/);
+                        var w = wh[1];
+                        var h = wh[2];
+                        var ret = autoToPic(w,h)
+                        src =src.replace(/(\d+)x(\d+)$/,ret.width+'x'+ret.height);
+                        var imgDom = imgPanel.s('img').eq(0);
+                        imgDom.attr('src',src);
+                        imgDom.attr('width',ret.width);
+                        imgDom.attr('height',ret.height);
+                        /**
+                         * 等比例
+                         */
                         mask.show();
                         imgPanel.show();
                         return true;
@@ -214,8 +227,43 @@
         }
 
         /**
-         * 生成
+         * 生成图片宽高
+         *
          */
+        function autoToPic(w,h){
+            w = parseInt(w)
+            h = parseInt(h)
+            var aw,ah;
+            var maxW = 600;
+            var maxH = 500;
+
+            //长宽都大于规定尺寸　
+            if(w>maxW&&h > maxH){
+                if(w>h){
+                    ah = maxW*h/w
+                    aw = maxW;
+                }
+                if(w<h){
+                    aw = maxH*w/h;
+                    ah = maxH;
+                }
+
+            }else if(w>maxW){
+                aw = maxW
+                ah = maxW* h/w;
+            }else if(h>maxH){
+                ah = maxH;
+                aw = maxH* w/h;
+            }else{
+                aw = w;
+                ah =h;
+            }
+            return{
+                width:aw,
+                height:ah
+            }
+
+        }
 
 
 
@@ -269,7 +317,7 @@
                     body:content,
                     from_uid: C.uid,
                     to_uid:opts.id,
-                    created:new Date().getTime()
+                    created:new Date().getTime()/1000//保证跟服务器时间统一
                 };
                 messageBox = pushMessage(msg);
                 J.chat.pdata.sendMsgToBroker(msg, opts.id, function (ret) {
@@ -322,13 +370,12 @@
                 var ret = window.confirm('是否重新发送？');
                 ret&&J.chat.pdata.sendMsgToBroker({
                     body: content,
-                    type: 1
+                    msg_type: 1
                 },function(data){
                     if (data&&!data.retcode) {
                         aWrong.parentNode.removeChild(aWrong);
                         aWrong.onclick = null;
                     }
-
                 });
             }
         }
@@ -343,7 +390,7 @@
         function pushMessage(msg){
             var messageBox,fn,timerDom;
             fn = msg.from_uid == C.uid ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
-            (msg.msg_type!=1&&msg.msg_type!=2)&&(msg.body = eval('('+ msg.body+')'));
+            (msg.msg_type!=1&&msg.msg_type!=2&&msg.msg_type!=106)&&(msg.body = eval('('+ msg.body+')'));
             messageBox = fn(msg.msg_type,msg.body);
             chatList.append(messageBox);
             chatBox.get().scrollTop =1000000;
@@ -375,7 +422,7 @@
         function shiftMessage(msg){
             var messageBox,fn,timerDom;
             fn = msg.from_uid == C.uid ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
-            (msg.msg_type!=1&&msg.msg_type!=2)&&(msg.body = eval('('+ msg.body+')'));
+            (msg.msg_type!=1&&msg.msg_type!=2&&msg.msg_type!=106)&&(msg.body = eval('('+ msg.body+')'));
             messageBox = fn(msg.msg_type,msg.body);
             var dom = chatList.first();
             timerDom = timerTasker(parseInt(msg.created));
@@ -410,12 +457,12 @@
          * 时间任务处理
          */
         function timerTasker(t){
-            var beginTime = t;
+            var beginTime = parseInt(t);
             timerTasker = function(t){
-                var curTime = t;
-                if(Math.abs(curTime -beginTime) >= 600000){
+                var curTime = parseInt(t);
+                if(Math.abs(curTime -beginTime) >= 600){
                     beginTime = curTime;
-                    return J.chat.template.getTimeTpl(curTime);
+                    return J.chat.template.getTimeTpl(curTime*1000);
                 }
             }
         }
@@ -457,6 +504,7 @@
             J.chat.pdata.getChatDetail(opts.id,0,0,msgCount,function(data){
                 if(data.status == 'OK'){
                     J.each(data.result,function(k,v){
+                        console.log(v)
                         pushMessage(v);
                     })
                 }
