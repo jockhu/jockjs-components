@@ -40,9 +40,9 @@
             C.guid = getCookie('aQQ_ajkguid');
             C.auth = 1;  
 
-         /*   if (C.uid && C.guid) {
+            if (C.uid && C.guid) {
                 C.pdata.getPollListener(callbackPollListener);
-            }*/
+            }
             
         })();
 

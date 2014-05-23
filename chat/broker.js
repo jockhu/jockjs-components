@@ -43,7 +43,7 @@
             if(count != opts.count || lasttime != opts.lasttime){
                 opts.count = count;
                 opts.lasttime = lasttime;
-                return buildHtml(count, lasttime);
+                buildHtml(count, lasttime);
             }
             return opts.html;
         }
@@ -52,15 +52,33 @@
 
         function buildHtml(count, lasttime){
             var msg_html = '';
-            count = (count > 99) ? '99+' : count;
+            if (count > 0) {
+                count = (count > 99) ? '99+' : count;
+            }
             lasttime = translateTime(lasttime);
             if (count > 0) {
-                msg_html = '<dd class="infos cf"><p class="new"><span class="ylw">' + count + '</span>"条新回复"</p><p>' + lasttime + '</p></dd>';
+                msg_html = '<dd class="infos cf"><p class="new"><span class="ylw">' + count + '</span>条新回复</p><p>' + lasttime + '</p></dd>';
             } else {
                 msg_html = '<dd class="infos cf"><p>上次聊天：</p><p>' + lasttime + '</p></dd>';
             }
             opts.html = '<dl class="cf event_broker_click" brokerId="' + opts.id + '"><dt><img src="' + opts.icon + '" width="28" height="36"></dt><dd class="name"><a href="javascript:void(0);">' + opts.name + '</a></dd>' + msg_html + '</dl>';
-            return opts.html;
+        }
+
+        /*
+        *只更新经纪人的新消息数目
+        * @param count: 新消息数目
+        * @param ele: 某个经纪人对应的dom
+        */
+        function updateNewMsgCount(count, ele) {
+            var pele = ele.s('.infos p'), str;
+            if (count > 0) {
+                count = (count > 99) ? '99+' : count;
+                str = '<span class="ylw">' + count + '</span>条新回复';
+            } else {
+                str = '上次聊天：';
+            }
+            pele.length && pele.eq(0).html(str);
+            buildHtml(count, opts.lasttime); 
         }
 
         /*
@@ -94,6 +112,7 @@
 
         return {
             getHtml: getHtml,
+            updateNewMsgCount: updateNewMsgCount,
             getOpts: getOpts
         }
     }

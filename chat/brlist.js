@@ -83,7 +83,7 @@
                    4.右侧未读消息显示[获取当前Tab]
                    5."所有经纪人"按钮上显示的未读消息数
          */
-        function update(chatList){  
+        function update(chatList){ 
             var brObj, curBrokerId, boxMsgList = {}, brokersNum = 0, allUnreadMsgNum = 0;
 
             if( chatList.status == 'OK' ){
@@ -161,10 +161,13 @@
             };
 
             listBox.on('click', function(e){  
+                var brokerObject, brokerHtml;
                 eventTarget = e.target ||  e.srcElement;  
                 while( eventTarget != listBox.get() ){
                     if( hasClass(eventTarget, event_broker_click)){
-                        C.tabs.show( BROKERSCACHE[ J.g(eventTarget).attr('brokerId') ] ); //??????????????????????????
+                        brokerObject = BROKERSCACHE[ J.g(eventTarget).attr('brokerId') ];
+                        C.tabs.show(brokerObject); 
+                        brokerObject.updateNewMsgCount(0, J.g(eventTarget));//消息条数置为0
                         return false;
                     }
                     if (!eventTarget) return;
