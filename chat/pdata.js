@@ -73,15 +73,24 @@
             var fnName;
             fnid++;
             fnName = 'J.chat.pdata.callbackChatList'+fnid;
+            J.chat.pdata['callbackChatList'+fnid] = function() {
+                var args = Array.prototype.slice.call(arguments);
+                console.log('before:',args);
+                callback.apply(this, args);
+                console.log('end:',args);
+
+                J.chat.pdata['callbackChatList'+fnid]=null;
+                return;
+            };
             J.get({
                 url: buildUrl('chatlist'),
                 type: 'jsonp',
+                data: {
+                    'r': Math.random()
+                },
                 callback: fnName
             });
-            J.chat.pdata['callbackChatList'+(fnid-1)] = function(){};
-            J.chat.pdata['callbackChatList'+(fnid)] = function() {
-                callback.apply(this, arguments);
-            }
+
         }
 
         /**
@@ -210,7 +219,7 @@
                     msg_type: msgObject.msg_type,
                     to_uid: brokerId
                 };
-            J.post({
+            J.get({
                 url: buildUrl('sendmessage'),
                 data: param,
                 type: 'json',

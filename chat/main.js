@@ -52,12 +52,17 @@
         }
 
 
-        function callbackPollListener(data) { 
+        function callbackPollListener(data) {
             //当data.result返回的是string时，它表示某种原因断开
             if (data.status == 'OK' && (typeof data.result == 'object')) {  
-                C.pdata.getChatList(C.brlist.update);
-                C.pdata.getPollListener(callbackPollListener);
+                C.pdata.getChatList(function(ret){
+                    console.log(ret)
+                    C.brlist.update(ret);
+                    C.pdata.getPollListener(callbackPollListener);
+                });
+
             }
+
         }
 
         function getCookie(name)

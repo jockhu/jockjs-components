@@ -141,8 +141,10 @@
         */
         function updateUnreadMsg(boxMsgList) { 
             var i, brokerid, new_msg_count;
-            for (i in boxMsgList) {  
+            console.log(boxMsgList,'boxMsgLIst')
+            for (i in boxMsgList) {
                 if (boxMsgList.hasOwnProperty(i)) {
+
                     if (CACHE[i]) {  
                         if (i != currentBrokerId) {
                             new_msg_count = boxMsgList[i] = 3;  
