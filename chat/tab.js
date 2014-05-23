@@ -106,7 +106,7 @@
          */
         function update(new_msg_count){  
             tip = tip || dom.s(".tip").eq(0);
-            new_msg_count = parseInt(new_msg_count) > 99 ? '99+' : data;
+            new_msg_count = parseInt(new_msg_count) > 99 ? '99+' : new_msg_count;
             tip.html(new_msg_count);
             if (new_msg_count > 0) {
                 tip.show();
