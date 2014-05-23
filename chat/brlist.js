@@ -21,7 +21,7 @@
      * @constructor
      */
     function Brlist(){  
-        var BROKERSCACHE = [], TMPECACHE = [], arrHtml = [], newBroker = {}, brLen = 0, listBox = C.container.brlist;//联系人列表数组，每个元素是borker实例
+        var BROKERSCACHE = [], TMPECACHE = [], arrHtml = [], newBroker = {}, brLen = 0, listBox = C.container.brlist, allUnreadMsgNum = 0;//联系人列表数组，每个元素是borker实例
 
         /**
          * 初始化：只初始化BROKERSCACHE数组
@@ -84,16 +84,16 @@
                    5."所有经纪人"按钮上显示的未读消息数
          */
         function update(chatList){ 
-            var brObj, curBrokerId, boxMsgList = {}, brokersNum = 0, allUnreadMsgNum = 0;
-
+            var brObj, curBrokerId, boxMsgList = {}, brokersNum = 0;
+            allUnreadMsgNum = 0;
             if( chatList.status == 'OK' ){
                 arrHtml = [];
                 brLen = chatList.result.length;
                 brokersNum = BROKERSCACHE.length;
-                curBrokerId = C.tabs.getActiveBrokerId();
+                curBrokerId = C.tabs.getActiveBrokerId();  console.log(curBrokerId, 'curBrokerId');
                 J.each(chatList.result, function(i, v){
-                    v.new_msg_count = (curBrokerId!= v.from_uid) ? v.new_msg_count : 0;
-                    allUnreadMsgNum += v.new_msg_count;
+                    curBrokerId && (v.new_msg_count = (curBrokerId != v.from_uid) ? v.new_msg_count : 0);
+                    allUnreadMsgNum += (v.new_msg_count * 1);
                     brObj = BROKERSCACHE[v.from_uid];
                     if( brObj ){
                         arrHtml.push( brObj.getHtml(v.new_msg_count, v.last_active) );
@@ -115,9 +115,9 @@
                 }
 
                 //"所有经纪人"按钮显示未读消息数
-                showAllUnreadMsgCount(allUnreadMsgNum);
+                showAllUnreadMsgCount(allUnreadMsgNum);  
                 //显示共多少名经纪人
-                C.container.brlistNum.innerHTML = '共' + brLen + '名';
+                C.container.brlistNum.html('共' + brLen + '名');
                 //多个tab显示未读消息数
                 C.tabs.updateUnreadMsg(boxMsgList); //???????????????????????
                 //若有联系人删除，则需要发送消息给tabs，判断是否需要关闭当前tab
@@ -129,9 +129,15 @@
         /*
         "所有经纪人"按钮显示未读消息数
         */
-        function showAllUnreadMsgCount(allUnreadMsgNum) {
-            allUnreadMsgNum = (allUnreadMsgNum > 99) ? '99+' : allUnreadMsgNum;
-            C.container.allUnreadMsg.innerHTML = allUnreadMsgNum;
+        function showAllUnreadMsgCount(unreadMsgNum) {  
+            if (unreadMsgNum > 0) {
+                unreadMsgNum = (unreadMsgNum > 99) ? '99+' : unreadMsgNum;
+                C.container.allUnreadMsg.html(unreadMsgNum);
+                C.container.allUnreadMsg.show();
+            } else {
+                C.container.allUnreadMsg.hide();
+            }
+            
         }
 
         /*
@@ -166,7 +172,8 @@
                 while( eventTarget != listBox.get() ){
                     if( hasClass(eventTarget, event_broker_click)){
                         brokerObject = BROKERSCACHE[ J.g(eventTarget).attr('brokerId') ];
-                        C.tabs.show(brokerObject); 
+                        C.tabs.show(brokerObject);
+                        showAllUnreadMsgCount(allUnreadMsgNum - brokerObject.getOpts().count);
                         brokerObject.updateNewMsgCount(0, J.g(eventTarget));//消息条数置为0
                         return false;
                     }
