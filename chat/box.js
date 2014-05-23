@@ -378,7 +378,6 @@
          * @returns {HTMLObject}
          */
         function shiftMessage(msg){
-            console.log(msg)
             var messageBox,fn,timerDom;
             fn = msg.from_uid == C.uid ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
             (msg.msg_type!=1&&msg.msg_type!=2)&&(msg.body = eval('('+ msg.body+')'));
@@ -456,7 +455,11 @@
 
         function updateUnreadMsg(new_msg_count) {
             Tab.update(new_msg_count);
-            J.chat.pdata.getChatDetail(opts.id,0,0,new_msg_count,function(data){
+        }
+
+
+        function updateMessage(msgCount){
+            J.chat.pdata.getChatDetail(opts.id,0,0,msgCount,function(data){
                 if(data.status == 'OK'){
                     J.each(data.result,function(k,v){
                         pushMessage(v);
@@ -472,6 +475,7 @@
             updateUnreadMsg: updateUnreadMsg,
             remove:remove,
             shiftMessage:shiftMessage,
+            updateMessage:updateMessage,
             id:opts.id,
             showCloseButton:Tab.showCloseButton,
             hideCloseButton:Tab.hideCloseButton

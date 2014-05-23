@@ -99,11 +99,16 @@
             J.get({
                 url: buildUrl('chatlist'),
                 type: 'jsonp',
+                data:{
+                    _r:Math.random()
+                },
                 callback: fnName
             });
-            J.chat.pdata['callbackChatList'+(fnid-1)] = function(){};
-            J.chat.pdata['callbackChatList'+(fnid)] = function() {
-                callback.apply(this, arguments);
+            J.chat.pdata['callbackChatList'+(fnid-1)] = function(){alert(1)};
+            J.chat.pdata['callbackChatList'+(fnid)] = function(data) {
+                var args = Array.prototype.slice.call(arguments);
+                console.log('data:',data)
+                callback.apply(this, args);
             }
         }
 
