@@ -24,14 +24,14 @@
         var isDev = /\.(dev\.|test)/.test(J.D.location.host), opts = {
             apiDomain : isDev ? 'http://chatapi.dev.anjuke.com' : 'http://api.anjuke.com/weiliao',
             longDomain: isDev ? 'http://dev.aifang.com:8080/register' : 'http://push10.anjuke.com'
-            },guid=0;
+            },fnid=0;
 
         function buildUrl(type){
             var urls = {
                 'friends': opts.apiDomain + '/user/getFriends/' + C.phone,
                 'chatlist': opts.apiDomain + '/message/getChatList',
                 'friend': opts.apiDomain + '/user/getFriendInfo/' + C.phone + '/' + C.userId,
-                'poll': opts.longDomain + '/' + C.guid + '/w-ajk-user-chat/' + C.userId+'?auth='+C.auth,
+                'poll': opts.longDomain + '/' + C.guid + '/w-ajk-user-chat/' + C.uid+'?auth='+C.auth,
                 'recomm': '/api/rec',
                 'property': '/property/info',
                 'house': '/property/card/ershou',
@@ -71,15 +71,15 @@
          */
         function getChatList(callback){
             var fnName;
-            guid++;
-            fnName = 'J.chat.pdata.callbackChatList'+guid;
+            fnid++;
+            fnName = 'J.chat.pdata.callbackChatList'+fnid;
             J.get({
                 url: buildUrl('chatlist'),
                 type: 'jsonp',
                 callback: fnName
             });
-            J.chat.pdata['callbackChatList'+(guid-1)] = function(){};
-            J.chat.pdata[fnName] = function() {
+            J.chat.pdata['callbackChatList'+(fnid-1)] = function(){};
+            J.chat.pdata['callbackChatList'+(fnid)] = function() {
                 callback.apply(this, arguments);
             }
         }
@@ -88,14 +88,14 @@
          *
          */
         function getChatDetail(to_uid, min_msg_id, max_msg_id, limit, callback){
-            var sendUrl = opts.apidomain + '/message/getChatDetail/' + to_uid + '/' + min_msg_id + '/' + max_msg_id + '/' + limit;
+            var sendUrl = opts.apiDomain + '/message/getChatDetail/' + to_uid + '/' + min_msg_id + '/' + max_msg_id + '/' + limit;
             J.get({
                 url: sendUrl,
                 type: 'jsonp',
                 callback: 'J.chat.pdata.callbackDetail'
             });
             J.chat.pdata.callbackDetail = function(){
-                var args = Array.prototype.slice(arguments);
+                var args = Array.prototype.slice.call(arguments);
                 callback.apply(this,args);
             }
         }
@@ -127,7 +127,8 @@
                 callback: 'J.chat.pdata.callbackPoll'
             });
             J.chat.pdata.callbackPoll = function() {
-                callback.apply(this, arguments);
+                var args = Array.prototype.slice.call(arguments);
+                callback.apply(this, args);
             }
         }
 

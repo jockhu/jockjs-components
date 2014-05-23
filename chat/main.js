@@ -36,15 +36,21 @@
             C.container.tabContainer = J.g('tab_container');
 
             //长轮询
-            C.userId = getCookie('chat_uid');
+            C.uid = getCookie('chat_uid');
             C.guid = getCookie('aQQ_ajkguid');
             C.auth = 1;  
 
-            if (C.userId && C.guid) {
+         /*   if (C.uid && C.guid) {
                 C.pdata.getPollListener(callbackPollListener);
-            }
+            }*/
             
         })();
+
+
+        function start(){
+            C.pdata.getPollListener(callbackPollListener);
+        }
+
 
         function callbackPollListener(data) { 
             //当data.result返回的是string时，它表示某种原因断开
@@ -75,7 +81,7 @@
                 J.un(window,'beforeunload')
             })
         }
-        closeWindow();
+        //closeWindow();
 
 
         function docIsVisiable(){
@@ -84,11 +90,14 @@
             }
             return false;
         }
+        return {
+            start:start
+        }
     }
 
     // C.Main = Main;
     // C.Main.init();
-    C.main = new Main();
+    C.main =new Main();
 
 })(J.chat);
 

@@ -69,7 +69,15 @@
             FBlock = opts.container = container.s('.binfo').eq(0)
             C.finfo.getBrokerInfo(opts);
 
+            //请求６条记录
+            J.chat.pdata.getChatDetail(opts.id,0,0,6,function(data){
+                if(data.status == 'OK'){
+                    J.each(data.result,function(k,v){
+                        shiftMessage(v);
+                    })
+                }
 
+            })
 
            /* Recommend = new C.Recomm(opts);
             BrokerInfo = new C.Broker(opts);*/
@@ -170,40 +178,13 @@
                 //滚动到顶部显示更多消息,向上查看，最小消息id应该为空
                 if(!scrollIsReturn&&!chatBox.get().scrollTop){
                     scrollIsReturn = true;
-                    J.chat.pdata.getChatDetail(opts.id, 0,maxMsgId,20,function(data){
+                    J.chat.pdata.getChatDetail(opts.id, 0,minMsgId,20,function(data){
                         scrollIsReturn = false;
-                      /*  var data =  [
-                            {
-                                "msg_id": "2000019285",
-                                "msg_type": "1",
-                                "to_uid": "2000000029",
-                                "from_uid": "2000000028",
-                                "status": "9",
-                                "is_pushed": "0",
-                                "created": "1398840350",
-                                "account_type": "1",
-                                "sync_status": "2",
-                                "last_update": "2014-04-30 14:45:52",
-                                "body": "哈哈！"
-                            },
-                            {
-                                "msg_id": "2000019284",
-                                "msg_type": "1",
-                                "to_uid": "2000000029",
-                                "from_uid": "2000000028",
-                                "status": "9",
-                                "is_pushed": "0",
-                                "created": "1398839983",
-                                "account_type": "1",
-                                "sync_status": "2",
-                                "last_update": "2014-04-30 14:39:48",
-                                "body": "哈哈！"
-                            }
-                        ];*/
-                        J.each(data,function(k,v){
-                            shiftMessage(v);
-                            maxMsgId= v.msg_id;
-                        })
+                        if(data.status == 'OK'){
+                            J.each(data.result,function(k,v){
+                                shiftMessage(v);
+                            })
+                        }
                     });
                 }
             });
@@ -296,10 +277,7 @@
                     created:new Date().getTime()
                 };
                 messageBox = pushMessage(msg);
-                J.chat.pdata.sendMsgToBroker({
-                    body: msg.body,
-                    type: msg.msg_type
-                }, function (ret) {
+                J.chat.pdata.sendMsgToBroker(msg, opts.id, function (ret) {
                     //发送失败处理逻辑
                     if ( ret.retcode == -1) {
                         sendError(msg.body,messageBox);
@@ -400,6 +378,7 @@
          * @returns {HTMLObject}
          */
         function shiftMessage(msg){
+            console.log(msg)
             var messageBox,fn,timerDom;
             fn = msg.from_uid != C.uid ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
             (msg.msg_type!=1&&msg.msg_type!=2)&&(msg.body = eval('('+ msg.body+')'));
@@ -409,7 +388,7 @@
             dom ? dom.insertBefore(messageBox):chatList.append(messageBox);
             timerDom&&messageBox.insertBefore(timerDom);
             minMsgId = msg.msg_id;
-            !maxMsgId&&(maxMsgId=msg.msg.msg_id);
+            !maxMsgId&&(maxMsgId=msg.msg_id);
             return messageBox
         }
         window.shiftMessage = shiftMessage;
@@ -437,11 +416,11 @@
          * 时间任务处理
          */
         function timerTasker(t){
-            var begainTime = t;
+            var beginTime = t;
             timerTasker = function(t){
                 var curTime = t;
-                if(curTime -begainTime > 600000){
-                    begainTime = curTime;
+                if(Math.abs(curTime -beginTime) >= 600000){
+                    beginTime = curTime;
                     return J.chat.template.getTimeTpl(curTime);
                 }
             }
