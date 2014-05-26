@@ -50,7 +50,7 @@
             opts = brokerObject.getOpts();
             container = createElement();
             opts.container = container;
-           Tab = new C.Tab(brokerObject);
+            Tab = new C.Tab(brokerObject);
             //opts brokerId 经纪人id propId 房源id container 容器
             Recommend = new C.recomm();
             //拿推荐数据
@@ -65,13 +65,13 @@
             C.finfo.getBrokerInfo(opts);
 
             //请求６条记录
-            J.chat.pdata.getChatDetail(opts.id,0,0,6,function(data){
+            C.pdata.getChatDetail(opts.id,0,0,6,function(data){
+                console.log('chatDetail',data)
                 if(data.status == 'OK'){
                     J.each(data.result,function(k,v){
                         shiftMessage(v);
                     })
                 }
-
             })
 
            /* Recommend = new C.Recomm(opts);

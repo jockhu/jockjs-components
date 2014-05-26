@@ -12,6 +12,7 @@
 
 /// require('chat.chat');
 /// require('chat.opened');
+/// require('chat.tabs');
 /// require('chat.pdata');
 
 (function(C){
@@ -47,7 +48,11 @@
 
 
             if(oInfo.viewType == 1){
-                console.log('oInfo',oInfo)
+                console.log('oInfo',oInfo);
+                C.tabs.show(new C.Broker({
+                    id: oInfo.brokerId,
+                    name: 'aaa'
+                }));
                 pdata.getFriendInfo(oInfo.brokerId, function(res){
                     console.log('res',res)
 
