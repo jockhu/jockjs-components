@@ -26,9 +26,8 @@
      * @constructor
      */
     function Box(brokerObject){
-        var opts;
-
-        var Tab,
+        var opts,
+            Tab,
             brokerObject, //broker的实例
             Recommend,
             FInfo,
@@ -40,7 +39,9 @@
             minMsgId,
             BBlock,//经济人版块
             FBlock,//房源消息版块
-            container;
+            container,
+            unReadMsg = 0, //tab对应的未读消息数
+            inputContent = '请输入您的问题';
 
 
         /**
@@ -148,7 +149,7 @@
                     }
                     target = target.parentNode;
                 }
-                e.stop()
+                // e.stop()
 
             })
 
@@ -175,6 +176,12 @@
                     e.preventDefault ? e.preventDefault() : e.returnValue = false;
                 }
 
+            });
+            inputTxt.on('focus', function() {
+                J.g(this).val('');
+            });
+            inputTxt.on('blur', function() {
+                J.g(this).val(inputContent);
             });
 
             function sendCallback() {
@@ -344,7 +351,8 @@
                         return false;
                     }
                     if(!ret.retcode){
-                        !maxMsgId&&(maxMsgId = ret.retdata.result)
+                        !maxMsgId&&(maxMsgId = ret.retdata.result); 
+                        // parseInt(maxMsgId) < parseInt(ret.retdata.result) ? maxMsgId = ret.retdata.result : null;
                     }
                 });
                 //如果是房源卡面，要转换为ｊｓｏｎ
@@ -492,6 +500,10 @@
         function show(brokerObject){
             Tab.show();
             container.show();
+            //根据未读消息数请求聊天记录，且联系人列表未读消息数更新
+            (unReadMsg > 0) ? updateMessage(unReadMsg) : null;
+            C.brlist.showAllUnreadMsgCount(C.brlist.allUnreadMsgNum - unReadMsg);
+
         }
 
         /**
@@ -514,17 +526,18 @@
         }
 
         function updateUnreadMsg(new_msg_count) {
+            unReadMsg = new_msg_count;
             Tab.update(new_msg_count);
         }
 
 
         function updateMessage(msgCount){
-            J.chat.pdata.getChatDetail(opts.id,0,0,msgCount,function(data){
-                if(data.status == 'OK'){
-                    J.each(data.result,function(k,v){
-                        console.log(v)
-                        pushMessage(v);
-                    })
+            J.chat.pdata.getChatDetail(opts.id, maxMsgId, 0, 500, function(data){ //可能有系统消息
+                if(data.status == 'OK'){ 
+                    //与返回的数据顺序相反
+                    for (var i = (data.result.length -1); i >= 0; i--) {
+                        pushMessage(data.result[i]);
+                    }
                 }
             })
         }

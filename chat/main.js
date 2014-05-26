@@ -84,15 +84,16 @@
 
 
         function start(){
-            pdata.getPollListener(callbackPollListener);
+            if (C.uid && C.guid) {
+                C.pdata.getPollListener(callbackPollListener);
+            }
         }
 
 
         function callbackPollListener(data) {
             //当data.result返回的是string时，它表示某种原因断开
             if (data.status == 'OK' && (typeof data.result == 'object')) {  
-                pdata.getChatList(function(ret){
-                    console.log(ret)
+                C.pdata.getChatList(function(ret){
                     C.brlist.update(ret);
                     pdata.getPollListener(callbackPollListener);
                 });

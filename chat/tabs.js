@@ -143,15 +143,12 @@
             var i, brokerid, new_msg_count;
             for (i in boxMsgList) {
                 if (boxMsgList.hasOwnProperty(i)) {
-
                     if (CACHE[i]) {  
                         if (i != currentBrokerId) {
                             new_msg_count = boxMsgList[i];
                             CACHE[i].updateUnreadMsg(new_msg_count);
                         } else {
                             CACHE[i].updateMessage(boxMsgList[i])
-                            //实时获取对应聊天内容
-                            //?????????????????????????
                         }
                     }
                 }

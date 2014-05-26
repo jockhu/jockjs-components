@@ -96,7 +96,6 @@
                     if(curBrokerId != v.from_uid){
                         allUnreadMsgNum += (v.new_msg_count * 1)
                     }
-                    //curBrokerId && (v.new_msg_count = (curBrokerId != v.from_uid) ? v.new_msg_count : 0);
                     brObj = BROKERSCACHE[v.from_uid];
                     if( brObj ){
                         arrHtml.push( brObj.getHtml(v.new_msg_count, v.last_active * 1000) );
@@ -190,14 +189,19 @@
             });
 
             btnShowAll.on('click',function(e){
-                peoList.show();
+                if (peoList.getStyle('display') == 'none') {
+                    peoList.show();
+                } else {
+                    peoList.hide();
+                }
+                
                 e.stop();
             })
 
             peoList.on('click',function(e){
                 e.stop();
             });
-            J.g(document).on('click',function(){
+            J.g(document).on('click',function(){  
                 peoList.hide();
             });
 
@@ -221,7 +225,8 @@
 
         return {
             // fillList: fillList,
-            update: update
+            update: update,
+            showAllUnreadMsgCount: showAllUnreadMsgCount
         }
     }
 
