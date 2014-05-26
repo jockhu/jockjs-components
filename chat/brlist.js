@@ -8,9 +8,9 @@
  * @date: 2014/05/08
  *
  */
-/// require('chat.main');
-/// require('chat.pdata');
+
 /// require('chat.chat');
+/// require('chat.pdata');
 /// require('chat.broker');
 /// require('chat.tabs');
 
@@ -21,7 +21,7 @@
      * @constructor
      */
     function Brlist(){  
-        var BROKERSCACHE = [], TMPECACHE = [], arrHtml = [], newBroker = {}, brLen = 0, listBox = C.container.brlist, allUnreadMsgNum = 0;//联系人列表数组，每个元素是borker实例
+        var BROKERSCACHE = [], TMPECACHE = [], arrHtml = [], newBroker = {}, brLen = 0, listBox = J.g('brlist'), allUnreadMsgNum = 0;//联系人列表数组，每个元素是borker实例
 
         /**
          * 初始化：只初始化BROKERSCACHE数组
