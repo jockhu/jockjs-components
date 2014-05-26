@@ -12,7 +12,7 @@
 
 /// require('chat.chat');
 
-(function(C){
+(function(C, W){
 
     /**
      *
@@ -21,37 +21,48 @@
      */
     function Opened(){
 
-        var onSuccess = null, win = J.W, timerI = null, timerO = null, cookieValue = '', cookieObj = J.cookie, cookie= C.cookie;
+        var onSuccess = null, timerI = null, timerO = null, cookieValue = '',
+            cookieObj = J.cookie, cookie= C.cookie, locked = false;
 
         (function(){
-            // 如果cookie配置为null直接退出
-            if(!(cookieValue=getOpenedConf())) win.close();
-
             // 不管什么情况，打开聊天对话框就设置为打开状态
-            listener(true)
-
-            J.on(win,'focus',function(){
-                listener(false)
-            });
-            J.on(win,'blur',function(){
-                listener(true)
-            });
-            J.on(J.D,'click',function(){
-                listener(false)
-            });
-            J.on(win,'beforeunload', function(){
-                setOpenedStatus(0);
-            });
+            setOpenedStatus(2);
+            // 如果cookie配置为null直接退出
+            if(!(cookieValue=getOpenedConf())) W.close();
+            listener(true);
+            W.onblur = startListener;
+            W.onfocus = stopListener;
+            J.D.onclick = stopListener;
+            W.onbeforeunload = beforeunload;
 
         })();
 
+        function beforeunload(){
+            setOpenedStatus(0);
+            locked = true;
+        }
+
+        function stopListener(){
+            if(!locked){
+                listener(false)
+            }
+        }
+
+        function startListener(){
+            if(!locked){
+                listener(true)
+            }
+        }
 
         /**
          * 设置窗口状态
-         * @param statusCode 0 窗口关闭，1 窗口后台打开 2|3 窗口 前台激活
+         * @param statusCode 0 窗口关闭，1 窗口打开 , 2 窗口加载完成
          */
         function setOpenedStatus(statusCode){
-            cookieObj.setCookie(cookie.name, (cookieValue = cookieValue.replace(/^\d{1}\.\d+/, statusCode+'.'+(+new Date()))), 1, cookie.domain);
+            var conf = getOpenedConf();
+            conf && cookieObj.setCookie(cookie.name, conf.replace(/^(\d{1})\.(\d+)/, function(a,b,c){
+                return statusCode + '.' + ((statusCode == 2) ? (+new Date()) : c);
+            }), 1, cookie.domain);
         }
 
         /**
@@ -64,63 +75,71 @@
 
         /**
          * 监听函数
-         * @param isListened 是否要监听
+         * @param listened 是否要监听
          * @returns {boolean}
          */
-        function listener(isListened){
-            clearInterval(timerI);
-            clearTimeout(timerO);
-            if(!isListened){
-                // 前台激活
-                setOpenedStatus(3);
-                return false;
-            }
-            // 后台激活
-            setOpenedStatus(2);
-            timerI = setInterval(function(){
-                if( cookieValue != getOpenedConf() ){
-                    cookieValue = getOpenedConf();
+        function listener(listened){
+            timerI && clearInterval(timerI);
+            timerO && clearTimeout(timerO);
+            !listened && (cookieValue = getOpenedConf());
+            listened && (timerI = W.setInterval(function(){
+                if( cookieValue != getOpenedConf() && (cookieValue = getOpenedConf()) ) {
                     clearTimeout(timerO);
-                    win.focus();
+                    W.focus();
                     if( onSuccess ){
                         var conf = cookieValue.match(/(\d+)\.(\d+)$/);
-                        onSuccess({
+                        onSuccess(conf ? {
                             brokerId:conf[1],
                             propId:conf[2]
-                        });
+                        } : null);
                     }
-                    activeWindow();
+                    // 非IE浏览器强制激活窗口
+                    !J.ua.ie && (timerO = setTimeout(function(){
+                        listener(false)
+                        alert('聊天窗口被激活!');
+                    },0));
                 }
-                //console.log('poll')
-            },500);
-        }
-
-        /**
-         * 非IE浏览器强制激活窗口
-         */
-        function activeWindow(){
-            if(!J.ua.ie){
-                timerO = setTimeout(function(){
-                    listener(false)
-                    alert('聊天窗口被激活!');
-                },0);
-            }
+            },500));
         }
 
         /**
          * 公开接口，设置监听cookie发生变化时候调用的回调函数
          * @param callback
          */
-        function setListener(callback){
+        function setSuccess(callback){
             onSuccess = callback;
         }
 
+        function getViewType(){
+            return getOpenedConf().match(/(\d+)\.(\d+)$/) ? 1 : 0;
+        }
+
+        /**
+         * 设置聊天窗口显示风格，1 tab模式，0 列表模式
+         * @param viewType
+         */
+        function setView(viewType){
+            if(viewType != getViewType() && viewType == 1){
+                resetWindow(viewType);
+            }
+        }
+
+        function resetWindow(viewType){
+            var wSize = C.windowSize[ viewType ? 'dialog' : 'list'],
+                width = wSize.width, height = wSize.height, left = wSize.left, top = wSize.top,
+                offsetLeft = wSize.offsetLeft || 0, offsetTop = wSize.offsetTop || 0, screen = W.screen;
+            W.moveTo(((left ? left : (screen.width / 2 - width / 2)) + offsetLeft),((top ? top : (screen.height / 2 - height / 2)) + offsetTop));
+            W.resizeTo(width,height)
+            W.focus();
+        }
+
         return {
-            setListener:setListener
+            setView:setView,
+            setSuccess:setSuccess
         }
     }
 
-   // C.opened = new Opened();
+    C.opened = new Opened();
 
-})(J.chat);
+})(J.chat, J.W);
 

@@ -22,7 +22,7 @@
     function Opener(){
 
         var cookieObj = J.cookie, cookie= C.cookie, windowOpenr = C.windowOpener,
-            windowSize = C.windowSize, pId = '', bId = '', timer = null;
+            timer = null;
 
         /**
          * 打开聊天窗口，客户端入口
@@ -37,19 +37,17 @@
             function newWindow(){
                 updateConf(conf, 1);
                 windowOpenr = J.W.open(C.chatDomain, C.windowName, getAttrString(conf));
-                windowOpenr.focus();
+                windowOpenr && windowOpenr.focus();
             }
             if(windowIsOpend(conf)){
-                if(windowOpenr){
-                    windowOpenr.focus();
-                }
+                windowOpenr && windowOpenr.focus();
                 // 处理意外关闭cookie没有被重置的二次验证
                 clearTimeout(timer);
                 updateConf(conf);
                 conf = getConf();
                 timer = setTimeout(function(){
                     if(conf.time == getConf().time){
-                        newWindow();
+                        //newWindow();
                     }
                 },1500);
             }else{
@@ -64,23 +62,26 @@
          */
         function getConf(){
             var cks;
-            if(cks = cookieObj.getCookie(cookie.name) || []){
+            if(cks = cookieObj.getCookie(cookie.name)){
                 cks = cks.split('.');
+                return {
+                    status:cks[0],
+                    time:cks[1],
+                    brId:cks[2]||'',
+                    prId:cks[3]||''
+                };
             }
             return {
-                status:cks[0],
-                time:cks[1],
-                brId:cks[2]||'',
-                prId:cks[3]||''
-            };
+                status:0,
+                time:0
+            }
         }
 
         /**
          * 获取chat窗口是否已经被打开
          * @returns {boolean}
          */
-        function windowIsOpend(){
-            var conf = getConf();
+        function windowIsOpend(conf){
             return conf.status != '0' && conf.status != '1' ? true : false;
         }
 
@@ -91,7 +92,7 @@
          * @param status
          */
         function updateConf(conf, status){
-            cookieObj.setCookie(cookie.name, (status ? status : conf.status) + '.' + (+new Date()) + '.' + conf.bId + '.' + conf.pId, 1, cookie.domain);
+            cookieObj.setCookie(cookie.name, (status ? status : conf.status) + '.' + (+new Date()) + '.' + conf.brId + '.' + conf.prId, 1, cookie.domain);
         }
 
         /**
@@ -99,14 +100,15 @@
          * @returns {string}
          */
         function getAttrString(conf){
-            var wSize = windowSize[ conf.bId ? 'dialog' : 'list'],
-                viewPage = (D.compatMode == 'BackCompat') ? D.body : D.documentElement,
-                width = wSize.width, height = wSize.height, left = wSize.left, top = wSize.top;
+            var wSize = C.windowSize[ conf.brId ? 'dialog' : 'list'],
+                width = wSize.width, height = wSize.height, left = wSize.left, top = wSize.top,
+                offsetLeft = wSize.offsetLeft || 0, offsetTop = wSize.offsetTop || 0, screen = W.screen;
+
             return C.windowAttrs +
                 ',width=' + width +
                 ',height=' + height +
-                ',left=' + (left ? left : (viewPage.clientWidth / 2 - width / 2)) +
-                ',top=' + (top ? top : (viewPage.clientHeight / 2 - height / 2))
+                ',left=' + ((left ? left : (screen.width / 2 - width / 2)) + offsetLeft) +
+                ',top=' + ((top ? top : (screen.height / 2 - height / 2)) + offsetTop)
         }
 
 
