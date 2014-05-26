@@ -421,6 +421,7 @@
          */
         function shiftMessage(msg){
             var messageBox,fn,timerDom;
+            
             fn = msg.from_uid == C.uid ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
             (msg.msg_type!=1&&msg.msg_type!=2&&msg.msg_type!=106)&&(msg.body = eval('('+ msg.body+')'));
             messageBox = fn(msg.msg_type,msg.body);
