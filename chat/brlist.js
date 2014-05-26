@@ -122,7 +122,7 @@
                 //显示共多少名经纪人
                 C.container.brlistNum.html('共' + brLen + '名');
                 //多个tab显示未读消息数
-                C.tabs.updateUnreadMsg(boxMsgList); //???????????????????????
+                C.tabs.updateUnreadMsg(boxMsgList); 
                 //若有联系人删除，则需要发送消息给tabs，判断是否需要关闭当前tab
                 sendMsgToTabs(brLen, brokersNum);
                 updateEvent();

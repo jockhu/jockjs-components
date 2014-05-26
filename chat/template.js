@@ -64,7 +64,7 @@
             year = day.getFullYear(),
             month = day.getMonth(),
             date = day.getDate(),
-            dayTime = 1000*60*60*24,
+            dayTime = 1000*60*60*24, //1天转成ms
             todayTime = new Date(year,month,date).getTime(),
             tomTime = todayTime + dayTime,
             yesTime = todayTime-dayTime,
