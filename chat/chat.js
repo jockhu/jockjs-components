@@ -51,5 +51,6 @@ J.add('chat', {
         allUnreadMsg: '',
         tabContainer: ''
     },
-    phone: '18721381560'
+    phone: '18602158988',
+    isDev:/\.(dev\.|test)/.test(J.D.location.host)
 });

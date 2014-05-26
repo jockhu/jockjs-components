@@ -21,10 +21,10 @@
      */
     function Pdata(){
 
-        var isDev = /\.(dev\.|test)/.test(J.D.location.host), opts = {
-            apiDomain : isDev ? 'http://chatapi.dev.anjuke.com' : 'http://api.anjuke.com/weiliao',
-            longDomain: isDev ? 'http://dev.aifang.com:8080/register' : 'http://push10.anjuke.com'
-            },fnid=0;
+        var opts = {
+            apiDomain : C.isDev ? 'http://chatapi.dev.anjuke.com' : 'http://api.anjuke.com/weiliao',
+            longDomain: C.isDev ? 'http://dev.aifang.com:8080/register' : 'http://push10.anjuke.com'
+        }, fnid=0;
 
         function buildUrl(type){
             var urls = {

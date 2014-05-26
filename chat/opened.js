@@ -91,7 +91,7 @@
                         onSuccess(conf ? {
                             brokerId:conf[1],
                             propId:conf[2]
-                        } : null);
+                        } : {});
                     }
                     // 非IE浏览器强制激活窗口
                     !J.ua.ie && (timerO = setTimeout(function(){
@@ -133,9 +133,23 @@
             W.focus();
         }
 
+        function close(){
+            W.close();
+        }
+
+        function getInfo(){
+            var conf = cookieValue.match(/(\d+)\.(\d+)$/);
+            return conf ? {
+                brokerId:conf[1],
+                propId:conf[2]
+            } : {};
+        }
+
         return {
-            setView:setView,
-            setSuccess:setSuccess
+            getInfo: getInfo,
+            close: close,
+            setView: setView,
+            setSuccess: setSuccess
         }
     }
 

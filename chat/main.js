@@ -11,75 +11,65 @@
 
 
 /// require('chat.chat');
+/// require('chat.opened');
 /// require('chat.pdata');
 
 (function(C){
 
 
     /**
-     * chat入口主函数
-     * @returns {{init: init}}
+     * chat 主函数
+     * @param opened J.chat.opened instance
      * @constructor
      */
-    function Main(){
+    function Main(opened){
 
-        // function init(){
-           
-        // }
+        var container = C.container, cookie = J.cookie, pdata = C.pdata;
 
+        //initialize
         (function() {
             C.connect = true;//表示是否连接
-            C.container.brlist = J.g('c_brlist'); //联系人列表的box
-            C.container.brlistNum = J.g('brokersCount'); //共xx名
-            C.container.allUnreadMsg = J.g('allUnreadMsg'); //显示“所有经纪人”按钮的未读消息数
-            //tab
-            C.container.tabContainer = J.g('tab_container');
+
+            /**
+             * c_brlist 联系人列表的box
+             * brokersCount 共xx名
+             * allUnreadMsg 显示“所有经纪人”按钮的未读消息数
+             * tab_container tab
+             */
+            J.each(['brlist','brlistNum','allUnreadMsg','tabContainer'], function(i, v){
+                container[v] = J.g(v);
+            });
 
             //长轮询
-            C.uid = getCookie('chat_uid');
-            C.guid = getCookie('aQQ_ajkguid');
+            C.uid = cookie.getCookie('chat_uid');
+            C.guid = cookie.getCookie('aQQ_ajkguid');
             C.auth = 1;  
 
          /*   if (C.uid && C.guid) {
                 C.pdata.getPollListener(callbackPollListener);
             }*/
-            
+
         })();
 
 
         function start(){
-            C.pdata.getPollListener(callbackPollListener);
+            pdata.getPollListener(callbackPollListener);
         }
 
 
         function callbackPollListener(data) {
             //当data.result返回的是string时，它表示某种原因断开
             if (data.status == 'OK' && (typeof data.result == 'object')) {  
-                C.pdata.getChatList(function(ret){
+                pdata.getChatList(function(ret){
                     console.log(ret)
                     C.brlist.update(ret);
-                    C.pdata.getPollListener(callbackPollListener);
+                    pdata.getPollListener(callbackPollListener);
                 });
-
             }
 
         }
 
-        function getCookie(name)
-        {
-            var arr,reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");  
-            if(arr = document.cookie.match(reg)) {
-                return unescape(arr[2]);
-            }
-            else
-                return null;
-        } 
-
-        // return {
-        //     init:init
-        // }
         function closeWindow(){
-
             J.on(window,'beforeunload',function(e){
                 var e = e || window.event;
                 e.returnValue = '暂时关闭这次微聊？您可点击屏幕右侧微聊按钮继续进入';
@@ -102,7 +92,7 @@
 
     // C.Main = Main;
     // C.Main.init();
-    C.main =new Main();
+    C.main = new Main(C.opened);
 
 })(J.chat);
 
