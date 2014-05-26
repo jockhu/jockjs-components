@@ -30,7 +30,7 @@
             var urls = {
                 'friends': opts.apiDomain + '/user/getFriends/' + C.phone,
                 'chatlist': opts.apiDomain + '/message/getChatList',
-                'friend': opts.apiDomain + '/user/getFriendInfo/' + C.phone + '/' + C.userId,
+                'friend': opts.apiDomain + '/user/getFriendInfo/' + C.phone + '/',
                 'poll': opts.longDomain + '/' + C.guid + '/w-ajk-user-chat/' + C.uid+'?auth='+C.auth,
                 'recomm': '/api/rec',
                 'property': '/property/info',
@@ -131,9 +131,9 @@
         /**
          *
          */
-        function getFriendInfo(callback){
+        function getFriendInfo(brokerId, callback){
             J.get({
-                url: buildUrl('friend'),
+                url: buildUrl('friend') + brokerId,
                 type: 'jsonp',
                 callback: 'J.chat.pdata.callbackFriendInfo'
             });

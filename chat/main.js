@@ -24,7 +24,7 @@
      */
     function Main(opened){
 
-        var container = C.container, cookie = J.cookie, pdata = C.pdata;
+        var container = C.container, cookie = J.cookie, pdata = C.pdata, oInfo = opened.getInfo();
 
         //initialize
         (function() {
@@ -43,7 +43,33 @@
             //长轮询
             C.uid = cookie.getCookie('chat_uid');
             C.guid = cookie.getCookie('aQQ_ajkguid');
-            C.auth = 1;  
+            C.auth = 1;
+
+
+            if(oInfo.viewType == 1){
+                console.log('oInfo',oInfo)
+                pdata.getFriendInfo(oInfo.brokerId, function(res){
+                    console.log('res',res)
+
+                    /*
+                    *
+                    * {
+                     icon: '',
+                     name: '',
+                     id: '',
+                     houseId:'',
+                     count: 0,
+                     lasttime: '',
+                     html: ''
+                     }
+                    * */
+                    //C.tabs.show(new C.Broker());
+                })
+
+
+            }
+
+
 
          /*   if (C.uid && C.guid) {
                 C.pdata.getPollListener(callbackPollListener);

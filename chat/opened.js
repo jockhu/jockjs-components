@@ -138,11 +138,13 @@
         }
 
         function getInfo(){
-            var conf = cookieValue.match(/(\d+)\.(\d+)$/);
-            return conf ? {
+            var conf = cookieValue.match(/(\d+)\.(\d+)$/), res =
+            conf ? {
                 brokerId:conf[1],
                 propId:conf[2]
             } : {};
+            res.viewType = getViewType();
+            return res;
         }
 
         return {

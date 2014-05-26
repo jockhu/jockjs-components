@@ -108,7 +108,7 @@
                             index: i,
                             chatInfo: v
                         };
-                        C.pdata.getFriendInfo(brCallback);
+                        C.pdata.getFriendInfo(v.from_uid, brCallback);
                     }
                 });
 
