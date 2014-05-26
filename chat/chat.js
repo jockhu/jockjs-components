@@ -12,8 +12,8 @@
 
 J.add('chat', {
     version:'1.0.0',
-    //chatDomain:'//shanghai.app-chat-web.jockhu.dev.anjuke.com/',
-    chatDomain:'//demos.jockhu.dev.anjuke.com/test/chat.html',
+    chatDomain:'//shanghai.app-chat-web.jockhu.dev.anjuke.com/',
+    //chatDomain:'//demos.jockhu.dev.anjuke.com/test/chat.html',
     cookie:{
         name:'chat_conf', //轮询的cookie名字
         domain:'anjuke.com'
