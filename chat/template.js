@@ -11,6 +11,7 @@
 
 
 /// require('chat.chat');
+/// require('chat.emoji');
 
 (function(C){
 
@@ -124,10 +125,10 @@
          * @returns {string}
          */
         function getTextTpl(className, content){
-            //先转化表情
-            //content = formateEmoji(content);
             //超链接
             content = formateTxt( encodeTxt(content) );
+            //先转化表情
+            content = formateEmoji(content); //只能在超链接后面
             var html = '<dd>'+
                             '<em class="ico_arw"></em>'+
                             '<p>' + content + '</p>'+
@@ -135,8 +136,12 @@
             return getTpl(className, html);
         }
         function formateEmoji(content) {
-            emoji.img_path = "<?php echo User_Common_Util_PageHelper::getPureStaticUrl('/img/chat/images/unicode/');?>";
-            emoji.sheet_path = "<?php echo User_Common_Util_PageHelper::getPureStaticUrl('/img/chat/images/sheet_64.png');?>";
+            // emoji.img_path = "<?php echo User_Common_Util_PageHelper::getPureStaticUrl('/img/chat/images/unicode/');?>";
+            // emoji.sheet_path = "<?php echo User_Common_Util_PageHelper::getPureStaticUrl('/img/chat/images/sheet_64.png');?>";
+
+            emoji.img_path = 'http://pages.benlinhuo.dev.anjuke.com/anjuke/img/chat/images/unicode/';
+            emoji.sheet_path = 'http://pages.benlinhuo.dev.anjuke.com/anjuke/img/chat/images/sheet_64.png';
+
             emoji.use_sheet = true;
             emoji.init_env();
             var auto_mode = emoji.replace_mode; 

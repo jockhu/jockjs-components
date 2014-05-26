@@ -138,7 +138,8 @@
                 callback: 'J.chat.pdata.callbackFriendInfo'
             });
             J.chat.pdata.callbackFriendInfo = function() {
-                callback.apply(this, arguments);
+                var args = Array.prototype.slice.call(arguments);
+                callback.apply(this, args);
             }
         }
 
@@ -151,6 +152,7 @@
                 data: {
                     'r': Math.random()
                 },
+                timeout: 360000,
                 type: 'jsonp',
                 callback: 'J.chat.pdata.callbackPoll'
             });

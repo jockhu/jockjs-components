@@ -100,6 +100,7 @@
         function eventBind(){
             chatList = container.s(".chatlist").eq(0);
             var btnSend =  container.s(".btn_sub").eq(0);
+            var inputTxt = container.s('.input_txt').eq(0);
             chatBox = container.s(".chatbox").eq(0);
             txtSend = container.s(".tarea").eq(0).s('textarea').eq(0);
             var mask = J.s(".p_msk").eq(0);
@@ -165,15 +166,31 @@
 
 
             //发送消息事件
-            btnSend.on('click',function(){
-                var txt;
-                txt=txtSend.val();
+            btnSend.on('click',sendCallback);
+            //enter键发送消息
+            inputTxt.on('keydown', function(e) { 
+                if (e.keyCode == 13) {
+                    sendCallback();
+                    e.stop();
+                    e.preventDefault ? e.preventDefault() : e.returnValue = false;
+                }
+
+            });
+
+            function sendCallback() {
+                var txt;  
+                txt=trim(txtSend.val());  
+                function trim(str) {
+                    return str.replace(/(^\s*)|(\s*$)/g, '');
+                } 
                 if(!txt){
+                    txtSend.val('');//可能有空格
                     return false;
                 }
                 sendMessage(1,txtSend.val());
-                txtSend.val('')
-            })
+                txtSend.val('');
+                calcTextLength();
+            }
 
             //每次输入总数时时减少
             if(!+[1,]){
@@ -279,10 +296,10 @@
                 txtSend.val(txtSend.val().substr(0,len));
             }
 
-            calcTextLength = function(){
+            // calcTextLength = function(){  
                 labTip.html(labTip.html().replace(/\d+/g,leaveChatCount))
-            }
-            calcTextLength();
+            // }
+            // calcTextLength();
         }
 
 
