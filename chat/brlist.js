@@ -21,7 +21,7 @@
      * @constructor
      */
     function Brlist(){  
-        var BROKERSCACHE = [], TMPECACHE = [], arrHtml = [], newBroker = {}, brLen = 0, listBox = J.g('brlist'), allUnreadMsgNum = 0;//联系人列表数组，每个元素是borker实例
+        var BROKERSCACHE = {}, brokerCount = 0, TMPECACHE = {}, arrHtml = [], newBroker = {}, brLen = 0, listBox = J.g('brlist'), allUnreadMsgNum = 0;//联系人列表数组，每个元素是borker实例
 
         /**
          * 初始化：只初始化BROKERSCACHE数组
@@ -44,6 +44,9 @@
                             name: fv.nick_name,
                             icon: fv.icon
                         });
+//                        BROKERSCACHE.length++;
+                        brokerCount++;
+
                     }
                 });
             }
@@ -125,12 +128,15 @@
             if( chatList.status == 'OK' ){
                 arrHtml = [];
                 brLen = chatList.result.length;
-                brokersNum = BROKERSCACHE.length;
+                brokersNum = brokerCount;
                 curBrokerId = C.tabs.getActiveBrokerId();
+                brokerCount = 0;
                 J.each(chatList.result, function(i, v){
 
                     dealNewMsgCount = ((curBrokerId == v.from_uid) ? 0 : v.new_msg_count);
                     allUnreadMsgNum += dealNewMsgCount * 1;
+                    brokerCount++;
+
                     brObj = BROKERSCACHE[v.from_uid];
                     if( brObj ){
                         arrHtml.push( brObj.getHtml(dealNewMsgCount, v.last_active * 1000) );
@@ -271,6 +277,11 @@
                 }
             });
         }
+
+        function getListCount(){
+            return brokerCount;
+        }
+
 
         return {
             update: update,

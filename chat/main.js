@@ -85,6 +85,7 @@
 
         function start(data){
             var telNumber = data.telNumber;
+            J.chat.phone =telNumber, //1
             C.pdata.getPollListener(callbackPollListener);
         }
 

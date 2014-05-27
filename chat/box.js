@@ -103,7 +103,8 @@
             var mapPanel = J.g('map_panel');
             var imgPanel = J.g('img_panel');
 
-            var scrollIsReturn = true;
+            var scrollTopElm = chatBox.first();
+            var scrollIsReturn = false;
 
 
             //聊天信息点击事件
@@ -170,6 +171,10 @@
                 }
 
             });
+<<<<<<< HEAD
+=======
+
+>>>>>>> asdfsadf
 
             function sendCallback() {
                 var txt;  
@@ -198,12 +203,21 @@
                 if(scrollIsReturn&&!chatBox.get().scrollTop){ 
                     scrollIsReturn = false;
                     J.chat.pdata.getChatDetail(opts.id, 0,minMsgId,20,function(data){
+<<<<<<< HEAD
                         scrollIsReturn = true;
+=======
+                        scrollIsReturn = false;
+                        var h = scrollTopElm.height();
+>>>>>>> asdfsadf
                         if(data.status == 'OK'){
                             J.each(data.result,function(k,v){
                                 shiftMessage(v);
                             })
                         }
+                        var tH = scrollTopElm.height()-h;
+                        chatBox.get().scrollTop =tH;
+
+
                     });
                 }
             });
@@ -305,20 +319,16 @@
          */
         function sendMessage(type,content){
             var houseId = opts.houseId;
+            //首次发送需要发送房源卡片
             houseId&&(function(){
                 J.chat.pdata.getHouseCard(houseId,function(data){
-                    /*data =  {
-                        retcode: 0,
-                        retmsg: "",
-                        retdata: '{"id":202080197,"des":"2\u5ba41\u53851\u536b 100.00\u5e73","img":"http:\/\/include.app-chat-web.haipengchen.dev.anjuke.com\/anjuke\/img\/global\/1\/gallery_img_default.png","name":"\u94fe\u5bb6\u6d4b\u8bd5","price":"305.00\u4e07\u5143","url":"http:\/\/www.anjuke.com\/prop\/view\/202080197?from=card","jsonVersion":1,"tradeType":"1"}'
-                     };*/
                     if(!data.retcode){
                         //返回正确的房源卡片
                         sendMessage(3,data.retdata);
                         sendMessage(1,content);
+
                     }
                 });
-
             })();
             sendMessage =function(type,content){
                 var messageBox;
@@ -386,6 +396,7 @@
                     if (data&&!data.retcode) {
                         aWrong.parentNode.removeChild(aWrong);
                         aWrong.onclick = null;
+                        maxMsgId = data.retdata.result;
                     }
                 });
             }
@@ -404,9 +415,9 @@
             (msg.msg_type!=1 && msg.msg_type!=2 && msg.msg_type!=106)&&(msg.body = eval('('+ msg.body+')'));
             messageBox = fn(msg.msg_type,msg.body);
             chatList.append(messageBox);
-            chatBox.get().scrollTop =1000000;
             timerDom = timerTasker(msg.created);
             timerDom&&chatList.append(timerDom);
+            chatBox.get().scrollTop =1000000;
             maxMsgId = msg.msg_id;
             return messageBox
         }
