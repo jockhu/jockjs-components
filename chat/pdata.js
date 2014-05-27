@@ -171,7 +171,7 @@
         }
 
         /**
-         *获取房源信息
+         *获取经纪人信息
          */
         function getBrokerInfo(brokerId, callback){
             var param = {

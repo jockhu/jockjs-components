@@ -9,11 +9,9 @@
  *
  */
 
-
 J.add('chat', {
     version:'1.0.0',
-    chatDomain:'//shanghai.app-chat-web.benlinhuo.dev.anjuke.com/',
-    //chatDomain:'//demos.jockhu.dev.anjuke.com/test/chat.html',
+    chatDomain:'//www.app-chat-web.'+ (J.D.location.host.match(/^\w+\.(\w+)\./) ? J.D.location.host.match(/^\w+\.(\w+)\./)[1] : "")+'.dev.anjuke.com/',
     cookie:{
         name:'chat_conf', //轮询的cookie名字
         domain:'anjuke.com'

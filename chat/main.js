@@ -53,8 +53,8 @@
                     id: oInfo.brokerId,
                     name: 'aaa'
                 }));
-                pdata.getFriendInfo(oInfo.brokerId, function(res){
-                    console.log('res',res)
+                pdata.getBrokerInfo(oInfo.brokerId, function(res){
+                    console.log('res---',res)
 
                     /*
                     *
