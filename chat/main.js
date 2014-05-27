@@ -83,10 +83,9 @@
         })();
 
 
-        function start(){
-            if (C.uid && C.guid) {
-                C.pdata.getPollListener(callbackPollListener);
-            }
+        function start(data){
+            var telNumber = data.telNumber;
+            C.pdata.getPollListener(callbackPollListener);
         }
 
 
