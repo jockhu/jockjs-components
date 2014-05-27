@@ -27,7 +27,8 @@
             cityAlias:J.site.info.cityAlias,
             onComplete:null,
             onShow:null,//异步加载图片
-            onexposure:null//增加曝光亮
+            onexposure:null,//增加曝光亮
+            noDataAction:null//无数据时操作
         }, opts, pageIndex = 1,fetchEnd=false, stopQuest = false, pause = false;
 
         (function () {
@@ -111,14 +112,7 @@
                             stopQuest = (pageIndex == 1 && len < 10) || len < (10 + (pageIndex-1)*20) ? true : false;
                         }
                     }else{
-                        J.s(".loveti").length && J.s(".loveti").each(function(i,v){
-                            v.hide();
-                        });
-                        J.g('likeFew')&&J.g("likeFew").setStyle({"display":"none"});
-                        J.g('list_lookmore')&&J.g("list_lookmore").setStyle({"display":"none"});
-                        if (J.g('likeNo')&&J.g('likeNo').s(".loveti").length>0) {
-                            J.g('likeNo').s(".loveti").eq(0).setStyle({"display":"none"});
-                        }
+                        opts.noDataAction&&opts.noDataAction();
                         stopQuest = true;
                     }
                     if(stopQuest && J.site.info.pageName!="Anjuke_Prop_View"){
