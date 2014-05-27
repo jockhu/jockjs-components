@@ -74,6 +74,42 @@
             newBroker = {};
         }
 
+        /*
+        * 监听是否用户给经纪人第一次发送消息，建立关系，并添加到联系人列表
+        */
+        function listenerNewBroker() {
+            J.on('chat: newBroker', addBroker, data);
+
+            /*
+            * data包括broker的icon,name,id,count,houseId,lasttime
+            */
+            function addBroker(data) {
+                var firstEle = listBox.firstChild, brObj, appendDom;
+                brObj = BROKERSCACHE[data.id] = new C.Broker({
+                    id: data.id,
+                    name: data.name,
+                    icon: data.icon,
+                    count: data.count,
+                    houseId: data.houseId,
+                    lasttime: data.lasttime
+                });
+
+                appendDom = getDomByHtml(brObj.getOpts());
+                insertBefore(appendDom, firstEle);
+                //单独事件绑定
+                brokerBindEvent(J.g(appendDom));
+            }
+        }
+
+        /*
+        * 将html转成对应的dom元素
+        */
+        function getDomByHtml(html) {
+            var div = document.createElement('div');
+            div.innerHTML = html;
+            return div.firstChild;
+        }
+
 
         /**
          *@param:chatList（getChatList接口返回数据）元素需要字段from_uid(brokerId), new_msg_count, last_active
@@ -84,7 +120,7 @@
                    5."所有经纪人"按钮上显示的未读消息数
          */
         function update(chatList){
-            var brObj, curBrokerId, boxMsgList = {}, brokersNum = 0;
+            var brObj, curBrokerId, boxMsgList = {}, brokersNum = 0, dealNewMsgCount = 0;
             allUnreadMsgNum = 0;
             if( chatList.status == 'OK' ){
                 arrHtml = [];
@@ -93,12 +129,11 @@
                 curBrokerId = C.tabs.getActiveBrokerId();
                 J.each(chatList.result, function(i, v){
 
-                    if(curBrokerId != v.from_uid){
-                        allUnreadMsgNum += (v.new_msg_count * 1)
-                    }
+                    dealNewMsgCount = ((curBrokerId == v.from_uid) ? 0 : v.new_msg_count);
+                    allUnreadMsgNum += dealNewMsgCount * 1;
                     brObj = BROKERSCACHE[v.from_uid];
                     if( brObj ){
-                        arrHtml.push( brObj.getHtml(v.new_msg_count, v.last_active * 1000) );
+                        arrHtml.push( brObj.getHtml(dealNewMsgCount, v.last_active * 1000) );
                         TMPECACHE[v.from_uid] = brObj;
                         boxMsgList[v.from_uid] = v.new_msg_count;  //key[uid]-value[new_msg_count]
                     }else{
@@ -147,7 +182,7 @@
         */
         function sendMsgToTabs(brLen, brokersNum){
             if (brLen != brokersNum) { //表明有联系人删除
-                // J.fire();//触发tabs那边监听处理该情况的事件???????????????????
+                C.tabs.autoDeleBroker();
             }
         }
 
@@ -211,22 +246,39 @@
         }
 
         function updateEvent() {
-            var hoverClassName = 'hover';
             listBox.s('.cf').each(function(k, v) {
-                v.on('mouseenter', function() {
-                    v.addClass(hoverClassName);
-                });
-                v.on('mouseleave', function() {
-                    v.removeClass(hoverClassName);
-                });
+                brokerBindEvent(v);
             });
         }
 
+        function brokerBindEvent(v) {
+            var hoverClassName = 'hover';
+            v.on('mouseenter', function() {
+                v.addClass(hoverClassName);
+            });
+            v.on('mouseleave', function() {
+                v.removeClass(hoverClassName);
+            });
+        }
+
+        /*
+        * 只更新未读消息数
+        */
+        function updateOnlyMsgCount(brokerObject) {  
+            var opts = brokerObject.getOpts();
+            var dlarr = listBox.s('.event_broker_click');  
+            J.each(dlarr, function(k, v) {  
+                if (J.g(v).attr('brokerid') == opts.id) {
+                    brokerObject.updateNewMsgCount(0, J.g(v));
+                    return;
+                }
+            });
+        }
 
         return {
-            // fillList: fillList,
             update: update,
-            showAllUnreadMsgCount: showAllUnreadMsgCount
+            showAllUnreadMsgCount: showAllUnreadMsgCount,
+            updateOnlyMsgCount: updateOnlyMsgCount
         }
     }
 

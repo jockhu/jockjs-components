@@ -37,8 +37,10 @@
          * @param brokerObject:broker的实例（icon: '', name: '', id: ''）
          */
         function show(brObject){
-            var opts = brObject.getOpts(), brokerId = opts.id, boxObject = CACHE[brokerId];
+            var opts = brObject.getOpts(), brokerId = opts.id, boxObject = CACHE[brokerId];　
+            if (brokerId == currentBrokerId) return;//当点击当前tab时，不做任何处理
             if(!boxObject){
+                if (exceedTip()) return;
                 boxObject = CACHE[brokerId] = new C.Box(brObject);
                 //如果只有一个ｔａｂ　,则不显示关闭
                 tabCount++;
@@ -47,8 +49,9 @@
                 currentBrokerId && CACHE[currentBrokerId] && (CACHE[currentBrokerId].next = CACHE[brokerId]);
             }
             currentBrokerId && CACHE[currentBrokerId].hide();
-            boxObject.show();
-            currentBrokerId = brokerId;
+            boxObject.show(brObject);
+            calcTabsWidth();
+            currentBrokerId = brokerId; 
             return boxObject;
         }
 
@@ -66,9 +69,28 @@
                     v.showCloseButton();
                 })
             }
-
         }
 
+        /*
+        * 判断是否超过19个tab,超过给提示
+        */
+        function exceedTip() {
+            if (tabCount >= 19) {
+                //弹出提示框
+
+                return true;
+            }
+            return false;
+        }
+
+        /*
+        * 联系人有删除，自动删除对应tab及box
+        */
+        function autoDeleBroker() {
+            J.each(CACHE, function(k, v) {
+                
+            });
+        }
 
 
         /**
@@ -86,12 +108,12 @@
         /**
         * 计算各个tab的宽度[浏览器宽度变化或者添加tab时]
         */
-        function calcTabsWidth() {
+        function calcTabsWidth() {  
             var maxTabWidth = 115, maxWidth = 880, tabWidth = 0, scale = document.body.clientWidth / C.windowSize.dialog.width;
             tabWidth = maxWidth / tabCount;
-            tabWidth = Math.floor((tabWidth > maxTabWidth) ? maxTabWidth * scale : tabWidth * scale);
+            tabWidth = Math.floor((tabWidth > maxTabWidth) ? maxTabWidth * scale : tabWidth * scale);  
             C.container.tabContainer.s('li').each(function(k, v) {
-                v.setStyle('width', tabWidth + 'px');
+                v.get().style.width = tabWidth + 'px';
             });
         }
 
@@ -115,7 +137,7 @@
             var brokerId = opts.id;
             var obj = CACHE[brokerId];
             var next = obj.next;
-            var prev = obj.prev;
+            var prev = obj.prev;  
             obj.remove();
             next?next.show():prev&&prev.show();
             currentBrokerId = next?next.id:prev&&prev.id;
@@ -161,7 +183,9 @@
             remove: remove,
             getActiveBrokerId: getActiveBrokerId,
             setActiveBrokerId: setActiveBrokerId,
-            updateUnreadMsg: updateUnreadMsg
+            updateUnreadMsg: updateUnreadMsg,
+            calcTabsWidth: calcTabsWidth,
+            autoDeleBroker: autoDeleBroker
         }
     }
 

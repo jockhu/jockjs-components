@@ -109,6 +109,14 @@
         }
         //closeWindow();
 
+        function windowResize() {
+            J.on(window, 'resize', function(e) {
+                C.tabs.calcTabsWidth();
+            });
+        }
+
+        windowResize();
+
 
         function docIsVisiable(){
             if(typeof document.visible === 'undefined' || document.visible === true){

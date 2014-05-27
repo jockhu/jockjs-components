@@ -38,8 +38,7 @@
             FBlock,//房源消息版块
             container,
             unReadMsg = 0, //tab对应的未读消息数
-            inputContent = '请输入您的问题';
-
+            brokerEle; //对应联系人broker的dom元素，用于只更新未读消息数
 
         /**
          * 初始化
@@ -64,7 +63,6 @@
 
             //请求６条记录
             C.pdata.getChatDetail(opts.id,0,0,6,function(data){
-                console.log('chatDetail',data)
                 if(data.status == 'OK'){
                     J.each(data.result,function(k,v){
                         shiftMessage(v);
@@ -105,9 +103,7 @@
             var mapPanel = J.g('map_panel');
             var imgPanel = J.g('img_panel');
 
-
-            var scrollIsReturn = false;
-
+            var scrollIsReturn = true;
 
 
             //聊天信息点击事件
@@ -174,12 +170,6 @@
                 }
 
             });
-            inputTxt.on('focus', function() {
-                J.g(this).val('');
-            });
-            inputTxt.on('blur', function() {
-                J.g(this).val(inputContent);
-            });
 
             function sendCallback() {
                 var txt;  
@@ -203,12 +193,12 @@
                 txtSend.get().oninput = calcTextLength;
             }
 
-            chatBox.on('scroll',function(){
+            chatBox.on('scroll',function(){ 
                 //滚动到顶部显示更多消息,向上查看，最小消息id应该为空
-                if(!scrollIsReturn&&!chatBox.get().scrollTop){
-                    scrollIsReturn = true;
+                if(scrollIsReturn&&!chatBox.get().scrollTop){ 
+                    scrollIsReturn = false;
                     J.chat.pdata.getChatDetail(opts.id, 0,minMsgId,20,function(data){
-                        scrollIsReturn = false;
+                        scrollIsReturn = true;
                         if(data.status == 'OK'){
                             J.each(data.result,function(k,v){
                                 shiftMessage(v);
@@ -349,7 +339,6 @@
                     }
                     if(!ret.retcode){
                         !maxMsgId&&(maxMsgId = ret.retdata.result); 
-                        // parseInt(maxMsgId) < parseInt(ret.retdata.result) ? maxMsgId = ret.retdata.result : null;
                     }
                 });
                 //如果是房源卡面，要转换为ｊｓｏｎ
@@ -494,14 +483,14 @@
          * 显示或激活和经纪人的聊天会话box
          * @param brokerObject
          */
-        function show(brokerObject){
+        function show(brObject){
+            if (!brObject) brObject = brokerObject;
             Tab.show();
             container.show();
             //根据未读消息数请求聊天记录，且联系人列表未读消息数更新
             (unReadMsg > 0) ? updateMessage(unReadMsg) : null;
-            console.log('C.brlist',C.brlist)
             C.brlist.showAllUnreadMsgCount(C.brlist.allUnreadMsgNum - unReadMsg);
-
+            C.brlist.updateOnlyMsgCount(brObject);
         }
 
         /**
