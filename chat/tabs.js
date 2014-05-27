@@ -40,7 +40,7 @@
             var opts = brObject.getOpts(), brokerId = opts.id, boxObject = CACHE[brokerId];　
             if (brokerId == currentBrokerId) return;//当点击当前tab时，不做任何处理
             if(!boxObject){
-                if (exceedTip()) return;
+                if (exceedTabsTip() || exceedBrokersTip()) return false;
                 boxObject = CACHE[brokerId] = new C.Box(brObject);
                 //如果只有一个ｔａｂ　,则不显示关闭
                 tabCount++;
@@ -74,7 +74,7 @@
         /*
         * 判断是否超过19个tab,超过给提示
         */
-        function exceedTip() {
+        function exceedTabsTip() {
             if (tabCount >= 19) {
                 //弹出提示框
 
@@ -84,11 +84,34 @@
         }
 
         /*
+        *  判断是否超过500个联系人，超过给提示
+        */
+        function exceedBrokersTip() {
+            var length = C.brlist.getBrokerCount();
+            if (length >= 500) {
+                //弹出提示框
+
+                return true;
+            }
+            return false;
+        }
+
+        // function listenExceedTip() {
+        //     J.on(document, 'chat: exceedTip', function() {
+        //         exceedTip();
+        //         exceedBrokersTip();
+        //     });
+        // }
+
+        /*
         * 联系人有删除，自动删除对应tab及box
         */
         function autoDeleBroker() {
             J.each(CACHE, function(k, v) {
-                
+                if (!C.brlist.BROKERSCACHE[v.id]) {
+                    remove(v);
+                    return;
+                }
             });
         }
 

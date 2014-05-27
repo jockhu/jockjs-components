@@ -77,7 +77,7 @@
         /*
         * 监听是否用户给经纪人第一次发送消息，建立关系，并添加到联系人列表
         */
-        function listenerNewBroker() {
+        function listenNewBroker() {
             J.on('chat: newBroker', addBroker, data);
 
             /*
@@ -240,9 +240,6 @@
                 peoList.hide();
             });
 
-
-
-
         }
 
         function updateEvent() {
@@ -277,6 +274,7 @@
 
         return {
             update: update,
+            BROKERSCACHE: BROKERSCACHE,
             showAllUnreadMsgCount: showAllUnreadMsgCount,
             updateOnlyMsgCount: updateOnlyMsgCount
         }
