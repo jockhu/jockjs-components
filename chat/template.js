@@ -154,7 +154,7 @@
          * @returns {*|XML|string|void}
          */
         function formateTxt(content){
-            var reg = /(https?|ftp|mms):\/\/([A-z0-9]+[_\-]?[A-z0-9]+\.)*[A-z0-9]+\-?[A-z0-9]+\.[A-z]{2,}(\/.*)*\/?/ig;
+            var reg = /(https?|ftp|mms):\/\/([A-z0-9]+[_\-]?[A-z0-9]+\.)*[A-z0-9_\-]+\-?[A-z0-9]+(\.[A-z]{2,})*(\/.*)*\/?/ig;
             
             return content.replace(reg,function(m){                
                 return '<a href="'+m+'" target="_blank">'+m+'</a>';
@@ -167,7 +167,8 @@
                 .replace(/</g,'&lt;')
                 .replace(/>/g,'&gt;')
                 .replace(/"/g, "&quot;")
-                .replace(/'/g, "&#39;");
+                .replace(/'/g, "&#39;")
+                .replace(/ /g,'&nbsp;');
         }
 
         /*function decodeTxt(content){
@@ -287,7 +288,7 @@
         function getTpl(className, content){
             var dom = J.create('div',{
                 'class' : className + ' cf'
-            }).html('<dl class="cf"><dt><img src="'+'xx'+'" width="48" height="48"></dt>'+ content +'</dl>');
+            }).html('<dl class="cf"><dt><img src="'+<?=User_Common_Util_PageHelper::getPureStaticUrl('/img/chat/images/default.gif')?>+'" width="48"></dt>'+ content +'</dl>');
             return dom;
         }
         

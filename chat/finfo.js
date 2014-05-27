@@ -74,10 +74,10 @@
                             '<dt><img src="'+data.photo+'" width="100" height="135"></dt>'+
                             '<dd>'+data.name+'</dd>'+
                             '<dd>'+data.phone+'</dd>'+
-                            '<dd><a href="'+(data.companyUrl||'')+'" target="_blank">'+data.company+'</a></dd>'+
-                            '<dd><a href="'+(data.addressUrl||'')+'" target="_blank">'+(data.address||'')+'</a></dd>'+
+                            '<dd><a href="'+(data.url)+'" target="_blank">'+data.company+'</a></dd>'+
+                            '<dd><a href="'+(data.url)+'" target="_blank">'+(data.store)+'</a></dd>'+
                             '</dl>'+
-                            '<div class="ct"><a href="'+(data.moreUrl||'')+'" class="btn_more" target="_blank">查看TA的更多房源</a></div>'+
+                            '<div class="ct"><a href="'+(data.more_url)+'" class="btn_more" target="_blank">查看TA的更多房源</a></div>'+
                             '</div>';
                     opts.container.html(html);
                 }

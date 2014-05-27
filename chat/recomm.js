@@ -33,7 +33,7 @@
                 '<img src="' + item.image +'" width="65" height="50">'+
                 '</dt>'+
                 '<dd class="fname">'+
-                '<a href="' + (item.url||'') + '" target="_blank">'+item.title + '</a>'+
+                '<a href="' + (item.url) + '" target="_blank">'+item.title + '</a>'+
                 '</dd>'+
                 '<dd class="ylw">'+parseInt(item.price) +'万</dd>'+
             '</dl>';
