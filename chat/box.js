@@ -171,10 +171,6 @@
                 }
 
             });
-<<<<<<< HEAD
-=======
-
->>>>>>> asdfsadf
 
             function sendCallback() {
                 var txt;  
@@ -200,15 +196,11 @@
 
             chatBox.on('scroll',function(){ 
                 //滚动到顶部显示更多消息,向上查看，最小消息id应该为空
-                if(scrollIsReturn&&!chatBox.get().scrollTop){ 
-                    scrollIsReturn = false;
+                if(!scrollIsReturn&&!chatBox.get().scrollTop){
+                    scrollIsReturn = true;
                     J.chat.pdata.getChatDetail(opts.id, 0,minMsgId,20,function(data){
-<<<<<<< HEAD
-                        scrollIsReturn = true;
-=======
                         scrollIsReturn = false;
                         var h = scrollTopElm.height();
->>>>>>> asdfsadf
                         if(data.status == 'OK'){
                             J.each(data.result,function(k,v){
                                 shiftMessage(v);

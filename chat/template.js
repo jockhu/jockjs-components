@@ -288,7 +288,7 @@
         function getTpl(className, content){
             var dom = J.create('div',{
                 'class' : className + ' cf'
-            }).html('<dl class="cf"><dt><img src="'+<?=User_Common_Util_PageHelper::getPureStaticUrl('/img/chat/images/default.gif')?>+'" width="48"></dt>'+ content +'</dl>');
+            }).html('<dl class="cf"><dt><img src="http://pages.lunjiang.dev.anjuke.com/anjuke/img/chat/images/default.gif" width="48"></dt>'+ content +'</dl>');
             return dom;
         }
         

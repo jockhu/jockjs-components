@@ -286,6 +286,7 @@
         return {
             update: update,
             BROKERSCACHE: BROKERSCACHE,
+            getListCount:getListCount,
             showAllUnreadMsgCount: showAllUnreadMsgCount,
             updateOnlyMsgCount: updateOnlyMsgCount
         }

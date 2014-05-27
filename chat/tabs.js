@@ -40,7 +40,7 @@
             var opts = brObject.getOpts(), brokerId = opts.id, boxObject = CACHE[brokerId];　
             if (brokerId == currentBrokerId) return;//当点击当前tab时，不做任何处理
             if(!boxObject){
-                if (exceedTabsTip() || exceedBrokersTip()) return false;
+                if (exceedTabsTip()/* || exceedBrokersTip()*/) return false;
                 boxObject = CACHE[brokerId] = new C.Box(brObject);
                 //如果只有一个ｔａｂ　,则不显示关闭
                 tabCount++;
@@ -77,7 +77,7 @@
         function exceedTabsTip() {
             if (tabCount >= 19) {
                 //弹出提示框
-
+                alert('同时聊天数达到上限，请先关闭部分经济人的聊天窑口');
                 return true;
             }
             return false;
@@ -87,7 +87,7 @@
         *  判断是否超过500个联系人，超过给提示
         */
         function exceedBrokersTip() {
-            var length = C.brlist.getBrokerCount();
+            var length = C.brlist.getListCount();
             if (length >= 500) {
                 //弹出提示框
 

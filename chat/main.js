@@ -48,14 +48,13 @@
 
 
             if(oInfo.viewType == 1){
-                console.log('oInfo',oInfo);
+               /* console.log('oInfo',oInfo);
                 C.tabs.show(new C.Broker({
                     id: oInfo.brokerId,
                     name: 'aaa'
-                }));
+                }));*/
                 pdata.getBrokerInfo(oInfo.brokerId, function(res){
                     console.log('res---',res)
-
                     /*
                     *
                     * {
@@ -68,7 +67,18 @@
                      html: ''
                      }
                     * */
-                    //C.tabs.show(new C.Broker());
+                    if (!res.retcode) {
+                        var data = res.retdata;
+                        var opts = {
+                            icon: data.photo,
+                            name: data.name,
+                            id: data.id
+                        };
+                        !res.retcode && C.tabs.show(new C.Broker(opts));
+
+                    }else{
+                        //show list
+                    }
                 })
 
 
@@ -117,6 +127,10 @@
         }
 
         windowResize();
+
+
+
+
 
 
         function docIsVisiable(){
