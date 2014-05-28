@@ -38,7 +38,7 @@
                             '<a href="'+(data.url||'') + '" target="_blank">'+data.title+'</a>'+
                             '<p>'+data.community+'</p>'+
                             '<p>'+data.size+'</p>'+
-                            '<strong class="ylw">'+data.price/10000+'万</strong>'+
+                            '<strong class="ylw">'+data.price +'万</strong>'+
                             '</div>';
                     opts.container.html(html);
                 }

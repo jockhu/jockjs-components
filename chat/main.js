@@ -44,30 +44,10 @@
             //长轮询
             C.uid = cookie.getCookie('chat_uid');
             C.guid = cookie.getCookie('aQQ_ajkguid');
-            C.auth = 1;
-
+            C.auth = cookie.getCookie('auth');
 
             if(oInfo.viewType == 1){
-               /* console.log('oInfo',oInfo);
-                C.tabs.show(new C.Broker({
-                    id: oInfo.brokerId,
-                    name: 'aaa'
-                }));*/
-                // oInfo.brokerId = '223';
-                pdata.getBrokerInfo(oInfo.brokerId, function(res){
-                    console.log('res---',res)
-                    /*
-                    *
-                    * {
-                     icon: '',
-                     name: '',
-                     id: '',
-                     houseId:'',
-                     count: 0,
-                     lasttime: '',
-                     html: ''
-                     }
-                    * */
+                pdata.getBrokerInfo(oInfo.brokerId, function(res){                   
                     if (!res.retcode) {
                         var data = res.retdata;
                         var opts = {
@@ -84,12 +64,6 @@
 
 
             }
-
-
-
-         /*   if (C.uid && C.guid) {
-                C.pdata.getPollListener(callbackPollListener);
-            }*/
 
         })();
 

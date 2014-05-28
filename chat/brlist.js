@@ -285,10 +285,18 @@
             return brokerCount;
         }
 
+        /*
+        * 获取BROKERSCACHE的变量
+        */
+        function getBROKERSCACHE() {
+            return BROKERSCACHE;
+        }
+
 
         return {
             update: update,
             BROKERSCACHE: BROKERSCACHE,
+            getBROKERSCACHE: getBROKERSCACHE,
             getListCount:getListCount,
             showAllUnreadMsgCount: showAllUnreadMsgCount,
             updateOnlyMsgCount: updateOnlyMsgCount
