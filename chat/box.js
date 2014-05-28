@@ -434,7 +434,7 @@
          * @param
          * @returns {HTMLObject}
          */
-        function shiftMessage(msg){ console.log(opts, 'opts121212');
+        function shiftMessage(msg){
             var messageBox,fn,timerDom;
             
             fn = msg.from_uid == C.uid ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;

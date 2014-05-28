@@ -139,8 +139,8 @@
             // emoji.img_path = "<?php echo User_Common_Util_PageHelper::getPureStaticUrl('/img/chat/images/unicode/');?>";
             // emoji.sheet_path = "<?php echo User_Common_Util_PageHelper::getPureStaticUrl('/img/chat/images/sheet_64.png');?>";
 
-            emoji.img_path = 'http://pages.benlinhuo.dev.anjuke.com/anjuke/img/chat/images/unicode/';
-            emoji.sheet_path = 'http://pages.benlinhuo.dev.anjuke.com/anjuke/img/chat/images/sheet_64.png';
+            emoji.img_path = 'http://pages.anjukestatic.com/img/chat/images/unicode/';
+            emoji.sheet_path = 'http://pages.anjukestatic.com/img/chat/images/sheet_64.png';
 
             emoji.use_sheet = true;
             emoji.init_env();
@@ -285,14 +285,14 @@
          * @param className
          * @param content
          */
-        function getTpl(className, content, icon){ console.log('getTpl', icon,'####', className)
-            var src = "http://pages.lunjiang.dev.anjuke.com/anjuke/img/chat/images/default.gif";
+        function getTpl(className, content, icon){
+            var src = "http://pages.anjukestatic.com/img/chat/images/default.gif";
             if (className.indexOf('jjr') > -1) {
                 src = icon;
             }
             var dom = J.create('div',{
                 'class' : className + ' cf'
-            }).html('<dl class="cf"><dt><img src=' + src + ' width="48"></dt>'+ content +'</dl>');
+            }).html('<dl class="cf"><dt><img src="' + src + '" width="48px"></dt>'+ content +'</dl>');
             return dom;
         }
         

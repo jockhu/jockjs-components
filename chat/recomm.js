@@ -45,6 +45,7 @@
          */
         function getRecomm(opts){
             C.pdata.getRecomm(opts.id, opts.houseId, function(data){
+                console.log(data)
                 var html = '', arrHtml=[];
                 if(data.retcode === 0){
                     J.each(data.retdata, function(i, v){
