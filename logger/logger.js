@@ -13,7 +13,7 @@
     var a = '.anjuke', c = 'soj.dev.aifang', cm = '.com', h = J.D.location.host, http = 'http://', isDev = /dev|test/.test(h),
         logUrl = http + ( isDev ? c + cm : 'm' + a + cm ) + '/ts.html',
         sojUrl = http + (isDev ? c + cm : 's' + a + cm) + '/stb',
-        s = h.match(/^(\w+)\.(\w+)\./), site = /iPad/.test(J.ua.ua) ? 'iPad' : s ? s[1] === 'm' ? 'm' : s[2] : 'unknow', eC = encodeURIComponent;
+        s = h.match(/^(\w+)\.(\w+)\./), site = /iPad/.test(J.ua.ua) ? 'pad' : s ? s[1] === 'm' ? 'touch' : 'pc' : 'unknow', eC = encodeURIComponent;
 
     J.add('logger', {
         site: site,
