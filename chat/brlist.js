@@ -95,7 +95,7 @@
                     icon: data.icon,
                     count: data.count,
                     houseId: data.houseId,
-                    lasttime: data.lasttime
+                    lasttime: data.created
                 });
 
                 appendDom = getDomByHtml(brObj.getHtml());
