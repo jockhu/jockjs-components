@@ -25,17 +25,15 @@
      */
     function Main(opened){
 
-        var container = C.container, cookie = J.cookie, pdata = C.pdata, oInfo = opened.getInfo();
+        var container = C.container, cookie = J.cookie, pdata = C.pdata;
 
         //initialize
         (function() {
-            C.connect = true;//表示是否连接
-
             /**
-             * c_brlist 联系人列表的box
-             * brokersCount 共xx名
+             * brlist 联系人列表的box
+             * brlistNum 共xx名
              * allUnreadMsg 显示“所有经纪人”按钮的未读消息数
-             * tab_container tab
+             * tabContainer tab
              */
             J.each(['brlist','brlistNum','allUnreadMsg','tabContainer'], function(i, v){
                 container[v] = J.g(v);
@@ -46,38 +44,55 @@
             C.guid = cookie.getCookie('aQQ_ajkguid');
             C.auth = cookie.getCookie('auth');
 
-            if(oInfo.viewType == 1){
-                pdata.getBrokerInfo(oInfo.brokerId, function(res){                   
+            showTab(opened.getInfo());
+
+            opened.setSuccess(function(conf){
+                showTab(conf)
+            });
+
+            J.on(J.W, 'resize', function(e) {
+                C.tabs.calcTabsWidth();
+            });
+
+        })();
+
+        function showTab(oInfo){
+            var brokerInfo;
+            function show(brokerOpts){
+                C.tabs.show(new C.Broker(brokerOpts));
+
+            }
+
+            if( brokerInfo = C.brlist.getBrokerInfo(oInfo.brokerId) ){
+                show(brokerInfo)
+            }else{
+                pdata.getBrokerInfo(oInfo.brokerId, function(res){
+                    //console.log('res---',res)
                     if (!res.retcode) {
                         var data = res.retdata;
-                        var opts = {
+                        show({
                             icon: data.photo,
                             name: data.name,
                             id: data.id
-                        };
-                        !res.retcode && C.tabs.show(new C.Broker(opts));
-
-                    }else{
-                        //show list
+                        });
                     }
                 })
 
 
             }
-
-        })();
+        }
 
 
         function start(data){
             var telNumber = data.telNumber;
             J.chat.phone =telNumber, //1
-            C.pdata.getPollListener(callbackPollListener);
+                C.pdata.getPollListener(callbackPollListener);
         }
 
 
         function callbackPollListener(data) {
             //当data.result返回的是string时，它表示某种原因断开
-            if (data.status == 'OK' && (typeof data.result == 'object')) {  
+            if (data.status == 'OK' && (typeof data.result == 'object')) {
                 C.pdata.getChatList(function(ret){
                     C.brlist.update(ret);
                     pdata.getPollListener(callbackPollListener);
@@ -93,20 +108,8 @@
                 J.un(window,'beforeunload')
             })
         }
+
         //closeWindow();
-
-        function windowResize() {
-            J.on(window, 'resize', function(e) {
-                C.tabs.calcTabsWidth();
-            });
-        }
-
-        windowResize();
-
-
-
-
-
 
         function docIsVisiable(){
             if(typeof document.visible === 'undefined' || document.visible === true){

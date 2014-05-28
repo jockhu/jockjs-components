@@ -21,7 +21,7 @@
      */
     function Opened(){
 
-        var onSuccess = null, timerI = null, timerO = null, cookieValue = '',
+        var onSuccess = null, timerI = null, timerO = null, cookieValue = '', newCookieValue = '',
             cookieObj = J.cookie, cookie= C.cookie, locked = false;
 
         (function(){
@@ -44,6 +44,7 @@
 
         function stopListener(){
             if(!locked){
+
                 listener(false)
             }
         }
@@ -60,9 +61,9 @@
          */
         function setOpenedStatus(statusCode){
             conf = getOpenedConf();
-            conf && cookieObj.setCookie(cookie.name, conf.replace(/^(\d)\.(\d+)/, function(a,b,c){
+            conf && cookieObj.setCookie(cookie.name, (newCookieValue =  conf.replace(/^(\d)\.(\d+)/, function(a,b,c){
                 return statusCode + '.' + ((statusCode == 2) ? (+new Date()) : c);
-            }), 1, cookie.domain);
+            })), 1, cookie.domain);
         }
 
         /**
@@ -73,7 +74,7 @@
         function update(brokerId, propId){
             brokerId = brokerId || '';
             propId = propId || '';
-            cookieObj.setCookie(cookie.name, 2 + '.'+(+new Date())+'.'+brokerId+'.'+propId, 1, cookie.domain);
+            cookieObj.setCookie(cookie.name, ( newCookieValue = (2 + '.'+(+new Date())+'.'+brokerId+'.'+propId)), 1, cookie.domain);
         }
 
         /**
@@ -92,25 +93,33 @@
         function listener(listened){
             timerI && clearInterval(timerI);
             timerO && clearTimeout(timerO);
-            !listened && (cookieValue = getOpenedConf());
-            listened && (timerI = W.setInterval(function(){
-                if( cookieValue != getOpenedConf() && (cookieValue = getOpenedConf()) ) {
-                    clearTimeout(timerO);
-                    W.focus();
-                    if( onSuccess ){
-                        var conf = cookieValue.match(/(\d+)\.(\d+)$/);
-                        onSuccess(conf ? {
-                            brokerId:conf[1],
-                            propId:conf[2]
-                        } : {});
+            !listened && (cookieValue = getOpenedConf(), doSuccess());
+            if(listened){
+                timerI = W.setInterval(function(){
+                    if( cookieValue != getOpenedConf() ) {
+                        setOpenedStatus(2);
+                        cookieValue = newCookieValue;
+                        clearTimeout(timerO);
+                        W.focus();
+                        doSuccess();
+                        // 非IE浏览器强制激活窗口
+                        !J.ua.ie && (timerO = setTimeout(function(){
+                            listener(false)
+                            alert('聊天窗口被激活!');
+                        },0));
                     }
-                    // 非IE浏览器强制激活窗口
-                    !J.ua.ie && (timerO = setTimeout(function(){
-                        listener(false)
-                        alert('聊天窗口被激活!');
-                    },0));
-                }
-            },500));
+                },500)
+            }
+        }
+
+        function doSuccess(){
+            if( onSuccess ){
+                var conf = cookieValue.match(/(\d+)\.(\d+)$/);
+                onSuccess(conf ? {
+                    brokerId:conf[1],
+                    propId:conf[2]
+                } : {});
+            }
         }
 
         /**

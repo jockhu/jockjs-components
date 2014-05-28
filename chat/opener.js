@@ -40,19 +40,21 @@
                 windowOpenr && windowOpenr.focus();
             }
             if(windowIsOpend(conf)){
-                windowOpenr && windowOpenr.focus();
                 // 处理意外关闭cookie没有被重置的二次验证
                 clearTimeout(timer);
                 updateConf(conf);
                 conf = getConf();
+                windowOpenr && windowOpenr.focus();
                 timer = setTimeout(function(){
+                    console.log(conf.time , getConf().time)
                     if(conf.time == getConf().time){
-                        newWindow();
+                        //newWindow();
                     }
                 },1500);
             }else{
                 newWindow();
             }
+
         }
 
 
