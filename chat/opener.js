@@ -100,7 +100,7 @@
          * @returns {string}
          */
         function getAttrString(conf){
-            var wSize = C.windowSize[ conf.brId ? 'dialog' : 'list'],
+            var wSize = C.windowSize.dialog,/*[ conf.brId ? 'dialog' : 'list']*/
                 width = wSize.width, height = wSize.height, left = wSize.left, top = wSize.top,
                 offsetLeft = wSize.offsetLeft || 0, offsetTop = wSize.offsetTop || 0, screen = W.screen;
 
