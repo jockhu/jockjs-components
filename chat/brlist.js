@@ -216,7 +216,7 @@
                 while( eventTarget != listBox.get() ){
                     if( hasClass(eventTarget, event_broker_click)){
                         brokerObject = BROKERSCACHE[ J.g(eventTarget).attr('brokerId') ];
-                        C.tabs.show(brokerObject);
+                        C.tabs.show(brokerObject,true);
                         showAllUnreadMsgCount(allUnreadMsgNum - brokerObject.getOpts().count);
                         brokerObject.updateNewMsgCount(0, J.g(eventTarget));//消息条数置为0
                         return false;

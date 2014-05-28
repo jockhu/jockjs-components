@@ -36,7 +36,7 @@
          * 显示或激活和经纪人的聊天会话tab
          * @param brokerObject:broker的实例（icon: '', name: '', id: ''）
          */
-        function show(brObject){
+        function show(brObject, isUpdate){
             var opts = brObject.getOpts(), brokerId = opts.id, boxObject = CACHE[brokerId];　
             if (brokerId == currentBrokerId) return;//当点击当前tab时，不做任何处理
             if(!boxObject){
@@ -52,7 +52,7 @@
             boxObject.show(brObject);
             calcTabsWidth();
             currentBrokerId = brokerId;
-            J.chat.opened.update(opts.id,opts.houseId)
+            isUpdate && J.chat.opened.update(opts.id,opts.houseId)
             return boxObject;
         }
 

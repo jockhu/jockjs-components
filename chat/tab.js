@@ -47,7 +47,7 @@
                     C.tabs.remove(brokerObject);
                     return true;
                 } else { //切换tab
-                    C.tabs.show(brokerObject);
+                    C.tabs.show(brokerObject,true);
                 }
             });
         }
