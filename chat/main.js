@@ -44,7 +44,6 @@
             C.guid = cookie.getCookie('aQQ_ajkguid');
             C.auth = cookie.getCookie('auth');
 
-<<<<<<< HEAD
             showTab(opened.getInfo());
 
             opened.setSuccess(function(conf){
@@ -72,14 +71,6 @@
                     if (!res.retcode) {
                         var data = res.retdata;
                         show({
-=======
-            if(oInfo.viewType == 1){ 
-                pdata.getBrokerInfo(oInfo.brokerId, function(res){    
-                    // console.log('getBrokerInfo', res)                
-                    if (!res.retcode) {
-                        var data = res.retdata;  
-                        var opts = {
->>>>>>> addBroker
                             icon: data.photo,
                             name: data.name,
                             id: data.id
