@@ -59,10 +59,19 @@
          * @param statusCode 0 窗口关闭，1 窗口打开 , 2 窗口加载完成
          */
         function setOpenedStatus(statusCode){
-            var conf = getOpenedConf();
-            conf && cookieObj.setCookie(cookie.name, conf.replace(/^(\d{1})\.(\d+)/, function(a,b,c){
+            conf = getOpenedConf();
+            conf && cookieObj.setCookie(cookie.name, conf.replace(/^(\d)\.(\d+)/, function(a,b,c){
                 return statusCode + '.' + ((statusCode == 2) ? (+new Date()) : c);
             }), 1, cookie.domain);
+        }
+
+        /**
+         * 更新cookie
+         * @param brokerId
+         * @param propId
+         */
+        function update(brokerId, propId){
+            cookieObj.setCookie(cookie.name, 2 + '.'+(+new Date())+'.'+brokerId+'.'+propId, 1, cookie.domain);
         }
 
         /**
@@ -148,6 +157,7 @@
         }
 
         return {
+            update: update,
             getInfo: getInfo,
             close: close,
             setView: setView,
