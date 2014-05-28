@@ -87,8 +87,8 @@
             * data包括broker的icon,name,id,count,houseId,lasttime
             */
             function addBroker(e) {
-                var data = e.data;
-                var firstEle = listBox.firstChild, brObj, appendDom;
+                var data = e.data, listBoxDom = listBox.get();
+                var firstEle = listBoxDom.firstChild, brObj, appendDom;
                 brObj = BROKERSCACHE[data.id] = new C.Broker({
                     id: data.id,
                     name: data.name,
@@ -98,8 +98,9 @@
                     lasttime: data.lasttime
                 });
 
-                appendDom = getDomByHtml(brObj.getOpts());
-                insertBefore(appendDom, firstEle);
+                appendDom = getDomByHtml(brObj.getHtml());
+                firstEle ? listBoxDom.insertBefore(appendDom, firstEle) : listBoxDom.appendChild(appendDom);
+
                 //单独事件绑定
                 brokerBindEvent(J.g(appendDom));
             }
