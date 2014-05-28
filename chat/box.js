@@ -405,7 +405,7 @@
             var messageBox,fn,timerDom;
             fn = msg.from_uid == C.uid ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
             (msg.msg_type!=1 && msg.msg_type!=2 && msg.msg_type!=106)&&(msg.body = eval('('+ msg.body+')'));
-            messageBox = fn(msg.msg_type,msg.body);
+            messageBox = fn(msg.msg_type,msg.body, opts.icon);
             chatList.append(messageBox);
             timerDom = timerTasker(msg.created);
             timerDom&&chatList.append(timerDom);
@@ -433,12 +433,13 @@
          * @param
          * @returns {HTMLObject}
          */
-        function shiftMessage(msg){
+        function shiftMessage(msg){ console.log(opts, 'opts121212');
             var messageBox,fn,timerDom;
             
             fn = msg.from_uid == C.uid ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
             (msg.msg_type!=1&&msg.msg_type!=2&&msg.msg_type!=106)&&(msg.body = eval('('+ msg.body+')'));
-            messageBox = fn(msg.msg_type,msg.body);
+
+            messageBox = fn(msg.msg_type,msg.body, opts.icon);
             var dom = chatList.first();
             timerDom = timerTasker(parseInt(msg.created));
             dom ? dom.insertBefore(messageBox):chatList.append(messageBox);

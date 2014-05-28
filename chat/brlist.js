@@ -81,7 +81,7 @@
         * 监听是否用户给经纪人第一次发送消息，建立关系，并添加到联系人列表
         */
         function listenNewBroker() {
-            J.on('chat: newBroker', addBroker, data);
+            J.on(document, 'chat:newBroker', addBroker, data);
 
             /*
             * data包括broker的icon,name,id,count,houseId,lasttime

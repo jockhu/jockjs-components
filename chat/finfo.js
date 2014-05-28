@@ -31,7 +31,7 @@
          * 获取房源信息
          */
         function getPropertyInfo(opts){
-            C.pdata.getPropertyInfo(opts.id, function(data){
+            C.pdata.getPropertyInfo(opts.id, function(data){  console.log(data, 'propertyInfo');
                 if(data.retcode === 0){
                     var data = data.retdata,
                         html = '<img src="'+data.pic +'" width="120" height="90">'+
@@ -67,7 +67,7 @@
          * 获取经纪人信息
          */
         function getBrokerInfo(opts){
-            C.pdata.getBrokerInfo(opts.id, function(data){
+            C.pdata.getBrokerInfo(opts.id, function(data){  console.log(data, 'getBrokerInfo');
                 if(data.retcode === 0){
                     var data = data.retdata,
                         html = '<dl class="cf">'+

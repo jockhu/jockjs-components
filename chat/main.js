@@ -53,6 +53,7 @@
                     id: oInfo.brokerId,
                     name: 'aaa'
                 }));*/
+                // oInfo.brokerId = '223';
                 pdata.getBrokerInfo(oInfo.brokerId, function(res){
                     console.log('res---',res)
                     /*

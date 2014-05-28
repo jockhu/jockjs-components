@@ -173,7 +173,8 @@
         /**
          *获取经纪人信息
          */
-        function getBrokerInfo(brokerId, callback){
+        function getBrokerInfo(brokerId, callback){  
+            console.log(brokerId, 'brokerId');
             var param = {
                     broker_id: brokerId
                 };

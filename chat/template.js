@@ -38,7 +38,7 @@
          * @param type 消息
          * @param content
          */
-        function getSendMessageTpl(type, content){
+        function getSendMessageTpl(type, content, icon){
             return FUNS[type]('me', content);
         }
 
@@ -47,9 +47,9 @@
          * @param type
          * @param content
          */
-        function getShiftMessageTpl(type, content){
+        function getShiftMessageTpl(type, content, icon){  
             if(type!=106){
-                return FUNS[type]('jjr',content);
+                return FUNS[type]('jjr',content, icon);
             }else{
                 return FUNS[type](content);
             }
@@ -124,7 +124,7 @@
          * @param content
          * @returns {string}
          */
-        function getTextTpl(className, content){
+        function getTextTpl(className, content, icon){
             //超链接
             content = formateTxt( encodeTxt(content) );
             //先转化表情
@@ -133,7 +133,7 @@
                             '<em class="ico_arw"></em>'+
                             '<p>' + content + '</p>'+
                         '</dd>';
-            return getTpl(className, html);
+            return getTpl(className, html, icon);
         }
         function formateEmoji(content) {
             // emoji.img_path = "<?php echo User_Common_Util_PageHelper::getPureStaticUrl('/img/chat/images/unicode/');?>";
@@ -185,12 +185,12 @@
          * @param content
          * @returns {string}
          */
-        function getPicTpl(className, content){
+        function getPicTpl(className, content, icon){
             var html = '<dd>'+
                             '<em class="ico_arw"></em>'+
                             '<a href="javascript:void(0);" title="点击查看大图" data-src="'+content+'" class="event_image_click"><img src="'+content+'" width="120" height="90" alt=""></a>'+
                         '</dd>';
-            return getTpl(className, html);
+            return getTpl(className, html, icon);
         }
         
         /**
@@ -199,7 +199,7 @@
          * @param content
          * @returns {string}
          */
-        function getMapTpl(className, content){
+        function getMapTpl(className, content, icon){
             var text = (content.city|| '') + (content.region||'') + content.address;
             var lat,lng;
             lat = content.baidu_lat || content.google_lat;
@@ -214,7 +214,7 @@
                                 '<em class="msk_txt">'+text +'</em>'+
                             '</a>'+
                         '</dd>';
-            return getTpl(className,html);
+            return getTpl(className,html, icon);
         }
 
         /**
@@ -223,7 +223,7 @@
          * @param content
          * @returns {string}
          */
-        function getCardTpl(className, content){
+        function getCardTpl(className, content, icon){
             var h6 = {
                 '1' : '二手房 （所有）',
                 '2' : '租房 (经纪人)',
@@ -250,7 +250,7 @@
                                 '</a>'+
                             '</div>'+
                         '</dd>';
-            return getTpl(className, html);
+            return getTpl(className, html, icon);
         }
         
         /**
@@ -259,12 +259,12 @@
          * @param content
          * @returns {string}
          */
-        function getVoiceTpl(className, content){
+        function getVoiceTpl(className, content, icon){
             var html = '<dd>'+
                             '<em class="ico_arw"></em>'+
                             '<p>本功能不支持经纪人发布的语音，请<a href="'+ content +'" target="_blank">下载手机版</a></p>'+
                         '</dd>';
-            return getTpl(className,html);
+            return getTpl(className,html, icon);
         }
 
         /**
@@ -285,10 +285,14 @@
          * @param className
          * @param content
          */
-        function getTpl(className, content){
+        function getTpl(className, content, icon){ console.log('getTpl', icon,'####', className)
+            var src = "http://pages.lunjiang.dev.anjuke.com/anjuke/img/chat/images/default.gif";
+            if (className.indexOf('jjr') > -1) {
+                src = icon;
+            }
             var dom = J.create('div',{
                 'class' : className + ' cf'
-            }).html('<dl class="cf"><dt><img src="http://pages.lunjiang.dev.anjuke.com/anjuke/img/chat/images/default.gif" width="48"></dt>'+ content +'</dl>');
+            }).html('<dl class="cf"><dt><img src=' + src + ' width="48"></dt>'+ content +'</dl>');
             return dom;
         }
         
