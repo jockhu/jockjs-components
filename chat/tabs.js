@@ -163,8 +163,11 @@
             var next = obj.next;
             var prev = obj.prev;  
             obj.remove();
-            next?next.show():prev&&prev.show();
-            currentBrokerId = next?next.id:prev&&prev.id;
+            //把当前选的ｂｏｘ去除选中状态，如果删除的ｂｏｘ是当前选中的ｂｏｘ,则显示前一个或后一个，否则只是删除
+            if(brokerId == currentBrokerId){
+                next?next.show():prev&&prev.show();
+                currentBrokerId = next?next.id:prev&&prev.id;
+            }
             delete CACHE[brokerId];
             next&&(next.prev = prev);
             prev&&(prev.next = next);
