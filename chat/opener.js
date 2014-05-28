@@ -47,7 +47,7 @@
                 conf = getConf();
                 timer = setTimeout(function(){
                     if(conf.time == getConf().time){
-                        //newWindow();
+                        newWindow();
                     }
                 },1500);
             }else{
