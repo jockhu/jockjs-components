@@ -311,17 +311,9 @@
          */
         function sendMessage(type,content){
             var houseId = opts.houseId;
-            //首次发送需要发送房源卡片
-            houseId&&(function(){
-                J.chat.pdata.getHouseCard(houseId,function(data){
-                    if(!data.retcode){
-                        //返回正确的房源卡片
-                        sendMessage(3,data.retdata);
-                        sendMessage(1,content);
-
-                    }
-                });
-            })();
+            //brlist 里面没有数据的情况下，发送消息添加联系人
+            J.fire(document,'chat:newBroker',opts)
+            !J.chat.brlist.BROKERSCACHE[opts.id]&& J.fire(document,'chat:newBroker',opts)
             sendMessage =function(type,content){
                 var messageBox;
                 var msg;
@@ -340,12 +332,21 @@
                         return false;
                     }
                     if(!ret.retcode){
-                        !maxMsgId&&(maxMsgId = ret.retdata.result); 
+                        !maxMsgId&&(maxMsgId = ret.retdata.result);
                     }
                 });
                 //如果是房源卡面，要转换为ｊｓｏｎ
             }
-            !houseId&&sendMessage(type,content);
+            //首次发送需要发送房源卡片
+            houseId? (function(){
+                J.chat.pdata.getHouseCard(houseId,function(data){
+                    if(!data.retcode){
+                        //返回正确的房源卡片
+                        sendMessage(3,data.retdata);
+                        sendMessage(1,content);
+                    }
+                });
+            })():sendMessage(type,content);
         }
 
         /**

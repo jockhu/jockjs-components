@@ -51,7 +51,8 @@
             currentBrokerId && CACHE[currentBrokerId].hide();
             boxObject.show(brObject);
             calcTabsWidth();
-            currentBrokerId = brokerId; 
+            currentBrokerId = brokerId;
+            J.chat.opened.update(opts.id,opts.houseId)
             return boxObject;
         }
 

@@ -34,6 +34,7 @@
                 brId: brokerId || '',
                 prId: propertyId || ''
             });
+            console.log(conf)
             function newWindow(){
                 updateConf(conf, 1);
                 windowOpenr = J.W.open(C.chatDomain, C.windowName, getAttrString(conf));

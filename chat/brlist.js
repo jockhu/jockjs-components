@@ -81,12 +81,13 @@
         * 监听是否用户给经纪人第一次发送消息，建立关系，并添加到联系人列表
         */
         function listenNewBroker() {
-            J.on(document, 'chat:newBroker', addBroker, data);
+            J.on(document,'chat:newBroker', addBroker);
 
             /*
             * data包括broker的icon,name,id,count,houseId,lasttime
             */
-            function addBroker(data) {
+            function addBroker(e) {
+                var data = e.data;
                 var firstEle = listBox.firstChild, brObj, appendDom;
                 brObj = BROKERSCACHE[data.id] = new C.Broker({
                     id: data.id,
@@ -245,6 +246,8 @@
             J.g(document).on('click',function(){  
                 peoList.hide();
             });
+
+            listenNewBroker();
 
         }
 
