@@ -46,7 +46,7 @@
                 conf = getConf();
                 windowOpenr && windowOpenr.focus();
                 timer = setTimeout(function(){
-                    console.log(conf.time , getConf().time)
+                    //console.log(conf.time , getConf().time)
                     if(conf.time == getConf().time){
                         //newWindow();
                     }
