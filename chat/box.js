@@ -507,7 +507,7 @@
          * 隐藏和经纪人的对话box
          * @param brokerObject
          */
-        function hide(brokerObject){
+        function hide(){
             Tab.hide();
             container.hide();
         }
@@ -516,7 +516,7 @@
          * 移除和经纪人的对话box
          * @param brokerObject
          */
-        function remove(brokerObject){
+        function remove(){
             Tab.remove();
             container.remove();
 
