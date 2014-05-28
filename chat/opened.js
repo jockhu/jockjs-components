@@ -71,6 +71,8 @@
          * @param propId
          */
         function update(brokerId, propId){
+            brokerId = brokerId || '';
+            propId = propId || '';
             cookieObj.setCookie(cookie.name, 2 + '.'+(+new Date())+'.'+brokerId+'.'+propId, 1, cookie.domain);
         }
 
