@@ -33,8 +33,6 @@
             BrokerInfo,
             maxMsgId,//最大消息的id
             minMsgId,
-            BBlock,//经济人版块
-            FBlock,//房源消息版块
             container,
             unReadMsg = 0, //tab对应的未读消息数
             brokerEle; //对应联系人broker的dom元素，用于只更新未读消息数
@@ -50,15 +48,21 @@
             //opts brokerId 经纪人id propId 房源id container 容器
             Recommend = new C.recomm();
             //拿推荐数据
-            var optsRecommend = J.mix(opts,{container: container.s('.othslist').eq(0)})
+            opts.container =container.s('.othslist').eq(0);
+            var optsRecommend = J.mix({},opts)
             Recommend.getRecomm(optsRecommend);
 
             //拿经济人消息
 
-            var optsProp = J.mix(opts,{container:container.s('.binfo').eq(0)});
-            BBlock =optsProp.container;
-            C.finfo.getPropertyInfo(optsProp);
+            opts.container =container.s('.binfo').eq(0)
+            var optsProp = J.mix({},opts);
             C.finfo.getBrokerInfo(optsProp);
+
+
+            opts.container=container.s('.finfo').eq(0);
+            var optsBinfo = J.mix({},opts)
+            C.finfo.getPropertyInfo(optsBinfo);
+
 
             //请求６条记录
             C.pdata.getChatDetail(opts.id,0,0,6,function(data){

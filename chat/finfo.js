@@ -32,7 +32,7 @@
          */
         function getPropertyInfo(opts){
             C.pdata.getPropertyInfo(opts.id, function(data){
-                if(data.retcode === 0){
+                if(!data.retcode){
                     var data = data.retdata,
                         html = '<img src="'+data.pic +'" width="120" height="90">'+
                             '<a href="'+(data.url||'') + '" target="_blank">'+data.title+'</a>'+
@@ -68,7 +68,7 @@
          */
         function getBrokerInfo(opts){
             C.pdata.getBrokerInfo(opts.id, function(data){
-                if(data.retcode === 0){
+                if(!data.retcode){
                     var data = data.retdata,
                         html = '<dl class="cf">'+
                             '<dt><img src="'+data.photo+'" width="100" height="135"></dt>'+
