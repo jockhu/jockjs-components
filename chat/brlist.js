@@ -95,8 +95,9 @@
                     icon: data.icon,
                     count: data.count,
                     houseId: data.houseId,
-                    lasttime: createdTime
+                    lasttime: ''
                 });
+
                 appendDom = getDomByHtml(brObj.getHtml(0, createdTime));
                 firstEle ? listBoxDom.insertBefore(appendDom, firstEle) : listBoxDom.appendChild(appendDom);
 
