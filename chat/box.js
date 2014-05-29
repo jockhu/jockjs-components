@@ -50,15 +50,15 @@
             //opts brokerId 经纪人id propId 房源id container 容器
             Recommend = new C.recomm();
             //拿推荐数据
-            opts.container = container.s('.othslist').eq(0);
-            Recommend.getRecomm(opts);
-            BrokerInfo = new C.Broker(opts);
-            //拿经济人消息
-            BBlock =opts.container = container.s('.binfo').eq(0);
-            C.finfo.getPropertyInfo(opts);
+            var optsRecommend = J.mix(opts,{container: container.s('.othslist').eq(0)})
+            Recommend.getRecomm(optsRecommend);
 
-            FBlock = opts.container = container.s('.binfo').eq(0)
-            C.finfo.getBrokerInfo(opts);
+            //拿经济人消息
+
+            var optsProp = J.mix(opts,{container:container.s('.binfo').eq(0)});
+            BBlock =optsProp.container;
+            C.finfo.getPropertyInfo(optsProp);
+            C.finfo.getBrokerInfo(optsProp);
 
             //请求６条记录
             C.pdata.getChatDetail(opts.id,0,0,6,function(data){
