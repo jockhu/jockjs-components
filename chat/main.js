@@ -52,9 +52,27 @@
 
             J.on(J.W, 'resize', function(e) {
                 C.tabs.calcTabsWidth();
+                changeHeight();
             });
 
         })();
+
+        function changeHeight(){
+            var ch = document.documentElement.clientHeight||document.body.clientHeight,
+            chatbox = J.s('.chatbox'),
+            othbox = J.s('.othslist');
+            chatbox.each(function(e,v){
+                v.setStyle({
+                    'height':ch-220+'px'
+                });
+            });
+            othbox.each(function(e,v){
+                v.setStyle({
+                    'height':ch-366+'px'
+                });
+            });
+            J.g('brlist').get().style.height=ch-146+'px';
+        }
 
         function showTab(oInfo){
             var brokerObj;

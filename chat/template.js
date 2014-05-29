@@ -189,7 +189,7 @@
         function getPicTpl(className, content, icon){
             var html = '<dd>'+
                             '<em class="ico_arw"></em>'+
-                            '<a href="javascript:void(0);" title="点击查看大图" data-src="'+content+'" class="event_image_click"><img src="'+content+'" width="120" height="90" alt=""></a>'+
+                            '<a href="javascript:void(0);" title="点击查看大图" data-src="'+content+'" class="event_image_click"><img src="'+content+'" height="90" alt=""></a>'+
                         '</dd>';
             return getTpl(className, html, icon);
         }

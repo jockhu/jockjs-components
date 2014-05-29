@@ -131,8 +131,10 @@
                         src =src.replace(/(\d+)x(\d+)$/,ret.width+'x'+ret.height);
                         var imgDom = imgPanel.s('img').eq(0);
                         imgDom.attr('src',src);
-                        imgDom.attr('width',ret.width);
-                        imgDom.attr('height',ret.height);
+                        if(ret.width>=600||ret.height>=500){
+                            imgDom.attr('width',ret.width);
+                            imgDom.attr('height',ret.height);
+                        }
                         /**
                          * 等比例
                          */
