@@ -199,7 +199,7 @@
         */
         function eventBind() {  
             var eventTarget, event_broker_click = 'event_broker_click',
-                peoList = J.g('peoList');
+                peoList = J.g('peoList'),
                 btn_up = peoList.s('.btn_up').eq(0),
                 btnShowAll = J.g("btnShowAll");
 
