@@ -84,7 +84,6 @@
                 show(brokerObj)
             }else{
                 pdata.getBrokerInfo(oInfo.brokerId, function(res){
-                    //console.log('res---',res)
                     if (!res.retcode) {
                         var data = res.retdata;
                         show(new C.Broker({

@@ -44,9 +44,7 @@
                             name: fv.nick_name,
                             icon: fv.icon
                         });
-//                        BROKERSCACHE.length++;
                         brokerCount++;
-
                     }
                 });
             }
@@ -97,10 +95,10 @@
                     houseId: data.houseId,
                     lasttime: ''
                 });
-
                 appendDom = getDomByHtml(brObj.getHtml(0, createdTime));
                 firstEle ? listBoxDom.insertBefore(appendDom, firstEle) : listBoxDom.appendChild(appendDom);
-
+                brokerCount++;
+                showBrokerCount(brokerCount);
                 //单独事件绑定
                 brokerBindEvent(J.g(appendDom));
             }
@@ -162,13 +160,20 @@
                 //"所有经纪人"按钮显示未读消息数
                 showAllUnreadMsgCount(allUnreadMsgNum);  
                 //显示共多少名经纪人
-                C.container.brlistNum.html('共' + brLen + '名');
+                showBrokerCount(brLen);
                 //多个tab显示未读消息数
                 C.tabs.updateUnreadMsg(boxMsgList); 
                 //若有联系人删除，则需要发送消息给tabs，判断是否需要关闭当前tab
                 sendMsgToTabs(brLen, brokersNum);
                 updateEvent();
             }
+        }
+
+        /*
+        * 显示共多少名经纪人
+        */
+        function showBrokerCount(count) {
+            C.container.brlistNum.html('共' + count + '名');
         }
 
         /*
