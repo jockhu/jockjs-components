@@ -396,7 +396,7 @@
                 ret && C.pdata.sendMsgToBroker({
                     body: content,
                     msg_type: 1
-                },function(data){
+                },opts.id,function(data){
                     if (data&&!data.retcode) {
                         aWrong.parentNode.removeChild(aWrong);
                         aWrong.onclick = null;
