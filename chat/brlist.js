@@ -86,18 +86,18 @@
             /*
             * data包括broker的icon,name,id,count,houseId,lasttime
             */
-            function addBroker(e) {
+            function addBroker(e) {  
                 var data = e.data, listBoxDom = listBox.get();
-                var firstEle = listBoxDom.firstChild, brObj, appendDom;
+                var firstEle = listBoxDom.firstChild, brObj, appendDom, createdTime = data.created * 1000;
                 brObj = BROKERSCACHE[data.id] = new C.Broker({
                     id: data.id,
                     name: data.name,
                     icon: data.icon,
                     count: data.count,
                     houseId: data.houseId,
-                    lasttime: data.created
+                    lasttime: createdTime
                 });
-                appendDom = getDomByHtml(brObj.getHtml());
+                appendDom = getDomByHtml(brObj.getHtml(0, createdTime));
                 firstEle ? listBoxDom.insertBefore(appendDom, firstEle) : listBoxDom.appendChild(appendDom);
 
                 //单独事件绑定
