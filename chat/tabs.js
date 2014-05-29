@@ -37,7 +37,7 @@
          * @param brokerObject:broker的实例（icon: '', name: '', id: ''）
          */
         function show(brObject, isUpdate){
-            var opts = brObject.getOpts(), brokerId = opts.id, boxObject = CACHE[brokerId];　
+            var opts = brObject.getOpts(), brokerId = opts.id, boxObject = CACHE[brokerId];
             if (brokerId == currentBrokerId) return;//当点击当前tab时，不做任何处理
             if(!boxObject){
                 if (exceedTabsTip()/* || exceedBrokersTip()*/) return false;

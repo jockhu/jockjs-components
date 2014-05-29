@@ -61,6 +61,7 @@
          */
         function createElement(id, name, num){
             dom = J.create("li",{
+                brokerId:id,
                 className:'now'
             });
             var html = '<em class="tab_l"></em><strong class="name">' + name + '</strong><em class="tab_r"></em>' +
@@ -146,7 +147,7 @@
 
         return {
             show: show,
-             hide: hide,
+            hide: hide,
             showCloseButton:showCloseButton,
             hideCloseButton:hideCloseButton,
             remove: remove,

@@ -46,8 +46,8 @@
 
             showTab(opened.getInfo());
 
-            opened.setSuccess(function(conf){
-                showTab(conf)
+            opened.setSuccess(function(oInfo){
+                showTab(oInfo)
             });
 
             J.on(J.W, 'resize', function(e) {
@@ -57,24 +57,23 @@
         })();
 
         function showTab(oInfo){
-            var brokerInfo;
-            function show(brokerOpts){
-                C.tabs.show(new C.Broker(brokerOpts));
-
+            var brokerObj;
+            function show(broker){
+                C.tabs.show(broker);
             }
 
-            if( brokerInfo = C.brlist.getBrokerInfo(oInfo.brokerId) ){
-                show(brokerInfo)
+            if( brokerObj = C.brlist.getBrokerInfo(oInfo.brokerId) ){
+                show(brokerObj)
             }else{
                 pdata.getBrokerInfo(oInfo.brokerId, function(res){
                     //console.log('res---',res)
                     if (!res.retcode) {
                         var data = res.retdata;
-                        show({
+                        show(new C.Broker({
                             icon: data.photo,
                             name: data.name,
                             id: data.id
-                        });
+                        }));
                     }
                 })
 

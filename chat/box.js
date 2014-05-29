@@ -166,7 +166,8 @@
                 if (e.keyCode == 13) {
                     sendCallback();
                     e.stop();
-                    e.preventDefault ? e.preventDefault() : e.returnValue = false;
+                    // e.stop 内已经处理 Jock
+                    //e.preventDefault ? e.preventDefault() : e.returnValue = false;
                 }
 
             });
@@ -308,10 +309,10 @@
          * @param content 消息内容
          * @param messageBox 消息盒子，可为空
          */
-        function sendMessage(type,content){
+        function sendMessage(type, content){
             var houseId = opts.houseId;
 
-            sendMessage =function(type,content){
+            sendMessage = function(type,content){
                 var messageBox;
                 var msg;
                 msg = {
@@ -319,7 +320,7 @@
                     body:content,
                     from_uid: C.uid,
                     to_uid:opts.id,
-                    created:new Date().getTime()/1000//保证跟服务器时间统一
+                    created:J.getTime()/1000//保证跟服务器时间统一
                 };
 
                 //brlist 里面没有数据的情况下，发送消息添加联系人
@@ -329,7 +330,7 @@
                 }
 
                 messageBox = pushMessage(msg);
-                J.chat.pdata.sendMsgToBroker(msg, opts.id, function (ret) {
+                C.pdata.sendMsgToBroker(msg, opts.id, function (ret) {
                     //发送失败处理逻辑
                     if ( ret.retcode == -1) {
                         sendError(msg.body,messageBox);
@@ -386,7 +387,7 @@
             messageBox.append(aWrong)
             aWrong.onclick = function(){
                 var ret = window.confirm('是否重新发送？');
-                ret&&J.chat.pdata.sendMsgToBroker({
+                ret && C.pdata.sendMsgToBroker({
                     body: content,
                     msg_type: 1
                 },function(data){
@@ -483,7 +484,7 @@
                 var curTime = parseInt(t);
                 if(Math.abs(curTime -beginTime) >= 600){
                     beginTime = curTime;
-                    return J.chat.template.getTimeTpl(curTime*1000);
+                    return C.template.getTimeTpl(curTime*1000);
                 }
             }
         }

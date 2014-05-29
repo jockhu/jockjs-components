@@ -32,7 +32,7 @@
             listener(true);
             W.onblur = startListener;
             W.onfocus = stopListener;
-            J.D.onclick = stopListener;
+            //J.D.onclick = stopListener;
             W.onbeforeunload = beforeunload;
 
         })();
@@ -44,7 +44,6 @@
 
         function stopListener(){
             if(!locked){
-
                 listener(false)
             }
         }
@@ -74,7 +73,7 @@
         function update(brokerId, propId){
             brokerId = brokerId || '';
             propId = propId || '';
-            cookieObj.setCookie(cookie.name, ( newCookieValue = (2 + '.'+(+new Date())+'.'+brokerId+'.'+propId)), 1, cookie.domain);
+            cookieObj.setCookie(cookie.name, ( cookieValue = newCookieValue = (2 + '.'+(+new Date())+'.'+brokerId+'.'+propId)), 1, cookie.domain);
         }
 
         /**

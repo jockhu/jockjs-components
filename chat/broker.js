@@ -38,7 +38,6 @@
         })(options);
 
 
-
         function getHtml(count, lasttime){
             if(count != opts.count || lasttime != opts.lasttime){
                 opts.count = count;
