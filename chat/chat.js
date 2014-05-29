@@ -10,11 +10,12 @@
  */
 
 J.add('chat', {
+    isDev:/\.(dev\.|test)/.test(J.D.location.host),
     version:'1.0.0',
-    chatDomain:location.href.indexOf('anjuke.test')>-1?'http://www.app-chat-web.pmt-20321-site.anjuke.test':'//www.app-chat-web.'+ (J.D.location.host.match(/^\w+\.(\w+)\./) ? J.D.location.host.match(/^\w+\.(\w+)\./)[1] : "")+'.dev.anjuke.com/',
+    chatDomain: /\.|test$/.test(J.D.location.host) ? 'http://www.app-chat-web.pmt-20321-site.anjuke.test':'//www.app-chat-web.'+ (J.D.location.host.match(/^\w+\.(\w+)\./) ? J.D.location.host.match(/^\w+\.(\w+)\./)[1] : "")+'.dev.anjuke.com/',
     cookie:{
         name:'chat_conf', //轮询的cookie名字
-        domain:'anjuke.com'
+        domain: /\.|test$/.test(J.D.location.host) ?  'anjuke.test' : 'anjuke.com'
     },
     windowName:'wchat',
     windowSize:{
@@ -49,6 +50,5 @@ J.add('chat', {
         allUnreadMsg: '',
         tabContainer: ''
     },
-    phone: '18721381560', //18602158988'
-    isDev:/\.(dev\.|test)/.test(J.D.location.host)
+    phone: '18721381560' //18602158988'
 });
