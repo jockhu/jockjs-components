@@ -97,7 +97,6 @@
                     houseId: data.houseId,
                     lasttime: data.created
                 });
-                return;
                 appendDom = getDomByHtml(brObj.getHtml());
                 firstEle ? listBoxDom.insertBefore(appendDom, firstEle) : listBoxDom.appendChild(appendDom);
 

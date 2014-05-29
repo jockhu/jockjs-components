@@ -38,11 +38,11 @@
             J.each(['brlist','brlistNum','allUnreadMsg','tabContainer'], function(i, v){
                 container[v] = J.g(v);
             });
-
             //长轮询
             C.uid = cookie.getCookie('chat_uid');
             C.guid = cookie.getCookie('aQQ_ajkguid');
             C.auth = cookie.getCookie('auth');
+            // C.auth = 1;
 
             showTab(opened.getInfo());
 

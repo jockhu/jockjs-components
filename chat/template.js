@@ -29,7 +29,8 @@
             '3' : getCardTpl,
             '5' : getVoiceTpl,
             '6' : getMapTpl,
-            '106' : getSysTpl
+            '106' : getSysTpl,
+            '107': getSysTpl
         };
 
 
@@ -48,7 +49,7 @@
          * @param content
          */
         function getShiftMessageTpl(type, content, icon){  
-            if(type!=106){
+            if(type!=106 && type!=107){
                 return FUNS[type]('jjr',content, icon);
             }else{
                 return FUNS[type](content);

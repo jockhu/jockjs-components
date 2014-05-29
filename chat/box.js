@@ -410,7 +410,7 @@
         function pushMessage(msg){
             var messageBox,fn,timerDom;
             fn = msg.from_uid == C.uid ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
-            (msg.msg_type!=1 && msg.msg_type!=2 && msg.msg_type!=106)&&(msg.body = eval('('+ msg.body+')'));
+            (msg.msg_type!=1 && msg.msg_type!=2 && msg.msg_type!=106&&msg.msg_type!=107)&&(msg.body = eval('('+ msg.body+')'));
             messageBox = fn(msg.msg_type,msg.body, opts.icon);
             chatList.append(messageBox);
             timerDom = timerTasker(msg.created);
@@ -443,7 +443,7 @@
             var messageBox,fn,timerDom;
             
             fn = msg.from_uid == C.uid ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
-            (msg.msg_type!=1&&msg.msg_type!=2&&msg.msg_type!=106)&&(msg.body = eval('('+ msg.body+')'));
+            (msg.msg_type!=1&&msg.msg_type!=2&&msg.msg_type!=106&&msg.msg_type!=107)&&(msg.body = eval('('+ msg.body+')'));
 
             messageBox = fn(msg.msg_type,msg.body, opts.icon);
             var dom = chatList.first();
