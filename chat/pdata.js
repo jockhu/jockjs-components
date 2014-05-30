@@ -3,7 +3,7 @@
  * Copyright 2014 ANJUKE Inc. All rights reserved.
  *
  * @path: chat/pdata.js
- * @author: »ô±¾ÁÖ
+ * @author: éœæœ¬æ—
  * @version: 1.0.0
  * @date: 2014/05/08
  *
@@ -45,9 +45,9 @@
          *
          */
         /**
-         * »ñÈ¡¾­¼ÍÈËÁĞ±í
-         * @param phone µÇÂ¼µÄÊÖ»úºÅÂë
-         * @param callback »Øµ÷º¯ÊıµÄ×Ö·û´®ĞÎÊ½
+         * è·å–ç»çºªäººåˆ—è¡¨
+         * @param phone ç™»å½•çš„æ‰‹æœºå·ç 
+         * @param callback å›è°ƒå‡½æ•°çš„å­—ç¬¦ä¸²å½¢å¼
          */
         function getFriends(callback){
             J.get({
@@ -136,7 +136,7 @@
         }
 
         /**
-         *»ñÈ¡ÍÆ¼öĞÅÏ¢[ÈôÎŞpropId£¬Ôò´«¿ÕÖµ]
+         *è·å–æ¨èä¿¡æ¯[è‹¥æ— propIdï¼Œåˆ™ä¼ ç©ºå€¼]
          */
         function getRecomm(brokerId, propId, callback){
             var param = {
@@ -155,7 +155,7 @@
         }
 
         /**
-         *»ñÈ¡·¿Ô´ĞÅÏ¢
+         *è·å–æˆ¿æºä¿¡æ¯
          */
         function getPropertyInfo(propId, callback){
             var param = {
@@ -171,7 +171,7 @@
         }
 
         /**
-         *»ñÈ¡¾­¼ÍÈËĞÅÏ¢
+         *è·å–ç»çºªäººä¿¡æ¯
          */
         function getBrokerInfo(brokerId, callback){  
             var param = {
@@ -187,9 +187,9 @@
         }
 
         /*
-        *»ñÈ¡·¿Ô´¿¨Æ¬
-        *houseUrl:Ö»ĞèÒª´«propId£¬ºó¶Ë×Ô¼ºpingµ¥Ò³µØÖ·
-        */
+         *è·å–æˆ¿æºå¡ç‰‡
+         *houseUrl:åªéœ€è¦ä¼ propIdï¼Œåç«¯è‡ªå·±pingå•é¡µåœ°å€
+         */
         function getHouseCard(hosueUrl, callback) {
             var param = {
                 'request_url': hosueUrl
@@ -203,9 +203,9 @@
         }
 
         /*
-        *ÏûÏ¢·¢ËÍ
-        *@param:msgObject°üº¬×Ö¶Î£ºmsg_type, body
-        */
+         *æ¶ˆæ¯å‘é€
+         *@param:msgObjectåŒ…å«å­—æ®µï¼šmsg_type, body
+         */
         function sendMsgToBroker(msgObject, brokerId, callback) {
             var param = {
                     phone: C.phone,
