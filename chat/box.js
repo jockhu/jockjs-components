@@ -329,11 +329,7 @@
                     created:J.getTime()/1000//保证跟服务器时间统一
                 };
 
-                //brlist 里面没有数据的情况下，发送消息添加联系人
-                if(type != 3 && !J.chat.brlist.BROKERSCACHE[opts.id]){
-                    opts.created = msg.created;
-                    J.fire(document,'chat:newBroker',opts)
-                }
+
 
                 messageBox = pushMessage(msg);
                 C.pdata.sendMsgToBroker(msg, opts.id, function (ret) {
@@ -344,6 +340,11 @@
                     }
                     if(!ret.retcode){
                         !maxMsgId&&(maxMsgId = ret.retdata.result);
+                        //brlist 里面没有数据的情况下，发送消息添加联系人
+                        if(type != 3 && !J.chat.brlist.BROKERSCACHE[opts.id]){
+                            opts.created = msg.created;
+                            J.fire(document,'chat:newBroker',opts)
+                        }
                     }
                 });
                 //如果是房源卡面，要转换为ｊｓｏｎ
