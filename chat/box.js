@@ -47,6 +47,7 @@
             Tab = new C.Tab(brokerObject);
             //opts brokerId 经纪人id propId 房源id container 容器
             Recommend = new C.recomm();
+            changeRecBrName(container, opts.name);
             //拿推荐数据
             opts.container =container.s('.othslist').eq(0);
             var optsRecommend = J.mix({},opts)
@@ -79,6 +80,15 @@
 
             eventBind();
         })();
+
+
+        /*
+         * xxx的其他相似房源中名字的更改
+         * @param container 整个box的
+         */
+        function changeRecBrName(container, name) {
+            container.s('.recbrname').eq(0).html(name);
+        }
 
 
 
