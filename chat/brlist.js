@@ -27,10 +27,10 @@
          * 初始化：只初始化BROKERSCACHE数组
          * @param：friends元素需要字段brokerId, icon, nick_name（获取的数据作处理）
          */
-        (function init(){ 
+        function init(){
             C.pdata.getFriends(fillList);
             eventBind();
-        })();
+        }
 
 
         function fillData(result){
@@ -301,6 +301,7 @@
 
 
         return {
+            init: init,
             getBrokerInfo: getBrokerInfo,
             update: update,
             BROKERSCACHE: BROKERSCACHE,
@@ -310,8 +311,8 @@
         }
     }
 
-//    C.brlist = new Brlist();
-    C.Brlist = Brlist;
+    C.brlist = new Brlist();
+//    C.Brlist = Brlist;
 
 })(J.chat);
 
