@@ -362,8 +362,10 @@
             //首次发送需要发送房源卡片
             houseId? (function(){
                 J.chat.pdata.getHouseCard(houseId,function(data){
-                    if(!data.retcode){
+                    if(!ret.retcode){
                         //返回正确的房源卡片
+
+
                         sendMessage(3,data.retdata);
                         sendMessage(1,content);
                     }
@@ -485,7 +487,6 @@
             !maxMsgId&&(maxMsgId=msg.msg_id);
             return messageBox
         }
-        window.shiftMessage = shiftMessage;
         /**
          * 显示消息（消息，提醒，时间...）
          * @param content 信息内容

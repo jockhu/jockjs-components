@@ -3,8 +3,7 @@
  * Copyright 2014 ANJUKE Inc. All rights reserved.
  *
  * @path: chat/pdata.js
- * @author: éœæœ¬æ—
- * @version: 1.0.0
+ * @author: ????? * @version: 1.0.0
  * @date: 2014/05/08
  *
  */
@@ -22,7 +21,7 @@
     function Pdata(){
 
         var opts = {
-            apiDomain : C.isDev ? 'http://chatapi.dev.anjuke.com' : 'http://api.anjuke.com/weiliao',
+            apiDomain : C.isDev ? 'http://chatapi.dev.anjuke.com' : C.isPg ? 'http://chatapi.anjuke.test': 'http://api.anjuke.com/weiliao',
             longDomain: C.isDev ? 'http://dev.aifang.com:8080/register' : 'http://push10.anjuke.com'
         }, fnid=0;
 
@@ -45,9 +44,7 @@
          *
          */
         /**
-         * è·å–ç»çºªäººåˆ—è¡¨
-         * @param phone ç™»å½•çš„æ‰‹æœºå·ç 
-         * @param callback å›è°ƒå‡½æ•°çš„å­—ç¬¦ä¸²å½¢å¼
+         * ?·å?ç»?ºªäººå?è¡?         * @param phone ?»å?????ºå???         * @param callback ????½æ????ç¬?¸²å½¢å?
          */
         function getFriends(callback){
             J.get({
@@ -136,7 +133,7 @@
         }
 
         /**
-         *è·å–æ¨èä¿¡æ¯[è‹¥æ— propIdï¼Œåˆ™ä¼ ç©ºå€¼]
+         *?·å??¨è?ä¿¡æ?[?¥æ?propIdï¼??ä¼?©º??
          */
         function getRecomm(brokerId, propId, callback){
             var param = {
@@ -155,7 +152,7 @@
         }
 
         /**
-         *è·å–æˆ¿æºä¿¡æ¯
+         *?·å??¿æ?ä¿¡æ?
          */
         function getPropertyInfo(propId, callback){
             var param = {
@@ -171,8 +168,7 @@
         }
 
         /**
-         *è·å–ç»çºªäººä¿¡æ¯
-         */
+         *?·å?ç»?ºªäººä¿¡??         */
         function getBrokerInfo(brokerId, callback){  
             var param = {
                     broker_id: brokerId
@@ -187,8 +183,8 @@
         }
 
         /*
-         *è·å–æˆ¿æºå¡ç‰‡
-         *houseUrl:åªéœ€è¦ä¼ propIdï¼Œåç«¯è‡ªå·±pingå•é¡µåœ°å€
+         *?·å??¿æ??¡ç?
+         *houseUrl:???è¦??propIdï¼??ç«??å·?ing??¡µ?°å?
          */
         function getHouseCard(hosueUrl, callback) {
             var param = {
@@ -196,15 +192,15 @@
             };
             J.get({
                 url: buildUrl('house'),
+                json:'json',
                 data: param,
-                type: 'json',
                 onSuccess: callback
             });
         }
 
         /*
-         *æ¶ˆæ¯å‘é€
-         *@param:msgObjectåŒ…å«å­—æ®µï¼šmsg_type, body
+         *æ¶?????
+         *@param:msgObject???å­??ï¼?sg_type, body
          */
         function sendMsgToBroker(msgObject, brokerId, callback) {
             var param = {
