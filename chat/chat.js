@@ -16,7 +16,7 @@ J.add('chat', {
     chatDomain:/\.test/.test(J.D.location.host) ? 'http://www.app-chat-web.pmt-20321-site.anjuke.test': (!/\.dev/.test(J.D.location.host) ? 'http://chat.anjuke.com':'//www.app-chat-web.'+ (J.D.location.host.match(/^\w+\.(\w+)\./) ? J.D.location.host.match(/^\w+\.(\w+)\./)[1] : "")+'.dev.anjuke.com/'),
     cookie:{
         name:'chat_conf', //轮询的cookie名字
-        domain: this.isPg ?  'anjuke.test' : 'anjuke.com'
+        domain: /\.test/.test(J.D.location.host) ?  'anjuke.test' : 'anjuke.com'
     },
     windowName:'wchat',
     windowSize:{
