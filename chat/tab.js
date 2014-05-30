@@ -54,14 +54,14 @@
 
         /**
          *
-         * @param id 经济人ｉｄ　
+         * @param id 经济人chatid　
          * @param name　经济人姓名
          * @param num　　未读消息数
          * @returns {li|*}
          */
         function createElement(id, name, num){
             dom = J.create("li",{
-                brokerId:id,
+                chatid:id,
                 className:'now'
             });
             var html = '<em class="tab_l"></em><strong class="name">' + name + '</strong><em class="tab_r"></em>' +
@@ -99,7 +99,6 @@
         function remove(){
             J.un(dom);
             dom.remove();
-            // J.fire(opts.container,'chat:tabclick',{id:opts.id});//###############################
         }
 
         /**

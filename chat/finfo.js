@@ -30,8 +30,8 @@
         /**
          * 获取房源信息
          */
-        function getPropertyInfo(opts){
-            C.pdata.getPropertyInfo(opts.id, function(data){
+        function getPropertyInfo(opts){ 
+            C.pdata.getPropertyInfo(opts.houseId, function(data){
                 if(!data.retcode){
                     var data = data.retdata,
                         html = '<img src="'+data.pic +'" width="120" height="90">'+
@@ -67,7 +67,8 @@
          * 获取经纪人信息
          */
         function getBrokerInfo(opts){
-            C.pdata.getBrokerInfo(opts.id, function(data){
+            var id = opts.brokerId ? opts.brokerId : opts.id;//若有borkerId则传入,否则传入chatid
+            C.pdata.getBrokerInfo(id, function(data){
                 if(!data.retcode){
                     var data = data.retdata,
                         html = '<dl class="cf">'+

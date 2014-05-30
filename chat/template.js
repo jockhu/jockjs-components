@@ -261,6 +261,7 @@
          * @returns {string}
          */
         function getVoiceTpl(className, content, icon){
+            var content = 'http://www.anjuke.com/mobile?from=webweiliao';
             var html = '<dd>'+
                             '<em class="ico_arw"></em>'+
                             '<p>本功能不支持经纪人发布的语音，请<a href="'+ content +'" target="_blank">下载手机版</a></p>'+

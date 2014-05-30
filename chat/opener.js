@@ -29,10 +29,11 @@
          * @param brokerId 经纪人ID
          * @param propertyId 房源ID
          */
-        function open(brokerId, propertyId){
+        function open(brokerId, propertyId, chatId){
             var conf = J.mix(getConf(), {
                 brId: brokerId || '',
-                prId: propertyId || ''
+                prId: propertyId || '',
+                chId: chatId || ''
             });
             function newWindow(){
                 updateConf(conf, 1);
@@ -70,7 +71,8 @@
                     status:cks[0],
                     time:cks[1],
                     brId:cks[2]||'',
-                    prId:cks[3]||''
+                    prId:cks[3]||'',
+                    chId:cks[4]||''
                 };
             }
             return {
@@ -94,7 +96,7 @@
          * @param status
          */
         function updateConf(conf, status){
-            cookieObj.setCookie(cookie.name, (status ? status : conf.status) + '.' + (+new Date()) + '.' + conf.brId + '.' + conf.prId, 1, cookie.domain);
+            cookieObj.setCookie(cookie.name, (status ? status : conf.status) + '.' + (+new Date()) + '.' + conf.brId + '.' + conf.prId + '.' + conf.chId, 1, cookie.domain);
         }
 
         /**

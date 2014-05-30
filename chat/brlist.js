@@ -41,6 +41,7 @@
                     if (fv.user_type == 2) {
                         BROKERSCACHE[fv.to_uid] = new C.Broker({
                             id: fv.to_uid,
+                            brokerId: '',
                             name: fv.nick_name,
                             icon: fv.icon
                         });
@@ -62,8 +63,9 @@
         function brCallback(data){
             if(!data || !data.result) return;
             var result = data.result, brObj, v = newBroker.chatInfo;
-            TMPECACHE[result.user_id] = brObj = new C.Broker({
-                id:result.user_id,
+            TMPECACHE[v.from_uid] = brObj = new C.Broker({
+                id: v.from_uid,
+                brokerId: '',
                 name: result.nick_name,
                 icon: result.icon
             });
@@ -89,6 +91,7 @@
                 var firstEle = listBoxDom.firstChild, brObj, appendDom, createdTime = data.created * 1000;
                 brObj = BROKERSCACHE[data.id] = new C.Broker({
                     id: data.id,
+                    brokerId: data.brokerId,
                     name: data.name,
                     icon: data.icon,
                     count: data.count,
@@ -123,17 +126,18 @@
                    5."所有经纪人"按钮上显示的未读消息数
          */
         function update(chatList){
-            var brObj, curBrokerId, boxMsgList = {}, brokersNum = 0, dealNewMsgCount = 0;
-            allUnreadMsgNum = 0;
+            var brObj, curChatId, boxMsgList = {}, brokersNum = 0, dealNewMsgCount = 0;
+            
             if( chatList.status == 'OK' ){
+                allUnreadMsgNum = 0;
                 arrHtml = [];
                 brLen = chatList.result.length;
                 brokersNum = brokerCount;
-                curBrokerId = C.tabs.getActiveBrokerId();
+                curChatId = C.tabs.getActiveChatId();
                 brokerCount = 0;
                 J.each(chatList.result, function(i, v){
 
-                    dealNewMsgCount = ((curBrokerId == v.from_uid) ? 0 : v.new_msg_count);
+                    dealNewMsgCount = ((curChatId == v.from_uid) ? 0 : v.new_msg_count);
                     allUnreadMsgNum += dealNewMsgCount * 1;
                     brokerCount++;
 
@@ -221,7 +225,7 @@
                 eventTarget = e.target ||  e.srcElement;  
                 while( eventTarget != listBox.get() ){
                     if( hasClass(eventTarget, event_broker_click)){
-                        brokerObject = BROKERSCACHE[ J.g(eventTarget).attr('brokerId') ];
+                        brokerObject = BROKERSCACHE[ J.g(eventTarget).attr('chatid') ];
                         C.tabs.show(brokerObject,true);
                         showAllUnreadMsgCount(allUnreadMsgNum - brokerObject.getOpts().count);
                         brokerObject.updateNewMsgCount(0, J.g(eventTarget));//消息条数置为0
@@ -280,7 +284,7 @@
             var opts = brokerObject.getOpts();
             var dlarr = listBox.s('.event_broker_click');  
             J.each(dlarr, function(k, v) {  
-                if (J.g(v).attr('brokerid') == opts.id) {
+                if (J.g(v).attr('chatid') == opts.id) {
                     brokerObject.updateNewMsgCount(0, J.g(v));
                     return;
                 }

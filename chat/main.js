@@ -42,7 +42,6 @@
             C.uid = cookie.getCookie('chat_uid');
             C.guid = cookie.getCookie('aQQ_ajkguid');
             C.auth = cookie.getCookie('auth');
-            // C.auth = 1;
 
             showTab(opened.getInfo());
 
@@ -89,7 +88,9 @@
                         show(new C.Broker({
                             icon: data.photo,
                             name: data.name,
-                            id: data.id
+                            brokerId: oInfo.brokerId,
+                            id: oInfo.chatId,
+                            houseId: oInfo.propId
                         }));
                     }
                 })

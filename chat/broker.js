@@ -23,7 +23,8 @@
         var opts = {
             icon: '',
             name: '',
-            id: '',
+            id: '', //聊天id(chatId)
+            brokerId: '',//经纪人id(如果从联系人列表点开，则取不到brokerId)
             houseId:'',
             count: 0,
             lasttime: '',
@@ -60,7 +61,7 @@
             } else {
                 msg_html = '<dd class="infos cf"><p>上次聊天：</p><p>' + lasttime + '</p></dd>';
             }
-            opts.html = '<dl class="cf event_broker_click" brokerId="' + opts.id + '"><dt><img src="' + opts.icon + '" width="28" height="36"></dt><dd class="name"><a href="javascript:void(0);">' + opts.name + '</a></dd>' + msg_html + '</dl>';
+            opts.html = '<dl class="cf event_broker_click" chatid="' + opts.id + '"><dt><img src="' + opts.icon + '" width="28" height="36"></dt><dd class="name"><a href="javascript:void(0);">' + opts.name + '</a></dd>' + msg_html + '</dl>';
         }
 
         /*

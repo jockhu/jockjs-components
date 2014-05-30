@@ -26,7 +26,7 @@
             tabCount = 0, 
             // container,
             // LOG,
-            currentBrokerId; //当前的经纪人ID
+            currentChatId; //当前的经纪人ID
 
         ;(function(){
              // container = J.s(".multiple").eq(0);
@@ -37,21 +37,21 @@
          * @param brokerObject:broker的实例（icon: '', name: '', id: ''）
          */
         function show(brObject, isUpdate){
-            var opts = brObject.getOpts(), brokerId = opts.id, boxObject = CACHE[brokerId];
-            if (brokerId == currentBrokerId) return;//当点击当前tab时，不做任何处理
+            var opts = brObject.getOpts(), chatId = opts.id, boxObject = CACHE[chatId];
+            if (chatId == currentChatId) return;//当点击当前tab时，不做任何处理
             if(!boxObject){
-                if (exceedTabsTip()/* || exceedBrokersTip()*/) return false;
-                boxObject = CACHE[brokerId] = new C.Box(brObject);
+                if (exceedTabsTip()) return false;
+                boxObject = CACHE[chatId] = new C.Box(brObject);
                 //如果只有一个ｔａｂ　,则不显示关闭
                 tabCount++;
                 autoHideCloseTab();
-                currentBrokerId && (CACHE[brokerId].prev = CACHE[currentBrokerId]);
-                currentBrokerId && CACHE[currentBrokerId] && (CACHE[currentBrokerId].next = CACHE[brokerId]);
+                currentChatId && (CACHE[chatId].prev = CACHE[currentChatId]);
+                currentChatId && CACHE[currentChatId] && (CACHE[currentChatId].next = CACHE[chatId]);
             }
-            currentBrokerId && CACHE[currentBrokerId].hide();
+            currentChatId && CACHE[currentChatId].hide();
             boxObject.show(brObject);
             calcTabsWidth();
-            currentBrokerId = brokerId;
+            currentChatId = chatId;
             isUpdate && J.chat.opened.update(opts.id,opts.houseId)
             return boxObject;
         }
@@ -75,7 +75,7 @@
         /*
         * 判断是否超过19个tab,超过给提示
         */
-        function exceedTabsTip() {
+        function exceedTabsTip() {   
             if (tabCount >= 19) {
                 //弹出提示框
                 alert('同时聊天数达到上限，请先关闭部分经济人的聊天窑口');
@@ -123,7 +123,7 @@
         */
        /* function switchTab(brokerObject) {
             var opts = brokerObject.getOpts(), curBox, switchedBox;
-            curBox = CACHE[currentBrokerId];
+            curBox = CACHE[currentChatId];
             switchedBox = CACHE[opts.id];
             curBox.hide();
             switchedBox.show();//除了tab+box的显示，还需要请求未读消息内容
@@ -158,17 +158,17 @@
          */
         function remove(brokerObject){
             var opts = brokerObject.getOpts();
-            var brokerId = opts.id;
-            var obj = CACHE[brokerId];
+            var chatId = opts.id;
+            var obj = CACHE[chatId];
             var next = obj.next;
             var prev = obj.prev;  
             obj.remove();
             //把当前选的ｂｏｘ去除选中状态，如果删除的ｂｏｘ是当前选中的ｂｏｘ,则显示前一个或后一个，否则只是删除
-            if(brokerId == currentBrokerId){
+            if(chatId == currentChatId){
                 next?next.show():prev&&prev.show();
-                currentBrokerId = next?next.id:prev&&prev.id;
+                currentChatId = next?next.id:prev&&prev.id;
             }
-            delete CACHE[brokerId];
+            delete CACHE[chatId];
             next&&(next.prev = prev);
             prev&&(prev.next = next);
             tabCount--;
@@ -176,12 +176,12 @@
         }
 
 
-        function getActiveBrokerId(){
-            return currentBrokerId;
+        function getActiveChatId(){
+            return currentChatId;
         }
 
-        function setActiveBrokerId(brokerId) {
-            currentBrokerId = brokerId;
+        function setActiveChatId(chatId) {
+            currentChatId = chatId;
         }
 
         /*
@@ -189,11 +189,11 @@
         *@param boxMsgList：[brokerid]-[new_msg_count]数组
         */
         function updateUnreadMsg(boxMsgList) { 
-            var i, brokerid, new_msg_count;
+            var i, chatid, new_msg_count;
             for (i in boxMsgList) {
                 if (boxMsgList.hasOwnProperty(i)) {
                     if (CACHE[i]) {  
-                        if (i != currentBrokerId) {
+                        if (i != currentChatId) {
                             new_msg_count = boxMsgList[i];
                             CACHE[i].updateUnreadMsg(new_msg_count);
                         } else {
@@ -208,8 +208,8 @@
             show: show,
             // hide: hide,
             remove: remove,
-            getActiveBrokerId: getActiveBrokerId,
-            setActiveBrokerId: setActiveBrokerId,
+            getActiveChatId: getActiveChatId,
+            setActiveChatId: setActiveChatId,
             updateUnreadMsg: updateUnreadMsg,
             calcTabsWidth: calcTabsWidth,
             autoDeleBroker: autoDeleBroker

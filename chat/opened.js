@@ -59,7 +59,7 @@
          * @param statusCode 0 窗口关闭，1 窗口打开 , 2 窗口加载完成
          */
         function setOpenedStatus(statusCode){
-            conf = getOpenedConf();
+            conf = getOpenedConf(); 
             conf && cookieObj.setCookie(cookie.name, (newCookieValue =  conf.replace(/^(\d)\.(\d+)/, function(a,b,c){
                 return statusCode + '.' + ((statusCode == 2) ? (+new Date()) : c);
             })), 1, cookie.domain);
@@ -69,11 +69,13 @@
          * 更新cookie
          * @param brokerId
          * @param propId
+         * @param chatId
          */
-        function update(brokerId, propId){
+        function update(brokerId, propId, chatId){
             brokerId = brokerId || '';
             propId = propId || '';
-            cookieObj.setCookie(cookie.name, ( cookieValue = newCookieValue = (2 + '.'+(+new Date())+'.'+brokerId+'.'+propId)), 1, cookie.domain);
+            chatId = chatId || '';
+            cookieObj.setCookie(cookie.name, ( cookieValue = newCookieValue = (2 + '.'+(+new Date())+'.'+brokerId+'.'+propId+'.'+chatId)), 1, cookie.domain);
         }
 
         /**
@@ -113,10 +115,11 @@
 
         function doSuccess(){
             if( onSuccess ){
-                var conf = cookieValue.match(/(\d+)\.(\d+)$/);
+                var conf = cookieValue.match(/(\d+)\.(\d+)\.(\d+)$/);
                 onSuccess(conf ? {
                     brokerId:conf[1],
-                    propId:conf[2]
+                    propId:conf[2],
+                    chatId:conf[3]
                 } : {});
             }
         }
@@ -130,7 +133,7 @@
         }
 
         function getViewType(){
-            return getOpenedConf().match(/(\d+)\.(\d+)$/) ? 1 : 0;
+            return getOpenedConf().match(/(\d+)\.(\d+)\.(\d+)$/) ? 1 : 0;
         }
 
         /**
@@ -156,12 +159,14 @@
             W.close();
         }
 
-        function getInfo(){
-            var conf = cookieValue.match(/(\d+)\.(\d+)$/), res =
+        function getInfo(){  
+            var conf = cookieValue.match(/(\d+)\.(\d+)\.(\d+)$/), res =
             conf ? {
                 brokerId:conf[1],
-                propId:conf[2]
+                propId:conf[2],
+                chatId:conf[3]
             } : {};
+
             res.viewType = getViewType();
             return res;
         }
