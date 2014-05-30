@@ -51,5 +51,5 @@ J.add('chat', {
         allUnreadMsg: '',
         tabContainer: ''
     },
-    phone: '18721381560' //18602158988'
+    phone: '' //18602158988' 18721381560
 });

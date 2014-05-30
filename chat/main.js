@@ -43,8 +43,6 @@
             C.guid = cookie.getCookie('aQQ_ajkguid');
             C.auth = cookie.getCookie('auth');
 
-            showTab(opened.getInfo());
-
             opened.setSuccess(function(oInfo){
                 showTab(oInfo)
             });
@@ -102,8 +100,11 @@
 
         function start(data){
             var telNumber = data.telNumber;
-            J.chat.phone =telNumber, //1
-                C.pdata.getPollListener(callbackPollListener);
+            J.chat.phone =telNumber; //1
+            C.brlist = new C.Brlist();//需要phone作为参数
+            showTab(opened.getInfo());
+            C.pdata.getPollListener(callbackPollListener);
+
         }
 
 

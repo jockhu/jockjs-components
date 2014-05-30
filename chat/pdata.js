@@ -25,7 +25,7 @@
             longDomain: C.isDev ? 'http://dev.aifang.com:8080/register' : 'http://push10.anjuke.com'
         }, fnid=0;
 
-        function buildUrl(type){
+        function buildUrl(type){ 
             var urls = {
                 'friends': opts.apiDomain + '/user/getFriends/' + C.phone,
                 'chatlist': opts.apiDomain + '/message/getChatList',

@@ -310,7 +310,8 @@
         }
     }
 
-    C.brlist = new Brlist();
+//    C.brlist = new Brlist();
+    C.Brlist = Brlist;
 
 })(J.chat);
 
