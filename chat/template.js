@@ -27,6 +27,7 @@
             '1' : getTextTpl,
             '2' : getPicTpl,
             '3' : getCardTpl,
+            '9' : getCardTpl,//金铺房源卡片
             '5' : getVoiceTpl,
             '6' : getMapTpl,
             '106' : getSysTpl,
@@ -137,9 +138,6 @@
             return getTpl(className, html, icon);
         }
         function formateEmoji(content) {
-            // emoji.img_path = "<?php echo User_Common_Util_PageHelper::getPureStaticUrl('/img/chat/images/unicode/');?>";
-            // emoji.sheet_path = "<?php echo User_Common_Util_PageHelper::getPureStaticUrl('/img/chat/images/sheet_64.png');?>";
-
             emoji.img_path = 'http://pages.anjukestatic.com/img/chat/images/unicode/';
             emoji.sheet_path = 'http://pages.anjukestatic.com/img/chat/images/sheet_64.png';
 
@@ -261,10 +259,14 @@
          * @returns {string}
          */
         function getVoiceTpl(className, content, icon){
-            var content = 'http://www.anjuke.com/mobile?from=webweiliao';
+            var content = 'http://www.anjuke.com/mobile?from=webweiliao', pStr;
+            if (className == 'jjr') {
+                pStr = '<p>暂不支持接收经纪人发送的语音内容，您可<a href="'+ content +'" target="_blank">下载手机版</a></p>';
+            } else if (className == 'me') {
+                pStr = '<p>暂不支持播放您发送的语音内容</p>';
+            }
             var html = '<dd>'+
-                            '<em class="ico_arw"></em>'+
-                            '<p>本功能不支持经纪人发布的语音，请<a href="'+ content +'" target="_blank">下载手机版</a></p>'+
+                            '<em class="ico_arw"></em>' + pStr +
                         '</dd>';
             return getTpl(className,html, icon);
         }
