@@ -22,7 +22,7 @@
 
         var opts = {
             apiDomain : C.isDev ? 'http://chatapi.dev.anjuke.com' : C.isPg ? 'http://chatapi.anjuke.test': 'http://api.anjuke.com/weiliao',
-            longDomain: !C.isDev ? 'http://push10.anjuke.com':'http://dev.aifang.com:8080/register'
+            longDomain: (C.isDev || C.isPg) ? 'http://dev.aifang.com:8080/register' : 'http://push10.anjuke.com'
         }, fnid=0;
 
         function buildUrl(type){ 

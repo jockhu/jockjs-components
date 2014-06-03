@@ -97,13 +97,6 @@
             return false;
         }
 
-        // function listenExceedTip() {
-        //     J.on(document, 'chat: exceedTip', function() {
-        //         exceedTip();
-        //         exceedBrokersTip();
-        //     });
-        // }
-
         /*
         * 联系人有删除，自动删除对应tab及box
         */
@@ -115,19 +108,6 @@
                 }
             });
         }
-
-
-        /**
-        * 切换tab
-        * @param brokerObject: 切换到的当前broker
-        */
-       /* function switchTab(brokerObject) {
-            var opts = brokerObject.getOpts(), curBox, switchedBox;
-            curBox = CACHE[currentChatId];
-            switchedBox = CACHE[opts.id];
-            curBox.hide();
-            switchedBox.show();//除了tab+box的显示，还需要请求未读消息内容
-        }*/
 
         /**
         * 计算各个tab的宽度[浏览器宽度变化或者添加tab时]
