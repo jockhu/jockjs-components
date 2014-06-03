@@ -46,7 +46,7 @@
         function getRecomm(opts){
             C.pdata.getRecomm(opts.brokerId, opts.id, opts.houseId||'', function(data){
                 var html = '', arrHtml=[];
-                if(data && data.retcode === 0 && data.retdata){
+                if(data && data.retcode == 0 && data.retdata && data.retdata.length){
                     J.each(data.retdata, function(i, v){
                         arrHtml.push( buildHtml(v) );
                     });
