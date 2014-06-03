@@ -44,8 +44,7 @@
          * @param opts
          */
         function getRecomm(opts){
-            var id = opts.brokerId ? opts.brokerId : opts.id;//若有borkerId则传入,否则传入chatid
-            C.pdata.getRecomm(id, opts.houseId, function(data){ 
+            C.pdata.getRecomm(opts.brokerId, opts.id, opts.houseId, function(data){
                 var html = '', arrHtml=[];
 
                 if(data.retcode === 0 && data.retdata){

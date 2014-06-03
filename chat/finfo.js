@@ -67,8 +67,7 @@
          * 获取经纪人信息
          */
         function getBrokerInfo(opts){
-            var id = opts.brokerId ? opts.brokerId : opts.id;//若有borkerId则传入,否则传入chatid
-            C.pdata.getBrokerInfo(id, function(data){
+            C.pdata.getBrokerInfo(opts.brokerId, opts.id, function(data){
                 if(!data.retcode){
                     var data = data.retdata,
                         html = '<dl class="cf">'+
@@ -83,27 +82,6 @@
                     opts.container.html(html);
                 }
             });
-
-            /*var getbro = pdata.getBrokerInfo({
-                container :opts.container,
-                broker_id : opts.broker_id
-            },function(d){
-                if(d.retcode === 0){
-                    var data = d.retdata,
-                        html = '<dl class="cf">'+
-                                    '<dt><img src="'+data.photo+'" width="100" height="135"></dt>'+
-                                    '<dd>'+data.name+'</dd>'+
-                                    '<dd>'+data.phone+'</dd>'+
-                                    '<dd><a href="'+(data.companyUrl||'')+'" target="_blank">'+data.company+'</a></dd>'+
-                                    '<dd><a href="'+(data.addressUrl||'')+'" target="_blank">'+(data.address||'')+'</a></dd>'+                                   
-                                '</dl>'+
-                                '<div class="ct"><a href="'+(data.moreUrl||'')+'" class="btn_more" target="_blank">查看TA的更多房源</a></div>'+
-                            '</div>';
-                }else{
-
-                }
-                opts.container.s('.binfo').eq(0).html(html);
-            });*/
         }
 
         return {

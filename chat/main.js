@@ -80,7 +80,7 @@
             if( brokerObj = C.brlist.getBrokerInfo(oInfo.brokerId) ){
                 show(brokerObj)
             }else{
-                pdata.getBrokerInfo(oInfo.brokerId, function(res){
+                pdata.getBrokerInfo(oInfo.brokerId, oInfo.chatId, function(res){
                     if (!res.retcode) {
                         var data = res.retdata;
                         show(new C.Broker({
