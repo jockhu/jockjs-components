@@ -237,7 +237,6 @@
                 '11' : '写字楼出售 （所有）' ,
                 '12' : '租房 (个人)'
             };
-            console.log('card:',content)
             var html = '<dd class="card">'+
                             '<em class="ico_arw"></em>'+
                             '<div class="cardbox cf">'+
