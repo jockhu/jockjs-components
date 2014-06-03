@@ -40,7 +40,7 @@
         /**
          * 初始化
          */
-        (function(){ 
+        (function(){
             opts = brokerObject.getOpts();
             container = createElement();
             opts.container = container;
@@ -369,25 +369,6 @@
             })():sendMessage(type,content);
         }
 
-        /**
-         * 消息发送正常回掉
-         * @param statusCode 状态吗
-         */
-        function sendSuccess(ret){
-            switch (ret.retcode){
-                case -1:
-
-                    //message send wrong
-                    break;
-                case  -2:
-                    //message send empty
-                    break;
-                case 0:
-                    //message send success;
-
-
-            }
-        }
 
         /**
          * 消息发送非法（超时，断网，意外中断）
