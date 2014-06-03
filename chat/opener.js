@@ -37,7 +37,15 @@
             });
             function newWindow(){
                 updateConf(conf, 1);
-                windowOpenr = J.W.open(C.chatDomain, C.windowName, getAttrString(conf));
+                //解决referrer丢失问题
+                //windowOpenr = J.W.open(C.chatDomain, C.windowName, getAttrString(conf));
+                windowOpenr = J.W.open("", C.windowName, getAttrString(conf));
+                var a = document.createElement("a");
+                a.href = C.chatDomain;
+                a.target= C.windowName;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
                 windowOpenr && windowOpenr.focus();
             }
             if(windowIsOpend(conf)){
