@@ -50,16 +50,13 @@
             changeRecBrName(container, opts.name);
             //拿推荐数据
             opts.container =container.s('.othslist').eq(0);
-            var optsRecommend = J.mix({},opts)
+            var optsRecommend = J.mix({},opts);
             Recommend.getRecomm(optsRecommend);
 
             //拿经济人消息
             opts.container =container.s('.binfo').eq(0)
             var optsProp = J.mix({},opts);
             C.finfo.getBrokerInfo(optsProp);
-
-
-
 
             //请求６条记录
             C.pdata.getChatDetail(opts.id,0,0,6,function(data){
@@ -220,11 +217,11 @@
                 txtSend.get().oninput = calcTextLength;
             }
 
-            chatBox.on('scroll',function(){ 
+            chatBox.on('scroll',function(){
                 //滚动到顶部显示更多消息,向上查看，最小消息id应该为空
                 if(!scrollIsReturn&&!chatBox.get().scrollTop){
                     scrollIsReturn = true;
-                    J.chat.pdata.getChatDetail(opts.id, 0,minMsgId,20,function(data){
+                    J.chat.pdata.getChatDetail(opts.id, 0, minMsgId-1, 20,function(data){ //max_msg_id:闭区间
                         scrollIsReturn = false;
                         var h = scrollTopElm.height();
                         if(data.status == 'OK'){
