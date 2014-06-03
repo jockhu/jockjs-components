@@ -232,7 +232,8 @@
                                 shiftMessage(v);
                             })
                         }
-                        chatBox.get().scrollTop =10000000;
+                        var tH = scrollTopElm.height()-h;
+                        chatBox.get().scrollTop =tH;
 
 
                     });
