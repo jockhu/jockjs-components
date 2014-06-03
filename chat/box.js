@@ -54,15 +54,11 @@
             Recommend.getRecomm(optsRecommend);
 
             //拿经济人消息
-
             opts.container =container.s('.binfo').eq(0)
             var optsProp = J.mix({},opts);
             C.finfo.getBrokerInfo(optsProp);
 
 
-            opts.container=container.s('.finfo').eq(0);
-            var optsBinfo = J.mix({},opts)
-            C.finfo.getPropertyInfo(optsBinfo);
 
 
             //请求６条记录
@@ -99,6 +95,13 @@
             var html= J.g("tpl_chat_box").html();
             dom.html(html);
             J.g("box_container").append(dom)
+
+            var tabHtml = opts.houseId?'' +
+                '<div class="tabs cf">'+
+                    '<a href="javascript:void(0);" class="now">当前咨询房源</a><a href="javascript:void(0);" class="br0">当前咨询经纪人</a>'+
+                '</div>':
+                '<h5>当前咨询经纪人</h5>';
+            dom.s(".infos").eq(0).first().html(tabHtml);
             return dom;
         }
 
@@ -188,6 +191,15 @@
 
             });
 
+            inputTxt.on('focus', function(e) {
+               inputTxt.up(0).addClass('focus');
+            });
+
+            inputTxt.on('blur', function(e) {
+                inputTxt.up(0).removeClass('focus');
+            });
+
+
             function sendCallback() {
                 var txt;  
                 txt=trim(txtSend.val());  
@@ -222,41 +234,43 @@
                                 shiftMessage(v);
                             })
                         }
-                        var tH = scrollTopElm.height()-h;
-                        chatBox.get().scrollTop =tH;
+                        chatBox.get().scrollTop =10000000;
 
 
                     });
                 }
             });
 
+            if(opts.houseId){
 
-            var FB = container.s(".tabs").eq(0).s("a");
-            var FB_Block = container.s(".tabcon");
-
-            var aF = FB.eq(0);
-            var aB = FB.eq(1);
-
-
-            var FBlock = FB_Block.eq(0);
-            var BBlock = FB_Block.eq(1);
+                opts.container=container.s('.finfo').eq(0);
+                var optsBinfo = J.mix({},opts)
+                C.finfo.getPropertyInfo(optsBinfo);
 
 
+                var FB = container.s(".tabs").eq(0).s("a");
+                var FB_Block = container.s(".tabcon");
 
-            aF.on('click',function(){
-               aF.addClass('now');
-               aB.removeClass('now');
-                FBlock.show();
-                BBlock.hide();
-            });
+                var aF = FB.eq(0);
+                var aB = FB.eq(1);
 
-            aB.on('click',function(){
-                aB.addClass('now');
-                aF.removeClass('now');
-                BBlock.show();
-                FBlock.hide();
-            });
+                var FBlock = FB_Block.eq(0);
+                var BBlock = FB_Block.eq(1);
 
+                aF.on('click',function(){
+                    aF.addClass('now');
+                    aB.removeClass('now');
+                    FBlock.show();
+                    BBlock.hide();
+                });
+
+                aB.on('click',function(){
+                    aB.addClass('now');
+                    aF.removeClass('now');
+                    BBlock.show();
+                    FBlock.hide();
+                });
+            }
         }
 
         /**
@@ -415,7 +429,8 @@
                 }
             }
 //            (msg.msg_type!=1 && msg.msg_type!=2 && msg.msg_type!=106&&msg.msg_type!=107)&&(msg.body = eval('('+ msg.body+')'));
-            messageBox = fn(msg.msg_type,msg.body, opts.icon);
+            messageBox = fn(msg.msg_type,msg.body, opts.icon.replace(/\.[a-z]+$/,function(str){return 'c'+str}));//加ｃ
+
             chatList.append(messageBox);
             timerDom = timerTasker(msg.created);
             timerDom&&chatList.append(timerDom);
@@ -455,8 +470,7 @@
                 }
             }
 //            (msg.msg_type!=1&&msg.msg_type!=2&&msg.msg_type!=106&&msg.msg_type!=107)&&(msg.body = eval('('+ msg.body+')'));
-
-            messageBox = fn(msg.msg_type,msg.body, opts.icon);
+            messageBox = fn(msg.msg_type,msg.body, opts.icon.replace(/\.[a-z]+$/,function(str){return 'c'+str}));//加ｃ
             var dom = chatList.first();
             timerDom = timerTasker(parseInt(msg.created));
             dom ? dom.insertBefore(messageBox):chatList.append(messageBox);

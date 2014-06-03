@@ -44,10 +44,10 @@
          * @param opts
          */
         function getRecomm(opts){
-            C.pdata.getRecomm(opts.brokerId, opts.id, opts.houseId, function(data){
+            C.pdata.getRecomm(opts.brokerId, opts.id, opts.houseId||'', function(data){
                 var html = '', arrHtml=[];
 
-                if(data.retcode === 0 && data.retdata){
+                if(!data.retcode&& data.retdata){
                     J.each(data.retdata, function(i, v){
                         arrHtml.push( buildHtml(v) );
                     });
