@@ -37,8 +37,8 @@
                         html = '<img src="'+data.pic +'" width="120" height="90">'+
                             '<a href="'+(data.url||'') + '" target="_blank">'+data.title+'</a>'+
                             '<p>'+data.community+'</p>'+
-                            '<p>'+data.size+'</p>'+
-                            '<strong class="ylw">'+data.price +'万</strong>'+
+                            '<p>'+data.room+','+parseInt(data.size)+'平米par</p>'+
+                            '<strong class="ylw">'+parseInt(data.price) +'万</strong>'+
                             '</div>';
                     opts.container.html(html);
                 }

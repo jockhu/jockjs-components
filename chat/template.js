@@ -179,15 +179,65 @@
         }*/
 
         /**
+         * 生成图片宽高
+         *
+         */
+        function autoToPic(maxW,maxH,w,h){
+            w = parseInt(w)
+            h = parseInt(h)
+            var aw,ah;
+
+            //长宽都大于规定尺寸　
+            if(w>maxW&&h > maxH){
+                if(w>h){
+                    ah = maxW*h/w
+                    aw = maxW;
+                }
+                if(w<h){
+                    aw = maxH*w/h;
+                    ah = maxH;
+                }
+
+            }else if(w>maxW){
+                aw = maxW
+                ah = maxW* h/w;
+            }else if(h>maxH){
+                ah = maxH;
+                aw = maxH* w/h;
+            }else{
+                aw = w;
+                ah =h;
+            }
+            return{
+                width:aw,
+                height:ah
+            }
+
+        }
+
+        /**
          * 获取图片的模板
          * @param className
          * @param content
          * @returns {string}
          */
         function getPicTpl(className, content, icon){
+            var reg = /(\d+)x(\d+).jpg$/,
+                wh =content.match(reg);
+            var w = wh[1];
+            var h = wh[2];
+            var maxW = 120,
+                maxH = 90,
+                resetCon;
+            var ret = autoToPic(maxW,maxH,w,h);
+            if(w<120||h<90){
+                resetCon = content;
+            }else{
+                resetCon=content.replace(reg,'120x120.jpg');
+            }
             var html = '<dd>'+
                             '<em class="ico_arw"></em>'+
-                            '<a href="javascript:void(0);" title="点击查看大图" data-src="'+content+'" class="event_image_click"><img src="'+content+'" height="90" alt=""></a>'+
+                            '<a href="javascript:void(0);" title="点击查看大图" data-src="'+content+'" class="event_image_click"><img src="'+resetCon+'" alt =""></a>'+
                         '</dd>';
             return getTpl(className, html, icon);
         }
