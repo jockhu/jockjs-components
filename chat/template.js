@@ -238,7 +238,7 @@
                 '12' : '租房 (个人)'
             };
             console.log(content)
-            var url = 'http://chat.anjuke.com/redirect?tradeType='+content.tradeType+'&id='+content.id+'&url='+content.url;
+            var url = '/redirect?tradeType='+content.tradeType+'&id='+(content.id||0)+'&url='+content.url;
             var html = '<dd class="card">'+
                             '<em class="ico_arw"></em>'+
                             '<div class="cardbox cf">'+
