@@ -237,11 +237,13 @@
                 '11' : '写字楼出售 （所有）' ,
                 '12' : '租房 (个人)'
             };
+            console.log(content)
+            var url = 'http://chat.anjuke.com/redirect?tradeType='+content.tradeType+'&id='+content.id+'&url='+content.url;
             var html = '<dd class="card">'+
                             '<em class="ico_arw"></em>'+
                             '<div class="cardbox cf">'+
                                 '<h6>'+h6[content.tradeType]+'</h6>'+
-                                '<a href="'+ content.url + '" class="cbox" target="_blank">'+
+                                '<a href="'+ url + '" class="cbox" target="_blank">'+
                                     '<img src="'+ content.img +'" width="65" height="50">'+
                                     '<p>'+ content.name +'</p>'+
                                     '<p class="gray">'+ content.des +'</p>'+

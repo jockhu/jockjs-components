@@ -148,10 +148,8 @@
                         src =src.replace(/(\d+)x(\d+)$/,ret.width+'x'+ret.height);
                         var imgDom = imgPanel.s('img').eq(0);
                         imgDom.attr('src',src);
-                        if(ret.width>=600||ret.height>=500){
-                            imgDom.attr('width',ret.width);
-                            imgDom.attr('height',ret.height);
-                        }
+                        imgDom.attr('width',ret.width==600?ret.width:'auto');
+                        imgDom.attr('height',ret.height==500 ?ret.height:'auto');
                         /**
                          * 等比例
                          */
