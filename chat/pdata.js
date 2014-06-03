@@ -192,7 +192,7 @@
             };
             J.get({
                 url: buildUrl('house'),
-                json:'json',
+                type:'json',
                 data: param,
                 onSuccess: callback
             });

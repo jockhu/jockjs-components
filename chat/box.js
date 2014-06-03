@@ -339,8 +339,6 @@
                     created:J.getTime()/1000//保证跟服务器时间统一
                 };
 
-
-
                 messageBox = pushMessage(msg);
                 C.pdata.sendMsgToBroker(msg, opts.id, function (ret) {
                     //发送失败处理逻辑
@@ -362,10 +360,8 @@
             //首次发送需要发送房源卡片
             houseId? (function(){
                 J.chat.pdata.getHouseCard(houseId,function(data){
-                    if(!ret.retcode){
+                    if(!data.retcode){
                         //返回正确的房源卡片
-
-
                         sendMessage(3,data.retdata);
                         sendMessage(1,content);
                     }
@@ -427,6 +423,7 @@
          * @returns {HTMLObject}
          */
         function pushMessage(msg){
+            var msg = J.mix({},msg);
             var messageBox,fn,timerDom;
             fn = msg.from_uid == C.uid ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
             if (msg.msg_type!=1 && msg.msg_type!=2 && msg.msg_type!=106&&msg.msg_type!=107) {
