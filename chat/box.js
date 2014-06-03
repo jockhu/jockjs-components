@@ -144,8 +144,8 @@
                         var wh =src.match(/(\d+)x(\d+).jpg$/);
                         var w = wh[1];
                         var h = wh[2];
-                        var ret = autoToPic(w,h)
-                        src =src.replace(/(\d+)x(\d+)$/,ret.width+'x'+ret.height);
+                        var ret = autoToPic(w,h);
+                        src =src.replace(/(\d+)x(\d+)/,ret.width+'x'+ret.height);
                         var imgDom = imgPanel.s('img').eq(0);
                         imgDom.attr('src',src);
                         imgDom.attr('width',ret.width==600?ret.width:'auto');
@@ -324,11 +324,7 @@
                 leaveChatCount=0;
                 txtSend.val(txtSend.val().substr(0,len));
             }
-
-            // calcTextLength = function(){  
-                labTip.html(labTip.html().replace(/\d+/g,leaveChatCount))
-            // }
-            // calcTextLength();
+            labTip.html(labTip.html().replace(/\d+/g,leaveChatCount))
         }
 
 
@@ -427,9 +423,10 @@
                     msg.body = '';
                 }
             }
-//            (msg.msg_type!=1 && msg.msg_type!=2 && msg.msg_type!=106&&msg.msg_type!=107)&&(msg.body = eval('('+ msg.body+')'));
             messageBox = fn(msg.msg_type,msg.body, opts.icon.replace(/\.[a-z]+$/,function(str){return 'c'+str}));//加ｃ
-
+            //经纪人发给用户的图片，改成600*500
+            (msg.msg_type == 2 && msg.to_uid == C.uid) ? msg.body = msg.body.replace(/(\d+)x(\d+)/, '599x499') : null;
+            messageBox = fn(msg.msg_type,msg.body, opts.icon);
             chatList.append(messageBox);
             timerDom = timerTasker(msg.created);
             timerDom&&chatList.append(timerDom);
@@ -440,26 +437,11 @@
 
         /**
          * 查看历史消息
-         * @param msg
-         * {
-                "msg_id": "2000019285",
-                "msg_type": "1",
-                "to_uid": "2000000029",
-                "from_uid": "2000000028",
-                "status": "9",
-                "is_pushed": "0",
-                "created": "1398840350",
-                "account_type": "1",
-                "sync_status": "2",
-                "last_update": "2014-04-30 14:45:52",
-                "body": "哈哈！"
-            };
          * @param
          * @returns {HTMLObject}
          */
         function shiftMessage(msg){
             var messageBox,fn,timerDom;
-            
             fn = msg.from_uid == C.uid ? J.chat.template.getSendMessageTpl: J.chat.template.getShiftMessageTpl;
             if (msg.msg_type!=1 && msg.msg_type!=2 && msg.msg_type!=106&&msg.msg_type!=107) {
                 try {
@@ -468,8 +450,10 @@
                     msg.body = '';
                 }
             }
-//            (msg.msg_type!=1&&msg.msg_type!=2&&msg.msg_type!=106&&msg.msg_type!=107)&&(msg.body = eval('('+ msg.body+')'));
             messageBox = fn(msg.msg_type,msg.body, opts.icon.replace(/\.[a-z]+$/,function(str){return 'c'+str}));//加ｃ
+            //经纪人发给用户的图片，改成600*500
+            (msg.msg_type == 2 && msg.from_uid != C.uid) ? msg.body = msg.body.replace(/(\d+)x(\d+)/, '599x499') : null;
+            messageBox = fn(msg.msg_type,msg.body, opts.icon);
             var dom = chatList.first();
             timerDom = timerTasker(parseInt(msg.created));
             dom ? dom.insertBefore(messageBox):chatList.append(messageBox);
@@ -491,10 +475,6 @@
                 return messageBox;
             }
             //历史消息
-
-
-
-
             return messageBox;
         }
 
