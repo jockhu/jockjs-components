@@ -37,7 +37,7 @@
                         html = '<img src="'+data.pic +'" width="120" height="90">'+
                             '<a href="'+(data.url||'') + '" target="_blank">'+data.title+'</a>'+
                             '<p>'+data.community+'</p>'+
-                            '<p>'+data.room+','+parseInt(data.size)+'平米par</p>'+
+                            '<p>'+data.room+','+parseInt(data.size)+'平米</p>'+
                             '<strong class="ylw">'+parseInt(data.price) +'万</strong>'+
                             '</div>';
                     opts.container.html(html);
