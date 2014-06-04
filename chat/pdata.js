@@ -44,7 +44,7 @@
          *
          */
         /**
-         * ?ï¿½ï¿½?ï¿½?ï¿½ï¿½äººï¿½?ï¿½?         * @param phone ?ï¿½ï¿½?????ï¿½ï¿½???         * @param callback ????ï¿½ï¿½????ï¿½?ï¿½ï¿½å½¢ï¿½?
+         * ?ï¿½ï¿½?ï¿?ï¿½ï¿½äººï¿½?ï¿?         * @param phone ?ï¿½ï¿½?????ï¿½ï¿½???         * @param callback ????ï¿½ï¿½????ï¿?ï¿½ï¿½å½?¿½?
          */
         function getFriends(callback){
             J.get({
@@ -75,7 +75,7 @@
                 },
                 callback: fnName
             });
-            J.chat.pdata['callbackChatList'+(fnid-1)] = function(){alert(1)};
+            J.chat.pdata['callbackChatList'+(fnid-1)] = function(){delete J.chat.pdata['callbackChatList'+(fnid-1)]};
             J.chat.pdata['callbackChatList'+(fnid)] = function(data) {
                 var args = Array.prototype.slice.call(arguments);
                 callback.apply(this, args);
@@ -133,7 +133,7 @@
         }
 
         /**
-         *?ï¿½ï¿½??ï¿½ï¿½?ä¿¡ï¿½?[?ï¿½ï¿½?propIdï¿½??ï¿½?ï¿½ï¿½??
+         *?ï¿½ï¿½??ï¿½ï¿½?ä¿¡ï¿½?[?ï¿½ï¿½?propIdï¿??ï¿?ï¿½ï¿½??
          */
         function getRecomm(brokerId, chatId, propId, callback){
             var param = {};
@@ -141,7 +141,7 @@
                 broker_id: brokerId
             } : param = {
                 broker_cid: chatId
-            };//è‹¥æœ‰borkerIdåˆ™ä¼ å…¥,å¦åˆ™ä¼ å…¥chatid
+            };//?¥æ?borkerId????????ä¼??chatid
             if (propId) {
                 param.prop_id = propId;
             }
@@ -171,14 +171,14 @@
         }
 
         /**
-         *?ï¿½ï¿½?ï¿½?ï¿½ï¿½äººä¿¡??         */
+         *?ï¿½ï¿½?ï¿?ï¿½ï¿½äººä¿¡??         */
         function getBrokerInfo(brokerId,chatId, callback){
             var param = {};
             brokerId ? param = {
                 broker_id: brokerId
             } : param = {
                 broker_cid: chatId
-            };//è‹¥æœ‰borkerIdåˆ™ä¼ å…¥,å¦åˆ™ä¼ å…¥chatid
+            };//?¥æ?borkerId????????ä¼??chatid
             J.get({
                 url: buildUrl('broker'),
                 data: param,
@@ -190,7 +190,7 @@
 
         /*
          *?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?
-         *houseUrl:???ï¿½??propIdï¿½??ï¿½??ï¿½?ing??ï¿½ï¿½?ï¿½ï¿½?
+         *houseUrl:???ï¿??propIdï¿??ï¿??ï¿?ing??ï¿½ï¿½?ï¿½ï¿½?
          */
         function getHouseCard(hosueUrl, callback) {
             var param = {
@@ -205,8 +205,8 @@
         }
 
         /*
-         *ï¿½?????
-         *@param:msgObject???ï¿½??ï¿½?sg_type, body
+         *ï¿?????
+         *@param:msgObject???ï¿??ï¿?sg_type, body
          */
         function sendMsgToBroker(msgObject, brokerId, callback) {
             var param = {

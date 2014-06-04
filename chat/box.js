@@ -160,11 +160,14 @@
 
             })
 
+
+            //地图弹出框关闭
             mapPanel.s('.btn_close').eq(0).on('click',function(){
                 mapPanel.hide();
                 mask.hide();
             })
 
+            //大图弹出框关闭
 
             imgPanel.s('.btn_close').eq(0).on('click',function(){
                 imgPanel.hide();
@@ -238,7 +241,6 @@
             });
 
             if(opts.houseId){
-
                 opts.container=container.s('.finfo').eq(0);
                 var optsBinfo = J.mix({},opts)
                 C.finfo.getPropertyInfo(optsBinfo);
@@ -266,6 +268,8 @@
                     BBlock.show();
                     FBlock.hide();
                 });
+            }else{
+                container.s('.binfo').eq(0).show();
             }
         }
 
