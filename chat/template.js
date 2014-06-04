@@ -170,14 +170,6 @@
                 .replace(/ /g,'&nbsp;');
         }
 
-        /*function decodeTxt(content){
-            return content
-                .replace(/&quot;/g,'"')
-                .replace(/&lt;/g,'<')
-                .replace(/&gt;/g,'>')
-                .replace(/&amp;/g, "&");
-        }*/
-
         /**
          * 生成图片宽高
          *

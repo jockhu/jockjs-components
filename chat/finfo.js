@@ -43,24 +43,6 @@
                     opts.container.html(html);
                 }
             })
-
-            /*var getprop = pdata.getPropertyInfo({
-                container : opts.container,
-                property_id : opts.property_id
-            },function(d){
-                if(d.retcode === 0){
-                    var data = d.retdata,
-                        html = '<img src="'+data.pic +'" width="120" height="90">'+
-                                '<a href="'+(data.url||'') + '" target="_blank">'+data.title+'</a>'+
-                                '<p>'+data.community+'</p>'+
-                                '<p>'+data.size+'</p>'+
-                                '<strong class="ylw">'+data.price/10000+'万</strong>'+
-                            '</div>';
-
-                }else{
-                }
-                opts.container.s('.finfo').eq(0).html(html);
-            });*/
         }
 
         /**

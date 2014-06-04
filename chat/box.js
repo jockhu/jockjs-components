@@ -67,10 +67,6 @@
                 }
             })
 
-           /* Recommend = new C.Recomm(opts);
-            BrokerInfo = new C.Broker(opts);*/
-       //     FInfo = new C.Finfo(opts);
-
             eventBind();
         })();
 
