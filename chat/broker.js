@@ -70,7 +70,7 @@
         * @param count: 新消息数目
         * @param ele: 某个经纪人对应的dom
         */
-        function updateNewMsgCount(count, ele) {  
+        function updateNewMsgCount(count, ele) {
             var pele = ele.s('.infos p'), str;
             if (count > 0) {
 //                count = (count > 99) ? '99+' : count;

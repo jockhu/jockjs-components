@@ -243,9 +243,11 @@
 
             btnShowAll.on('click',function(e){
                 if (peoList.getStyle('display') == 'none') {
+                    btnShowAll.addClass('on');
                     peoList.show();
                 } else {
                     peoList.hide();
+                    btnShowAll.removeClass('on');
                 }
                 
                 e.stop();
