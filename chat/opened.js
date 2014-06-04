@@ -106,7 +106,7 @@
                         // 非IE浏览器强制激活窗口
                         !J.ua.ie && (timerO = setTimeout(function(){
                             listener(false)
-                            // alert('聊天窗口被激活!');
+                            alert('聊天窗口被激活!');
                         },0));
                     }
                 },500)
