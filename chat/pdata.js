@@ -122,8 +122,12 @@
                 data: {
                     'r': Math.random()
                 },
-                timeout: 360000,
+                timeout: 20000,
                 type: 'jsonp',
+                onFailure:function(){
+
+                },
+
                 callback: 'J.chat.pdata.callbackPoll'
             });
             J.chat.pdata.callbackPoll = function() {
