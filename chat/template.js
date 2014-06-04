@@ -285,7 +285,7 @@
                             '<div class="cardbox cf">'+
                                 '<h6>'+h6[content.tradeType]+'</h6>'+
                                 '<a href="'+ url + '" class="cbox" target="_blank">'+
-                                    '<img src="'+ content.img +'" width="65" height="50">'+
+                                    '<img src="'+ content.img +'" width="67" height="50">'+
                                     '<p>'+ content.name +'</p>'+
                                     '<p class="gray">'+ content.des +'</p>'+
                                     '<p class="f14 bold">'+ content.price +'</p>'+
