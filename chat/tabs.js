@@ -126,6 +126,7 @@
          * @param brokerObject
          */
         function remove(brokerObject){
+            if (!brokerObject) return;
             var opts = brokerObject.getOpts();
             var chatId = opts.id;
             var obj = CACHE[chatId];
