@@ -30,10 +30,10 @@
         function buildHtml(item){
             return '<dl class="cf">'+
                 '<dt>'+
-                '<img src="' + item.image +'" width="65" height="50">'+
+                '<a target="_blank" href="'+item.url+'?from=webweiliao"><img src="' + item.image +'" width="65" height="50"></a>'+
                 '</dt>'+
                 '<dd class="fname">'+
-                '<a href="' + (item.url) + '" target="_blank">'+item.title + '</a>'+
+                '<a href="' + (item.url) + '?from=webweiliao" target="_blank">'+item.title + '</a>'+
                 '</dd>'+
                 '<dd class="ylw">'+parseInt(item.price) +'万</dd>'+
             '</dl>';
