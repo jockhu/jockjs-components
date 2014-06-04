@@ -51,14 +51,14 @@
 
 
         function buildHtml(count, lasttime){
-            var msg_html = '';
+            var msg_html = '', dealCount = count;
             if (count > 0) {
-                count = (count > 10) ? '10+' : count;
+                dealCount = (count > 10) ? '10+' : count;
 //                count = (count > 99) ? '99+' : count;
             }
             lasttime = translateTime(lasttime);
             if (count > 0) {
-                msg_html = '<dd class="infos cf"><p class="new"><span class="ylw">' + count + '</span>条新回复</p><p>' + lasttime + '</p></dd>';
+                msg_html = '<dd class="infos cf"><p class="new"><span class="ylw">' + dealCount + '</span>条新回复</p><p>' + lasttime + '</p></dd>';
             } else {
                 msg_html = '<dd class="infos cf"><p>上次聊天：</p><p>' + lasttime + '</p></dd>';
             }
@@ -70,7 +70,7 @@
         * @param count: 新消息数目
         * @param ele: 某个经纪人对应的dom
         */
-        function updateNewMsgCount(count, ele) {
+        function updateNewMsgCount(count, ele) {  
             var pele = ele.s('.infos p'), str;
             if (count > 0) {
 //                count = (count > 99) ? '99+' : count;
