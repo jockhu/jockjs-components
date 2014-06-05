@@ -123,7 +123,8 @@
                 while(target !== chatList.get()){
                     if(target.className.indexOf('event_map_click')>-1){
                         var center = target.getAttribute('data-center');
-                        var text = target.getAttribute('data-content')
+                        var text = target.getAttribute('data-content');
+                        text = cutWords(text, 21);
                         mask.show();
                         mapPanel.show();
                         mapPanel.s('img').eq(0).attr('src','http://api.map.baidu.com/staticimage?center='+center+'&width=600&height=500&zoom=17')
@@ -267,6 +268,18 @@
             }else{
                 container.s('.binfo').eq(0).show();
             }
+        }
+
+        /*
+        * 截字
+        * @txt 需要截断的字
+        * @legnth 截字的长度(例如21,超过21个字符 20+...)
+        *
+        */
+        function cutWords(txt, length) {
+            if (txt && txt.length <= length) return txt;
+            var objectTxt = new String(txt);
+            return (objectTxt.slice(0, length - 1) + '...');
         }
 
         /**

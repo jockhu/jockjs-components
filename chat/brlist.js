@@ -238,16 +238,16 @@
             });
 
             btn_up.on('click',function(){
-                peoList.hide();
+//                peoList.hide();
+                hideBrlistBtn();
             });
 
             btnShowAll.on('click',function(e){
                 if (peoList.getStyle('display') == 'none') {
-                    btnShowAll.addClass('on');
-                    peoList.show();
+                    showBrlistBtn();
+
                 } else {
-                    peoList.hide();
-                    btnShowAll.removeClass('on');
+                    hideBrlistBtn();
                 }
                 
                 e.stop();
@@ -256,13 +256,29 @@
             peoList.on('click',function(e){
                 e.stop();
             });
-            J.g(document).on('click',function(){  
-                peoList.hide();
+            J.g(document).on('click',function(){
+                hideBrlistBtn();
+//                peoList.hide();
             });
 
             listenNewBroker();
 
+            /*
+             * '所有经纪人'
+             */
+            function showBrlistBtn() {
+                btnShowAll.addClass('on');
+                peoList.show();
+            }
+
+            function hideBrlistBtn() {
+                btnShowAll.removeClass('on');
+                peoList.hide();
+            }
+
         }
+
+
 
         function updateEvent() {
             listBox.s('.cf').each(function(k, v) {
