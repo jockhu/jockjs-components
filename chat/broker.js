@@ -76,8 +76,10 @@
 //                count = (count > 99) ? '99+' : count;
                 count = (count > 10) ? '10+' : count;
                 str = '<span class="ylw">' + count + '</span>条新回复';
+                pele.eq(0).get().className = 'new';
             } else {
                 str = '上次聊天：';
+                pele.eq(0).get().className = '';
             }
             pele.length && pele.eq(0).html(str);
             buildHtml(count, opts.lasttime); 
