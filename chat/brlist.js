@@ -238,7 +238,6 @@
             });
 
             btn_up.on('click',function(){
-//                peoList.hide();
                 hideBrlistPanel();
             });
 
@@ -258,7 +257,6 @@
             });
             J.g(document).on('click',function(){
                 hideBrlistPanel();
-//                peoList.hide();
             });
 
             listenNewBroker();

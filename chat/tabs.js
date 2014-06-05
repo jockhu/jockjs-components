@@ -89,15 +89,15 @@
         /*
         *  判断是否超过500个联系人，超过给提示
         */
-        function exceedBrokersTip() {
-            var length = C.brlist.getListCount();
-            if (length >= 500) {
-                //弹出提示框
-
-                return true;
-            }
-            return false;
-        }
+//        function exceedBrokersTip() {
+//            var length = C.brlist.getListCount();
+//            if (length >= 500) {
+//                //弹出提示框
+//
+//                return true;
+//            }
+//            return false;
+//        }
 
         /*
         * 联系人有删除，自动删除对应tab及box
