@@ -45,6 +45,8 @@
                 //如果只有一个ｔａｂ　,则不显示关闭
                 tabCount++;
                 autoHideCloseTab();
+                //从单页过来联系人列表不展示
+                opts.houseId && C.brlist.hideBrlistPanel();
                 currentChatId && (CACHE[chatId].prev = CACHE[currentChatId]);
                 currentChatId && CACHE[currentChatId] && (CACHE[currentChatId].next = CACHE[chatId]);
             }

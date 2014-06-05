@@ -239,15 +239,15 @@
 
             btn_up.on('click',function(){
 //                peoList.hide();
-                hideBrlistBtn();
+                hideBrlistPanel();
             });
 
             btnShowAll.on('click',function(e){
                 if (peoList.getStyle('display') == 'none') {
-                    showBrlistBtn();
+                    showBrlistPanel();
 
                 } else {
-                    hideBrlistBtn();
+                    hideBrlistPanel();
                 }
                 
                 e.stop();
@@ -257,7 +257,7 @@
                 e.stop();
             });
             J.g(document).on('click',function(){
-                hideBrlistBtn();
+                hideBrlistPanel();
 //                peoList.hide();
             });
 
@@ -266,16 +266,21 @@
             /*
              * '所有经纪人'
              */
-            function showBrlistBtn() {
+            function showBrlistPanel() {
                 btnShowAll.addClass('on');
                 peoList.show();
             }
 
-            function hideBrlistBtn() {
-                btnShowAll.removeClass('on');
-                peoList.hide();
-            }
+        }
 
+        /*
+        * 隐藏联系人列表的面板
+        */
+        function hideBrlistPanel() {
+            var peoList = J.g('peoList'),
+                btnShowAll = J.g("btnShowAll");
+            btnShowAll.removeClass('on');
+            peoList.hide();
         }
 
 
@@ -321,6 +326,7 @@
 
         return {
             init: init,
+            hideBrlistPanel: hideBrlistPanel,
             getBrokerInfo: getBrokerInfo,
             update: update,
             BROKERSCACHE: BROKERSCACHE,
