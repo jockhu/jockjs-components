@@ -22,7 +22,7 @@
 
         var opts = {
             apiDomain : C.isDev ? 'http://chatapi.dev.anjuke.com' : C.isPg ? 'http://chatapi.anjuke.test': 'http://api.anjuke.com/weiliao',
-            longDomain: (C.isDev || C.isPg) ? 'http://dev.aifang.com:8080/register' : 'http://push10.anjuke.com'
+            longDomain: (C.isDev || C.isPg) ? 'http://dev.aifang.com:8080/register' : 'http://push10.anjuke.com/register'
         }, fnid=0;
 
         function buildUrl(type){ 
@@ -44,7 +44,7 @@
          *
          */
         /**
-         * ?ï¿½ï¿½?ï¿?ï¿½ï¿½äººï¿½?ï¿?         * @param phone ?ï¿½ï¿½?????ï¿½ï¿½???         * @param callback ????ï¿½ï¿½????ï¿?ï¿½ï¿½å½?¿½?
+         * ?ï¿½ï¿½?ï¿½?ï¿½ï¿½äººï¿½?ï¿½?         * @param phone ?ï¿½ï¿½?????ï¿½ï¿½???         * @param callback ????ï¿½ï¿½????ï¿½?ï¿½ï¿½ï¿½?ï¿½ï¿½?
          */
         function getFriends(callback){
             J.get({
@@ -137,7 +137,7 @@
         }
 
         /**
-         *?ï¿½ï¿½??ï¿½ï¿½?ä¿¡ï¿½?[?ï¿½ï¿½?propIdï¿??ï¿?ï¿½ï¿½??
+         *?ï¿½ï¿½??ï¿½ï¿½?ä¿¡ï¿½?[?ï¿½ï¿½?propIdï¿½??ï¿½?ï¿½ï¿½??
          */
         function getRecomm(brokerId, chatId, propId, callback){
             var param = {};
@@ -145,7 +145,7 @@
                 broker_id: brokerId
             } : param = {
                 broker_cid: chatId
-            };//?¥æ?borkerId????????ä¼??chatid
+            };//?ï¿½ï¿½?borkerId????????ï¿½??chatid
             if (propId) {
                 param.prop_id = propId;
             }
@@ -175,14 +175,14 @@
         }
 
         /**
-         *?ï¿½ï¿½?ï¿?ï¿½ï¿½äººä¿¡??         */
+         *?ï¿½ï¿½?ï¿½?ï¿½ï¿½äººä¿¡??         */
         function getBrokerInfo(brokerId,chatId, callback){
             var param = {};
             brokerId ? param = {
                 broker_id: brokerId
             } : param = {
                 broker_cid: chatId
-            };//?¥æ?borkerId????????ä¼??chatid
+            };//?ï¿½ï¿½?borkerId????????ï¿½??chatid
             J.get({
                 url: buildUrl('broker'),
                 data: param,
@@ -194,7 +194,7 @@
 
         /*
          *?ï¿½ï¿½??ï¿½ï¿½??ï¿½ï¿½?
-         *houseUrl:???ï¿??propIdï¿??ï¿??ï¿?ing??ï¿½ï¿½?ï¿½ï¿½?
+         *houseUrl:???ï¿½??propIdï¿½??ï¿½??ï¿½?ing??ï¿½ï¿½?ï¿½ï¿½?
          */
         function getHouseCard(hosueUrl, callback) {
             var param = {
@@ -209,8 +209,8 @@
         }
 
         /*
-         *ï¿?????
-         *@param:msgObject???ï¿??ï¿?sg_type, body
+         *ï¿½?????
+         *@param:msgObject???ï¿½??ï¿½?sg_type, body
          */
         function sendMsgToBroker(msgObject, brokerId, callback) {
             var param = {
