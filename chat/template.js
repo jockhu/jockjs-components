@@ -53,7 +53,7 @@
             if(type!=106 && type!=107){
                 return FUNS[type]('jjr',content, icon);
             }else{
-                return FUNS[type](content);
+                return FUNS[type]('', content);
             }
         }
 
@@ -320,7 +320,7 @@
          * @param content
          * @returns {string}
          */
-        function getSysTpl(content){
+        function getSysTpl(className, content){
             var dom = J.create('div',{
                 'class' : 'ct'
             }).html('<div class="notice">' + content + '</div>');
