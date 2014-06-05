@@ -251,7 +251,7 @@
 
                 var FBlock = FB_Block.eq(0);
                 var BBlock = FB_Block.eq(1);
-
+                FBlock.show();
                 aF.on('click',function(){
                     aF.addClass('now');
                     aB.removeClass('now');
