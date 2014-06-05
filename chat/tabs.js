@@ -105,7 +105,7 @@
         function autoDeleBroker() {
             J.each(CACHE, function(k, v) {
                 if (!C.brlist.BROKERSCACHE[v.id]) {
-                    remove(v);
+                    remove(C.brlist.BROKERSCACHE[v.id].getBrokerObject());
                     return;
                 }
             });

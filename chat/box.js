@@ -541,6 +541,11 @@
         }
 
 
+
+        function getBrokerObject(){
+            return brokerObject;
+        }
+
         function updateMessage(msgCount){
             J.chat.pdata.getChatDetail(opts.id, maxMsgId, 0, 500, function(data){ //可能有系统消息
                 if(data.status == 'OK'){ 
@@ -562,7 +567,8 @@
             updateMessage:updateMessage,
             id:opts.id,
             showCloseButton:Tab.showCloseButton,
-            hideCloseButton:Tab.hideCloseButton
+            hideCloseButton:Tab.hideCloseButton,
+            getBrokerObject:getBrokerObject
         }
     }
     C.Box = Box;
