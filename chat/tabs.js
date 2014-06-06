@@ -80,7 +80,7 @@
         function exceedTabsTip() {   
             if (tabCount >= 19) {
                 //弹出提示框
-                alert('同时聊天数达到上限，请先关闭部分经济人的聊天窑口');
+                alert('同时聊天数达到上限，请先关闭部分经纪人的聊天窗口');
                 return true;
             }
             return false;
