@@ -170,6 +170,7 @@
                 //若有联系人删除，则需要发送消息给tabs，判断是否需要关闭当前tab
                 sendMsgToTabs(brLen, brokersNum);
                 updateEvent();
+
             }
         }
 
@@ -198,8 +199,8 @@
         /*
         *若有联系人删除，则需要发送消息给tabs，判断是否需要关闭当前tab
         */
-        function sendMsgToTabs(brLen, brokersNum){
-            if (brLen != brokersNum) { //表明有联系人删除
+        function sendMsgToTabs(brLen_after, brokersNum_before){
+            if (brLen_after < brokersNum_before && brokersNum_before != 0) { //表明有联系人删除
                 C.tabs.autoDeleBroker();
             }
         }
