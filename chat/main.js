@@ -38,10 +38,6 @@
             J.each(['brlist','brlistNum','allUnreadMsg','tabContainer'], function(i, v){
                 container[v] = J.g(v);
             });
-            //长轮询
-            C.uid = cookie.getCookie('chat_uid');
-            C.guid = cookie.getCookie('aQQ_ajkguid');
-            C.auth = cookie.getCookie('auth');
 
             opened.setSuccess(function(oInfo){
                 showTab(oInfo)
@@ -100,6 +96,11 @@
 
         function start(data){
             var telNumber = data.telNumber;
+            //长轮询
+            C.uid = cookie.getCookie('chat_uid');
+            C.guid = cookie.getCookie('aQQ_ajkguid');
+            C.auth = cookie.getCookie('auth');
+            
             J.chat.phone =telNumber; //1
             C.brlist.init();//需要phone作为参数
             showTab(opened.getInfo());
