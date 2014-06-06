@@ -64,6 +64,9 @@
                     J.each(data.result,function(k,v){
                         shiftMessage(v);
                     })
+                    //滚动条滚动至最下方
+                    chatBox = container.s(".chatbox").eq(0);
+                    chatBox && (chatBox.get().scrollTop =1000000);
                 }
             })
 
