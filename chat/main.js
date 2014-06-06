@@ -111,10 +111,16 @@
 
         function callbackPollListener(data) {
             //当data.result返回的是string时，它表示某种原因断开
-            if (data && data.status == 'OK' && (typeof data.result == 'object')) {
+            if(!data){
+                C.pdata.getPollListener(callbackPollListener);
+                return;
+            }
+
+
+            if ( data.status == 'OK' && (typeof data.result == 'object')) {
                 C.pdata.getChatList(function(ret){
                     C.brlist.update(ret);
-                    pdata.getPollListener(callbackPollListener);
+                    C.pdata.getPollListener(callbackPollListener);
                 });
             }
 

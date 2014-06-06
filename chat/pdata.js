@@ -25,12 +25,12 @@
             longDomain: (C.isDev || C.isPg) ? 'http://dev.aifang.com:8080/register' : 'http://push10.anjuke.com/register'
         }, fnid=0;
 
-        function buildUrl(type){ 
+        function buildUrl(type){
             var urls = {
                 'friends': opts.apiDomain + '/user/getFriends/' + C.phone,
                 'chatlist': opts.apiDomain + '/message/getChatList',
                 'friend': opts.apiDomain + '/user/getFriendInfo/' + C.phone + '/',
-                'poll': opts.longDomain + '/' + C.guid + '/w-ajk-user-chat/' + C.uid+'?auth='+C.auth,
+                'poll': opts.longDomain + '/' + C.guid + '/w-ajk-user-chat/' + C.uid,
                 'recomm': '/api/rec',
                 'property': '/property/info',
                 'house': '/property/card/ershou',
@@ -57,7 +57,7 @@
             });
 
             J.chat.pdata.callbackFriends = function(){
-                var arg = Array.prototype.slice(arguments); 
+                var arg = Array.prototype.slice(arguments);
                 callback.apply(this, arguments);
             }
         }
@@ -113,28 +113,113 @@
             }
         }
 
+        var num =0;
         /**
          *
          */
-        function getPollListener(callback){  
-            J.get({
+        function getPollListener(callback){
+            console.error('begain:',num++)
+            jsonp({
                 url: buildUrl('poll'),
                 data: {
+                    'auth':C.auth,
                     'r': Math.random()
                 },
-                timeout: 20000,
+                timeout: 5000,
                 type: 'jsonp',
-                onFailure:function(){
-
+                onFailure:function(data){
+                    callback(data)
                 },
-
-                callback: 'J.chat.pdata.callbackPoll'
+                onSuccess:function(data){
+                    callback(data)
+                }
             });
-            J.chat.pdata.callbackPoll = function() {
-                var args = Array.prototype.slice.call(arguments);
-                callback.apply(this, args);
+            /* J.chat.pdata.callbackPoll = function() {
+             var args = Array.prototype.slice.call(arguments);
+             callback.apply(this, args);
+             }*/
+        }
+
+
+
+        function jsonp(option){
+            var opts= {
+                url:'',
+                data:{},
+                onSuccess:function(){},
+                onFailure:function(){},
+                timeout:20000
+            }
+            opts = J.mix(opts,option)
+            var script = document.createElement("script");
+            var head =  document.head || document.getElementsByTagName("head")[0];
+            var strParams = '?';
+            var params = opts.data;
+            timer = setTimeout(timeout,opts.timeout)
+            var funObj = getGuidFun(opts.onSuccess,timer);
+            params.callback = funObj.name;
+            var timer;
+            for(var i in params){
+                strParams+=i+'='+params[i]+'&';
+            }
+            script.src=opts.url+strParams;
+            head.appendChild(script);
+            script.onload=script.onreadystatechange = function(_, isAbort){
+                if (isAbort || !script.readyState || /loaded|complete/.test(script.readyState)) {
+                    script.onload = script.onreadystatechange = null;
+                    if ( head && script.parentNode ) {
+                        head.removeChild( script );
+                    }
+                    script = undefined
+                }
+            }
+
+            function timeout(){
+                opts.onFailure();
+                abort();
+                timer = undefined;
+                funObj.destoryFun();
+            }
+
+
+            function abort(){
+                script&&script.onload(null,true);
+            }
+            return {
+                abort:abort
             }
         }
+
+        function getGuidFun(callback,timer){
+            var guid =0;
+            getGuidFun =function(callback,timer){
+                return (function(id){
+                    var funName ='callback_chat'+id;
+                    destoryFun();
+                    window[funName] = function(){
+                        timer&&clearTimeout(timer);
+                        var args = Array.prototype.slice.call(arguments);
+                        callback.apply(null,args);
+                        delete window[funName];
+                    }
+                    id++;
+                    function destoryFun(){
+                        var d_id = id-1;
+                        window['callback_chat'+(d_id)]&&(window['callback_chat'+(d_id)] = function(){
+                            delete window['callback_chat'+(d_id)];
+                        })
+                    }
+                    return {
+                        name:funName,
+                        destoryFun:destoryFun
+                    }
+
+                })(++guid);
+
+            }
+            return getGuidFun(callback,timer);
+        }
+
 
         /**
          *?��??��?信�?[?��?propId�??�?��??
@@ -163,8 +248,8 @@
          */
         function getPropertyInfo(propId, callback){
             var param = {
-                    property_id: propId
-                };
+                property_id: propId
+            };
             J.get({
                 url: buildUrl('property'),
                 data: param,
@@ -214,11 +299,11 @@
          */
         function sendMsgToBroker(msgObject, brokerId, callback) {
             var param = {
-                    phone: C.phone,
-                    body: msgObject.body,
-                    msg_type: msgObject.msg_type,
-                    to_uid: brokerId
-                };
+                phone: C.phone,
+                body: msgObject.body,
+                msg_type: msgObject.msg_type,
+                to_uid: brokerId
+            };
             J.get({
                 url: buildUrl('sendmessage'),
                 data: param,
