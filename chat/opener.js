@@ -21,7 +21,7 @@
      */
     function Opener(){
 
-        var cookieObj = J.cookie, cookie= C.cookie, windowOpenr = C.windowOpener,
+        var cookieObj = J.cookie, cookie= C.cookie, windowOpenr = C.windowOpener,conf,
             timer = null;
 
         /**

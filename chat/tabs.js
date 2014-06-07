@@ -176,6 +176,11 @@
             }
         }
 
+
+        function getCurrentBox(){
+            return CACHE;
+        }
+
         return {
             show: show,
             // hide: hide,
@@ -184,7 +189,8 @@
             setActiveChatId: setActiveChatId,
             updateUnreadMsg: updateUnreadMsg,
             calcTabsWidth: calcTabsWidth,
-            autoDeleBroker: autoDeleBroker
+            autoDeleBroker: autoDeleBroker,
+            getCurrentBox:getCurrentBox
         }
     }
 

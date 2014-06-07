@@ -68,18 +68,15 @@
         }
 
         function showTab(oInfo){
-            var brokerObj;
-            function show(broker){
-                C.tabs.show(broker);
-            }
-
-            if( brokerObj = C.brlist.getBrokerInfo(oInfo.brokerId) ){
-                show(brokerObj)
+            var boxObject;
+            if( boxObject = C.tabs.getCurrentBox()[oInfo.chatId]){
+                boxObject.show();
             }else{
+                if(!oInfo.brokerId&&!oInfo.chatId)return;
                 pdata.getBrokerInfo(oInfo.brokerId, oInfo.chatId, function(res){
                     if (!res.retcode) {
                         var data = res.retdata;
-                        show(new C.Broker({
+                        C.tabs.show(new C.Broker({
                             icon: data.photo,
                             name: data.name,
                             brokerId: oInfo.brokerId,
@@ -100,7 +97,9 @@
             C.uid = cookie.getCookie('chat_uid');
             C.guid = cookie.getCookie('aQQ_ajkguid');
             C.auth = cookie.getCookie('auth');
-            
+            //开始监听ｃｏｏｋｉｅ值　变化
+            C.opened.start();
+
             J.chat.phone =telNumber; //1
             C.brlist.init();//需要phone作为参数
             showTab(opened.getInfo());

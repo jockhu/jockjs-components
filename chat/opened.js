@@ -22,18 +22,14 @@
     function Opened(){
 
         var onSuccess = null, timerI = null, timerO = null, cookieValue = '', newCookieValue = '',
-            cookieObj = J.cookie, cookie= C.cookie, locked = false;
+            cookieObj = J.cookie, cookie= C.cookie, locked = false,conf;
 
         (function(){
             // 不管什么情况，打开聊天对话框就设置为打开状态
             setOpenedStatus(2);
             // 如果cookie配置为null直接退出
             if(!(cookieValue=getOpenedConf())) W.close();
-            listener(true);
-            W.onblur = startListener;
-            W.onfocus = stopListener;
-            //J.D.onclick = stopListener;
-            W.onbeforeunload = beforeunload;
+
 
         })();
 
@@ -42,8 +38,10 @@
             locked = true;
         }
 
-        function stopListener(){
-            if(!locked){
+        function stopListener(e){
+            var e = e || window.event;
+            var target = e.target || e.srcElement;
+            if(!locked&&target == document.documentElement){
                 listener(false)
             }
         }
@@ -53,6 +51,16 @@
                 listener(true)
             }
         }
+
+
+        function start(){
+            listener(true);
+            W.onblur = startListener;
+            W.onfocus = stopListener;
+            J.D.onclick = stopListener;
+            W.onbeforeunload = beforeunload;
+        }
+
 
         /**
          * 设置窗口状态
@@ -95,9 +103,11 @@
             timerI && clearInterval(timerI);
             timerO && clearTimeout(timerO);
             !listened && (cookieValue = getOpenedConf(), doSuccess());
+
             if(listened){
                 timerI = W.setInterval(function(){
-                    if( cookieValue != getOpenedConf() ) {
+                    if( cookieValue != getOpenedConf()) {
+
                         setOpenedStatus(2);
                         cookieValue = newCookieValue;
                         clearTimeout(timerO);
@@ -176,7 +186,9 @@
             getInfo: getInfo,
             close: close,
             setView: setView,
-            setSuccess: setSuccess
+            setSuccess: setSuccess,
+            startListener:startListener,
+            start:start
         }
     }
 
