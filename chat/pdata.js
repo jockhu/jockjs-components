@@ -199,13 +199,13 @@
                         timer&&clearTimeout(timer);
                         var args = Array.prototype.slice.call(arguments);
                         callback.apply(null,args);
-                        delete window[funName];
+                        window[funName] = undefined;
                     }
                     id++;
                     function destoryFun(){
                         var d_id = id-1;
                         window['callback_chat'+(d_id)]&&(window['callback_chat'+(d_id)] = function(){
-                            delete window['callback_chat'+(d_id)];
+                           window['callback_chat'+(d_id)]=undefined;
                         })
                     }
                     return {
