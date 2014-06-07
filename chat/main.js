@@ -50,7 +50,7 @@
 
         })();
 
-        function changeHeight(){
+        function changeHeight(){ 
             var ch = document.documentElement.clientHeight||document.body.clientHeight,
             chatbox = J.s('.chatbox'),
             othbox = J.s('.othslist');
@@ -143,7 +143,8 @@
             return false;
         }
         return {
-            start:start
+            start:start,
+            changeHeight: changeHeight
         }
     }
 
