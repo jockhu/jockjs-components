@@ -29,6 +29,8 @@
             setOpenedStatus(2);
             // 如果cookie配置为null直接退出
             if(!(cookieValue=getOpenedConf())) W.close();
+            W.onbeforeunload = beforeunload;
+
 
 
         })();
@@ -59,7 +61,7 @@
             W.onblur = startListener;
             W.onfocus = stopListener;
             J.D.onclick = stopListener;
-            W.onbeforeunload = beforeunload;
+
         }
 
 
