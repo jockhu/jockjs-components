@@ -54,7 +54,7 @@
 
         function fillList(data){   
             if (data.status == 'OK' && data.result) {
-                fillData(data.result); 
+                fillData(data.result);
                 C.pdata.getChatList(update);
             }
         }

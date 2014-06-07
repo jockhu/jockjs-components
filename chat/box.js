@@ -373,7 +373,7 @@
                         //brlist 里面没有数据的情况下，发送消息添加联系人
                         if(type != 3 && !J.chat.brlist.BROKERSCACHE[opts.id]){
                             opts.created = msg.created;
-                            J.fire(document,'chat:newBroker',opts)
+                            J.fire(document,'chat:newBroker',opts);
                         }
                     }
                 });
@@ -550,6 +550,7 @@
         }
 
         function updateMessage(msgCount){
+            if (msgCount <= 0 ) return;
             J.chat.pdata.getChatDetail(opts.id, maxMsgId, 0, 500, function(data){ //可能有系统消息
                 if(data.status == 'OK'){ 
                     //与返回的数据顺序相反
