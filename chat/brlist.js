@@ -89,6 +89,7 @@
             function addBroker(e) {  
                 var data = e.data, listBoxDom = listBox.get();
                 var firstEle = listBoxDom.firstChild, brObj, appendDom, createdTime = data.created * 1000;
+                brObj = BROKERSCACHE[data.id];
                 (!BROKERSCACHE[data.id]) && (brObj = BROKERSCACHE[data.id] = new C.Broker({
                     id: data.id,
                     brokerId: data.brokerId,
