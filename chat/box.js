@@ -389,6 +389,7 @@
                     }
                 });
             })():sendMessage(type,content);
+            J.site.trackEvent('chat_user_count')
         }
 
 
