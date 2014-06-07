@@ -118,7 +118,6 @@
          *
          */
         function getPollListener(callback){
-            	console.error('begain:',num++);
 		jsonp({
                 url: buildUrl('poll'),
                 data: {
