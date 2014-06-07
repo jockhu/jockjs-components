@@ -364,7 +364,7 @@
                 messageBox = pushMessage(msg);
                 C.pdata.sendMsgToBroker(msg, opts.id, function (ret) {
                     //发送失败处理逻辑
-                    if ( ret.retcode == -1) {
+                    if ( ret.retcode ) {
                         sendError(msg.body,messageBox);
                         return false;
                     }
