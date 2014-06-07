@@ -371,7 +371,7 @@
                     if(!ret.retcode){
                         !maxMsgId&&(maxMsgId = ret.retdata.result);
                         //brlist 里面没有数据的情况下，发送消息添加联系人
-                        if(type != 3 && !J.chat.brlist.BROKERSCACHE[opts.id]){
+                        if(type != 3 && !C.brlist.BROKERSCACHE[opts.id]){
                             opts.created = msg.created;
                             J.fire(document,'chat:newBroker',opts);
                         }
