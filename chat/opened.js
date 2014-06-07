@@ -42,6 +42,7 @@
             var e = e || window.event;
             var target = e.target || e.srcElement;
             if(!locked&&target == document.documentElement){
+              //  !J.getCookie('AUTHTOKEN')&&window.close();
                 listener(false)
             }
         }
