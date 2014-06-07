@@ -118,13 +118,14 @@
          *
          */
         function getPollListener(callback){
-            jsonp({
+            	console.error('begain:',num++);
+		jsonp({
                 url: buildUrl('poll'),
                 data: {
                     'auth':C.auth,
                     'r': Math.random()
                 },
-                timeout: 15000,
+                timeout: 5000,
                 type: 'jsonp',
                 onFailure:function(data){
                     callback(data)
