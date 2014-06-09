@@ -229,7 +229,7 @@
             }
             var html = '<dd>'+
                             '<em class="ico_arw"></em>'+
-                            '<a href="javascript:void(0);" title="点击查看大图" data-src="'+content+'" class="event_image_click"><img src="'+resetCon+'" alt =""></a>'+
+                            '<a href="javascript:void(0);" onclick="return false;" title="点击查看大图" data-src="'+content+'" class="event_image_click"><img src="'+resetCon+'" alt =""></a>'+
                         '</dd>';
             return getTpl(className, html, icon);
         }
@@ -248,7 +248,7 @@
 
             var html = '<dd>'+
                             '<em class="ico_arw"></em>'+
-                            '<a href="javascript:void(0);" title="点击查看地图" data-content="'+text +'" data-center="'+ lng + ',' + lat +'" class="map event_map_click">'+
+                            '<a href="javascript:void(0);" onclick="return false;" title="点击查看地图" data-content="'+text +'" data-center="'+ lng + ',' + lat +'" class="map event_map_click">'+
                                 '<img src="http://api.map.baidu.com/staticimage?center='+ lng + ',' + lat +'&width=300&height=200&zoom=17" width="120" height="120" alt="">'+
                                 '<i class="ico_c"></i>'+
                                 '<span class="msk"></span>'+
