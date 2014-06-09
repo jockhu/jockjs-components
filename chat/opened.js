@@ -130,7 +130,7 @@
 
         function doSuccess(){
             if( onSuccess ){
-                var conf = cookieValue && cookieValue.match(/(\d+)\.(\d+)\.(\d+)$/);
+                var conf = cookieValue && cookieValue.match(/(\d+)\.(\d+)\.(\d+)\.(\d+)$/);
                 onSuccess(conf ? {
                     brokerId:conf[1],
                     propId:conf[2],
