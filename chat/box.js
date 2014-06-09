@@ -145,8 +145,8 @@
                         src =src.replace(/(\d+)x(\d+)/,ret.width+'x'+parseInt(ret.height));
                         var imgDom = imgPanel.s('img').eq(0);
                         imgDom.attr('src',src);
-                        imgDom.attr('width',ret.width==600?ret.width:'auto');
-                        imgDom.attr('height',ret.height==500 ?ret.height:'auto');
+                        //imgDom.attr('width',ret.width==600?ret.width:'auto');
+                        //imgDom.attr('height',ret.height==500 ?ret.height:'auto');
                         /**
                          * 等比例
                          */
