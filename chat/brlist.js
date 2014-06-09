@@ -328,6 +328,10 @@
             return BROKERSCACHE[brokerId];
         }
 
+        function getUnreadMsgCount() {
+            return allUnreadMsgNum;
+        }
+
 
         return {
             init: init,
@@ -335,6 +339,7 @@
             getBrokerInfo: getBrokerInfo,
             update: update,
             BROKERSCACHE: BROKERSCACHE,
+            getUnreadMsgCount: getUnreadMsgCount,
             getListCount:getListCount,
             showAllUnreadMsgCount: showAllUnreadMsgCount,
             updateOnlyMsgCount: updateOnlyMsgCount

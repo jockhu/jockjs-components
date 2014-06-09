@@ -519,7 +519,7 @@
             container.show();
             //根据未读消息数请求聊天记录，且联系人列表未读消息数更新
             (unReadMsg > 0) ? updateMessage(unReadMsg) : null;
-            C.brlist.showAllUnreadMsgCount(C.brlist.allUnreadMsgNum - unReadMsg);
+            C.brlist.showAllUnreadMsgCount(C.brlist.getUnreadMsgCount() - unReadMsg);
             C.brlist.updateOnlyMsgCount(brObject);
         }
 
