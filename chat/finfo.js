@@ -34,7 +34,7 @@
             C.pdata.getPropertyInfo(opts.houseId, opts.cityId, function(data){
                 if(!data.retcode){
                     var data = data.retdata,
-                        html = '<img src="'+data.pic +'" width="120" height="90">'+
+                        html = '<a href="'+(data.url||'') + '" target="_blank">' + '<img src="'+data.pic +'" width="120" height="90"></a>'+
                             '<a href="'+(data.url||'') + '" target="_blank">'+data.title+'</a>'+
                             '<p>'+data.community+'</p>'+
                             '<p>'+data.room+','+parseInt(data.size)+'平米</p>'+
@@ -53,11 +53,11 @@
                 if(!data.retcode){
                     var data = data.retdata,
                         html = '<dl class="cf">'+
-                            '<dt><a href="data.url" target="_blank"><img src="'+data.photo+'" width="100" height="135"></a</dt>'+
+                            '<dt><img src="'+data.photo+'" width="100" height="135"></dt>'+
                             '<dd>'+data.name+'</dd>'+
                             '<dd>'+data.phone+'</dd>'+
-                            '<dd><a href="'+(data.url)+'" target="_blank">'+data.company+'</a></dd>'+
-                            '<dd><a href="'+(data.url)+'" target="_blank">'+(data.store)+'</a></dd>'+
+                            '<dd><a href="'+(data.url||'')+'" target="_blank">'+data.company+'</a></dd>'+
+                            '<dd><a href="'+(data.url||'')+'" target="_blank">'+(data.store)+'</a></dd>'+
                             '</dl>'+
                             '<div class="ct"><a href="'+(data.more_url)+'" class="btn_more" target="_blank">查看TA的更多房源</a></div>'+
                             '</div>';
