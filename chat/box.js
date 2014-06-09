@@ -145,8 +145,6 @@
                         src =src.replace(/(\d+)x(\d+)/,ret.width+'x'+parseInt(ret.height));
                         var imgDom = imgPanel.s('img').eq(0);
                         imgDom.attr('src',src);
-                        //imgDom.attr('width',ret.width==600?ret.width:'auto');
-                        //imgDom.attr('height',ret.height==500 ?ret.height:'auto');
                         /**
                          * 等比例
                          */
@@ -166,6 +164,11 @@
                 mapPanel.hide();
                 mask.hide();
             })
+            //ie6样式错乱--地图大图下方的文字描述位置
+            mapPanel.s('.btn_close').eq(0).on('mouseenter', function() {
+                //ie6
+                (J.ua.ua.indexOf('MSIE 6') > -1) && (mapPanel.s('.ct').eq(0).setStyle('left', '-50%'));
+            });
 
             //大图弹出框关闭
 
