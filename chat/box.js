@@ -142,7 +142,7 @@
                         var w = wh[1];
                         var h = wh[2];
                         var ret = autoToPic(w,h)
-                        src =src.replace(/(\d+)x(\d+)/,ret.width+'x'+parseInt(ret.height));
+                        src =src.replace(/(\d+)x(\d+)/,parseInt(ret.width)+'x'+parseInt(ret.height));
                         var imgDom = imgPanel.s('img').eq(0);
                         imgDom.attr('src',src);
                         /**
