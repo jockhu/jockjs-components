@@ -13,7 +13,7 @@
     var a = '.anjuke', c = 'soj.dev.aifang', cm = '.com', h = J.D.location.host, http = 'http://', isDev = /dev|test/.test(h),
         logUrl = http + ( isDev ? c + cm : 'm' + a + cm ) + '/ts.html',
         sojUrl = http + (isDev ? c + cm : 's' + a + cm) + '/stb',
-        s = h.match(/^(\w+)\.(\w+)\./), site = /iPad/.test(J.ua.ua) ? 'pad' : s ? s[1] === 'm' ? 'touch' : 'pc' : 'unknow', eC = encodeURIComponent;
+        s = h.match(/^(\w+)\.(\w+)\./), site = /iPad/.test('iPad') ? 'pad' : s ? s[1] === 'm' ? 'touch' : s[2] === 'fang' ? 'fang' : 'pc' : 'unknown', eC = encodeURIComponent;
 
     J.add('logger', {
         site: site,
@@ -22,7 +22,6 @@
         isDev:isDev,
         autoLogger:true,
         onError:null,
-        add: add,
         log: log,
         setBackList: setBackList
     });
@@ -80,29 +79,6 @@
             }
         });
         return cM + m.join(',')
-    }
-
-    function add(instance){
-        /*for (item in instance || {}){
-            if(J.isFunction( instance[item] )){
-                applyLogger(instance, item);
-            }
-        }
-
-        function applyLogger(instance, item){
-            var method = instance[item];
-            if(method.logged) return false;
-            instance[item] = function(method){
-                return function(){
-                    try{
-                        return method.apply(this, arguments);
-                    }catch(ex){
-                        log(ex)
-                    }
-                }
-            }(method);
-            method.logged = true;
-        }*/
     }
 
     J.W.onerror = function(message, url, line){
