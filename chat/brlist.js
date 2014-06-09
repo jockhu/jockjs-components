@@ -192,11 +192,13 @@
                 unreadMsgNum = (unreadMsgNum > 10) ? '10+' : unreadMsgNum;
                 C.container.allUnreadMsg.html(unreadMsgNum);
                 C.container.allUnreadMsg.show();
-                allUnreadMsgNum = unreadMsgNum;
+
             } else {
                 C.container.allUnreadMsg.hide();
             }
-            
+
+            allUnreadMsgNum = unreadMsgNum;
+
         }
 
         /*
