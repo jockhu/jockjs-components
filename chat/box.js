@@ -381,7 +381,7 @@
             }
             //首次发送需要发送房源卡片
             houseId? (function(){
-                J.chat.pdata.getHouseCard(houseId,function(data){
+                J.chat.pdata.getHouseCard(houseId, opts.cityId, function(data){
                     if(!data.retcode){
                         //返回正确的房源卡片
                         sendMessage(3,data.retdata);

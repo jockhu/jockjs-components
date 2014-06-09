@@ -245,9 +245,10 @@
         /**
          *?��??��?信�?
          */
-        function getPropertyInfo(propId, callback){
+        function getPropertyInfo(propId, cityId, callback){
             var param = {
-                property_id: propId
+                property_id: propId,
+                city_id: cityId
             };
             J.get({
                 url: buildUrl('property'),
@@ -280,9 +281,10 @@
          *?��??��??��?
          *houseUrl:???�??propId�??�??�?ing??��?��?
          */
-        function getHouseCard(hosueUrl, callback) {
+        function getHouseCard(hosueUrl, cityId, callback) {
             var param = {
-                'request_url': hosueUrl
+                'request_url': hosueUrl,
+                'city_id': cityId
             };
             J.get({
                 url: buildUrl('house'),

@@ -26,6 +26,7 @@
             id: '', //聊天id(chatId)
             brokerId: '',//经纪人id(如果从联系人列表点开，则取不到brokerId)
             houseId:'',
+            cityId: '', //城市id
             count: 0,
             lasttime: '',
             html: ''

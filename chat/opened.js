@@ -81,12 +81,14 @@
          * @param brokerId
          * @param propId
          * @param chatId
+         * @param cityId
          */
-        function update(brokerId, propId, chatId){
+        function update(brokerId, propId, chatId, cityId){
             brokerId = brokerId || '';
             propId = propId || '';
             chatId = chatId || '';
-            cookieObj.setCookie(cookie.name, ( cookieValue = newCookieValue = (2 + '.'+(+new Date())+'.'+brokerId+'.'+propId+'.'+chatId)), 1, cookie.domain);
+            cityId = cityId || '';
+            cookieObj.setCookie(cookie.name, ( cookieValue = newCookieValue = (2 + '.'+(+new Date())+'.'+brokerId+'.'+propId+'.'+chatId+'.'+cityId)), 1, cookie.domain);
         }
 
         /**
@@ -132,7 +134,8 @@
                 onSuccess(conf ? {
                     brokerId:conf[1],
                     propId:conf[2],
-                    chatId:conf[3]
+                    chatId:conf[3],
+                    cityId:conf[4]
                 } : {});
             }
         }
@@ -146,7 +149,7 @@
         }
 
         function getViewType(){
-            return getOpenedConf().match(/(\d+)\.(\d+)\.(\d+)$/) ? 1 : 0;
+            return getOpenedConf().match(/(\d+)\.(\d+)\.(\d+)\.(\d+)$/) ? 1 : 0;
         }
 
         /**
@@ -173,11 +176,12 @@
         }
 
         function getInfo(){  
-            var conf = cookieValue.match(/(\d+)\.(\d+)\.(\d+)$/), res =
+            var conf = cookieValue.match(/(\d+)\.(\d+)\.(\d+)\.(\d+)$/), res =
             conf ? {
                 brokerId:conf[1],
                 propId:conf[2],
-                chatId:conf[3]
+                chatId:conf[3],
+                cityId:conf[4]
             } : {};
 
             res.viewType = getViewType();

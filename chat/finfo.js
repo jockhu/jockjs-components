@@ -31,7 +31,7 @@
          * 获取房源信息
          */
         function getPropertyInfo(opts){ 
-            C.pdata.getPropertyInfo(opts.houseId, function(data){
+            C.pdata.getPropertyInfo(opts.houseId, opts.cityId, function(data){
                 if(!data.retcode){
                     var data = data.retdata,
                         html = '<img src="'+data.pic +'" width="120" height="90">'+

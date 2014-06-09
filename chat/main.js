@@ -81,7 +81,8 @@
                             name: data.name,
                             brokerId: oInfo.brokerId,
                             id: oInfo.chatId,
-                            houseId: oInfo.propId
+                            houseId: oInfo.propId,
+                            cityId: oInfo.cityId
                         }));
                     }
                 })
