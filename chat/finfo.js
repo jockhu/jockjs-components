@@ -53,7 +53,7 @@
                 if(!data.retcode){
                     var data = data.retdata,
                         html = '<dl class="cf">'+
-                            '<dt><img src="'+data.photo+'" width="100" height="135"></dt>'+
+                            '<dt><a href="data.url" target="_blank"><img src="'+data.photo+'" width="100" height="135"></a</dt>'+
                             '<dd>'+data.name+'</dd>'+
                             '<dd>'+data.phone+'</dd>'+
                             '<dd><a href="'+(data.url)+'" target="_blank">'+data.company+'</a></dd>'+
