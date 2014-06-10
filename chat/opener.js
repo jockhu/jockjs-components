@@ -40,13 +40,17 @@
                 updateConf(conf, 1);
                 //解决referrer丢失问题
                 //windowOpenr = J.W.open(C.chatDomain, C.windowName, getAttrString(conf));
-                windowOpenr = J.W.open("", C.windowName, getAttrString(conf));
-                var a = document.createElement("a");
-                a.href = C.chatDomain;
-                a.target= C.windowName;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
+                windowOpenr = J.W.open(" ", C.windowName, getAttrString(conf));
+                //setTimeout(function(){
+                    var a = document.createElement("a");
+                    a.href = C.chatDomain;
+                    a.target= C.windowName;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    a=null;
+                //},1000)
+
                 windowOpenr && windowOpenr.focus();
             }
             if(windowIsOpend(conf)){
