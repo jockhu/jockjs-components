@@ -22,7 +22,7 @@
     function Opened(){
 
         var onSuccess = null, timerI = null, timerO = null, cookieValue = '', newCookieValue = '',
-            cookieObj = J.cookie, cookie= C.cookie, locked = false,conf;
+            cookieObj = J.cookie, cookie= C.cookie, locked = false,conf,successTimer;
 
         (function(){
             // 不管什么情况，打开聊天对话框就设置为打开状态
@@ -120,7 +120,7 @@
                         doSuccess();
                         // 非IE浏览器强制激活窗口
                         !J.ua.ie && (timerO = setTimeout(function(){
-                            listener(false);
+                            //listener(false);
                             alert('欢迎回到微聊，点击“确定”继续咨询经纪人');
                         },0));
                     }
