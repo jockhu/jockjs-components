@@ -334,7 +334,7 @@
          */
         function calcTextLength(){
             var labTip = container.s(".inputTip").eq(0);
-            var len =2000;
+            var len = 500;
             var leaveChatCount = len-txtSend.val().length;
             if(leaveChatCount<=0){
                 leaveChatCount=0;

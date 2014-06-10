@@ -305,7 +305,7 @@
                 msg_type: msgObject.msg_type,
                 to_uid: brokerId
             };
-            J.get({
+            J.post({
                 url: buildUrl('sendmessage'),
                 data: param,
                 type: 'json',
