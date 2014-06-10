@@ -34,7 +34,7 @@
             C.pdata.getPropertyInfo(opts.houseId, opts.cityId, function(data){
                 if(!data.retcode){
                     var data = data.retdata,
-                        html = '<a href="'+(data.url||'') + '" target="_blank">' + '<img src="'+data.pic +'" width="120" height="90"></a>'+
+                        html = '<a class="prop_link" href="'+(data.url||'') + '" target="_blank">' + '<img src="'+data.pic +'" width="120" height="90"></a>'+
                             '<a href="'+(data.url||'') + '" target="_blank">'+data.title+'</a>'+
                             '<p>'+data.community+'</p>'+
                             '<p>'+data.room+','+parseInt(data.size)+'平米</p>'+
