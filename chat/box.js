@@ -128,10 +128,10 @@
                         var center = target.getAttribute('data-center');
                         var text = target.getAttribute('data-content');
                         text = cutWords(text, 21);
+                        mapPanel.s('img').eq(0).attr('src','http://api.map.baidu.com/staticimage?center='+center+'&width=600&height=500&zoom=17');
+                        mapPanel.s('.msktxt').eq(0).html(text);
                         mask.show();
                         mapPanel.show();
-                        mapPanel.s('img').eq(0).attr('src','http://api.map.baidu.com/staticimage?center='+center+'&width=600&height=500&zoom=17')
-                        mapPanel.s('.msktxt').eq(0).html(text)
                         return true;
                         //map click
                     }
