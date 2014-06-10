@@ -188,8 +188,7 @@
         */
         function showAllUnreadMsgCount(unreadMsgNum) {  
             if (unreadMsgNum > 0) {
-//                unreadMsgNum = (unreadMsgNum > 99) ? '99+' : unreadMsgNum;
-                unreadMsgNum = (unreadMsgNum > 10) ? '10+' : unreadMsgNum;
+                unreadMsgNum = (unreadMsgNum > 99) ? '99+' : unreadMsgNum;
                 C.container.allUnreadMsg.html(unreadMsgNum);
                 C.container.allUnreadMsg.show();
 

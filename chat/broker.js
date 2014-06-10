@@ -54,8 +54,7 @@
         function buildHtml(count, lasttime){
             var msg_html = '', dealCount = count;
             if (count > 0) {
-                dealCount = (count > 10) ? '10+' : count;
-//                count = (count > 99) ? '99+' : count;
+                dealCount = (count > 99) ? '99+' : count;
             }
             lasttime = translateTime(lasttime);
             if (count > 0) {
@@ -74,8 +73,7 @@
         function updateNewMsgCount(count, ele) {
             var pele = ele.s('.infos p'), str;
             if (count > 0) {
-//                count = (count > 99) ? '99+' : count;
-                count = (count > 10) ? '10+' : count;
+                count = (count > 99) ? '99+' : count;
                 str = '<span class="ylw">' + count + '</span>条新回复';
                 pele.eq(0).get().className = 'new';
             } else {
