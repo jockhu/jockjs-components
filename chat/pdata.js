@@ -310,6 +310,7 @@
                 data: param,
                 type: 'json',
                 timeout:20000,
+                onFailure:callback,
                 onSuccess: callback
             });
         }
