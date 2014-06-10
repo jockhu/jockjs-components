@@ -60,7 +60,7 @@
             listener(true);
             W.onblur = startListener;
             W.onfocus = stopListener;
-            J.D.onclick = stopListener;
+            //J.D.onclick = stopListener;
 
         }
 
