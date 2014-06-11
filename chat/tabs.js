@@ -54,7 +54,7 @@
             boxObject.show(brObject);
             calcTabsWidth();
             currentChatId = chatId;
-            isUpdate && J.chat.opened.update(opts.id,opts.houseId)
+            isUpdate && J.chat.opened.update('',opts.houseId,opts.id);
             return boxObject;
         }
 
