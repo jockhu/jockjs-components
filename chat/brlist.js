@@ -235,7 +235,6 @@
                         C.tabs.show(brokerObject,true);
                         showAllUnreadMsgCount(allUnreadMsgNum - brokerObject.getOpts().count);
                         brokerObject.updateNewMsgCount(0, J.g(eventTarget));//消息条数置为0
-                        C.main.changeHeight();
                         return false;
                     }
                     if (!eventTarget) return;

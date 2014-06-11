@@ -53,6 +53,7 @@
             currentChatId && CACHE[currentChatId].hide();
             boxObject.show(brObject);
             calcTabsWidth();
+            C.main.changeHeight();
             currentChatId = chatId;
             isUpdate && J.chat.opened.update(opts.brokerId,opts.houseId,opts.id, opts.cityId);
             return boxObject;
