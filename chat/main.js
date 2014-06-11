@@ -71,7 +71,7 @@
             var boxObject;
             if( boxObject = C.tabs.getCurrentBox()[oInfo.chatId]){
 //                boxObject.show();
-                C.tabs.show(boxObject, true);
+                C.tabs.show(boxObject.getBrokerObject(), true);
             }else{
                 if(!oInfo.brokerId&&!oInfo.chatId)return;
                 pdata.getBrokerInfo(oInfo.brokerId, oInfo.chatId, function(res){
