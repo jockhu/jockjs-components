@@ -51,13 +51,20 @@
         function getBrokerInfo(opts){
             C.pdata.getBrokerInfo(opts.brokerId, opts.id, function(data){
                 if(!data.retcode){
-                    var data = data.retdata,
-                        html = '<dl class="cf">'+
+                    var data = data.retdata, str;
+                    if (data.company_id && parseInt(data.company_id) != 0) {
+                        str = '<dd><a href="'+(data.url||'')+'" target="_blank">'+data.company+'</a></dd>'+
+                              '<dd><a href="'+(data.url||'')+'" target="_blank">'+(data.store)+'</a></dd>';
+                    } else {
+                        str = '<dd><p>'+data.company+'</p></dd>'+
+                              '<dd><p>'+(data.store)+'</p></dd>';
+                    }
+
+                    var html = '<dl class="cf">'+
                             '<dt><img src="'+data.photo+'" width="100" height="135"></dt>'+
                             '<dd>'+data.name+'</dd>'+
                             '<dd>'+data.phone+'</dd>'+
-                            '<dd><a href="'+(data.url||'')+'" target="_blank">'+data.company+'</a></dd>'+
-                            '<dd><a href="'+(data.url||'')+'" target="_blank">'+(data.store)+'</a></dd>'+
+                            str +
                             '</dl>'+
                             '<div class="ct"><a href="'+(data.more_url)+'" class="btn_more" target="_blank">查看TA的更多房源</a></div>'+
                             '</div>';
