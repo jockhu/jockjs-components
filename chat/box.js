@@ -129,9 +129,12 @@
                         var text = target.getAttribute('data-content');
                         text = cutWords(text, 21);
                         mapPanel.s('img').eq(0).attr('src','http://api.map.baidu.com/staticimage?center='+center+'&width=600&height=500&zoom=17');
-                        mapPanel.s('.msktxt').eq(0).html(text);
+                        var msktxtEle = mapPanel.s('.msktxt').eq(0);
+                        msktxtEle.html(text);
+                        msktxtEle.hide();//先hide再show，是为了显示的位置不闪烁
                         mask.show();
                         mapPanel.show();
+                        msktxtEle.show();
                         return true;
                         //map click
                     }
