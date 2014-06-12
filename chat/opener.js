@@ -61,7 +61,7 @@
                 windowOpenr && windowOpenr.focus();
                 timer = setTimeout(function(){
                     if(conf.time == getConf().time){
-//                        newWindow();
+                        //newWindow();
                     }
                 },1500);
             }else{
@@ -109,7 +109,7 @@
          * @param status
          */
         function updateConf(conf, status){
-            cookieObj.setCookie(cookie.name, (status ? status : conf.status) + '.' + (+new Date()) + '.' + conf.brId + '.' + conf.prId + '.' + conf.chId + '.' + conf.ctId, 1, cookie.domain);
+            cookieObj.setCookie(cookie.name, (status ? status : conf.status) + '.' + (+new Date()) + '.' + conf.brId + '.' + conf.prId + '.' + conf.chId + '.' + conf.ctId, 0, cookie.domain);
         }
 
         /**

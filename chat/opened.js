@@ -73,7 +73,7 @@
             conf = getOpenedConf(); 
             conf && cookieObj.setCookie(cookie.name, (newCookieValue =  conf.replace(/^(\d)\.(\d+)/, function(a,b,c){
                 return statusCode + '.' + ((statusCode == 2) ? (+new Date()) : c);
-            })), 1, cookie.domain);
+            })), 0, cookie.domain);
         }
 
         /**
@@ -88,7 +88,7 @@
             propId = propId || '';
             chatId = chatId || '';
             cityId = cityId || '';
-            cookieObj.setCookie(cookie.name, ( cookieValue = newCookieValue = (2 + '.'+(+new Date())+'.'+brokerId+'.'+propId+'.'+chatId+'.'+cityId)), 1, cookie.domain);
+            cookieObj.setCookie(cookie.name, ( cookieValue = newCookieValue = (2 + '.'+(+new Date())+'.'+brokerId+'.'+propId+'.'+chatId+'.'+cityId)), 0, cookie.domain);
         }
 
         /**
