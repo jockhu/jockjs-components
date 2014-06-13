@@ -25,7 +25,7 @@
      */
     function Main(opened){
 
-        var container = C.container, cookie = J.cookie, pdata = C.pdata;
+        var container = C.container, cookie = J.cookie, pdata = C.pdata,lock=false;
 
         //initialize
         (function() {
@@ -105,19 +105,25 @@
             J.chat.phone =telNumber; //1
             C.brlist.init();//需要phone作为参数
             showTab(opened.getInfo());
-            C.pdata.getPollListener(callbackPollListener);
+            bindFocusBLur(function(){
+                lock = false;
+                callbackPollListener()
+            },function(){
+                lock = true;
+            });
 
         }
 
-
         function callbackPollListener(data) {
             //当data.result返回的是string时，它表示某种原因断开
+            if(lock)return;
             if(!data){
                 C.pdata.getPollListener(callbackPollListener);
                 return;
             }
-
-
+            if(data.result == 'DUPLICATE_QUIT'){
+                return;
+            }
             if ( data.status == 'OK' && (typeof data.result == 'object')) {
                 C.pdata.getChatList(function(ret){
                     C.brlist.update(ret);
@@ -136,6 +142,52 @@
         }
 
         //closeWindow();
+
+        function bindFocusBLur(focusHandler,blurHandler){
+            var isOut = true;
+            (function(){
+                var v = getIeVersion();
+                if(!v || v>8){
+                    window.addEventListener('blur',blur);
+                    window.addEventListener('focus',focus);
+                    focus();
+                }else{
+                    document.attachEvent('onfocusout',focusOut)
+                    document.attachEvent('onfocusin',focusIn)
+                }
+            })();
+
+            function focusIn(e){
+                if(isOut){
+                    isOut = false;
+                    var e = window.event || e;
+                    focus(e);
+                }
+            }
+            function focusOut(e){
+                var e = e || window.event;
+                var target = e.srcElement ;
+                var relatedTarget = e.toElement;
+                if(!relatedTarget){
+                    blur(e);
+                    isOut = true;
+                }
+            }
+            function focus(e){
+                focusHandler();
+            }
+
+            function blur(e){
+                blurHandler();
+            }
+
+            function getIeVersion(){
+                var undef, v = 4, div = document.createElement('div');
+                while (div.innerHTML = '<!--[if gt IE '+(++v)+']><i></i>< ![endif]-->',div.getElementsByTagName('i')[0]);
+                return v > 5? v : undefined;
+            }
+        }
+
 
         function docIsVisiable(){
             if(typeof document.visible === 'undefined' || document.visible === true){
