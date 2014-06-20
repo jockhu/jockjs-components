@@ -60,9 +60,6 @@
             listener(true);
             W.onblur = startListener;
             W.onfocus = stopListener;
-
-            bindFocusBLur(stopListener,startListener)
-
             //J.D.onclick = stopListener;
 
         }
@@ -189,52 +186,6 @@
 
             res.viewType = getViewType();
             return res;
-        }
-
-
-        function bindFocusBLur(focusHandler,blurHandler){
-            var isOut = true;
-            (function(){
-                var v = getIeVersion();
-                if(!v || v>8){
-                    window.addEventListener('blur',blur);
-                    window.addEventListener('focus',focus);
-                    focus();
-                }else{
-                    document.attachEvent('onfocusout',focusOut)
-                    document.attachEvent('onfocusin',focusIn)
-                }
-            })();
-
-            function focusIn(e){
-                if(isOut){
-                    isOut = false;
-                    var e = window.event || e;
-                    focus(e);
-                }
-            }
-            function focusOut(e){
-                var e = e || window.event;
-                var target = e.srcElement ;
-                var relatedTarget = e.toElement;
-                if(!relatedTarget){
-                    blur(e);
-                    isOut = true;
-                }
-            }
-            function focus(e){
-                focusHandler();
-            }
-
-            function blur(e){
-                blurHandler();
-            }
-
-            function getIeVersion(){
-                var undef, v = 4, div = document.createElement('div');
-                while (div.innerHTML = '<!--[if gt IE '+(++v)+']><i></i>< ![endif]-->',div.getElementsByTagName('i')[0]);
-                return v > 5? v : undefined;
-            }
         }
 
         return {
