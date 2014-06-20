@@ -13,6 +13,7 @@ J.add('chat', {
     isDev:/\.dev/.test(J.D.location.host),
     isPg:/\.test/.test(J.D.location.host),
     version:'1.0.0',
+
 //    chatDomain:/\.test/.test(J.D.location.host) ? 'http://www.app-chat-web.pmt-21758-site.anjuke.test': (!/\.dev/.test(J.D.location.host) ? 'http://chat.anjuke.com':'http://www.app-chat-web.'+ (J.D.location.host.match(/^\w+\.(\w+)\./) ? J.D.location.host.match(/^\w+\.(\w+)\./)[1] : "")+'.dev.anjuke.com/'),
 
     chatDomain:'http://chat.anjuke.com',
