@@ -4,7 +4,7 @@
 
 ;(function(J){
     function Bmap(opption){
-        var baseDomain = "http://pages.lunjiang.dev.aifcdn.com/";
+        var baseDomain = "http://pages.aifcdn.com";
         var defOpts ={
             id:'',
             lng:0,
@@ -36,7 +36,7 @@
                 title: '',
                 popInfo: '',
                 barInfo: '',
-                icon: 'http://pages.lunjiang.dev.aifcdn.com/img/jmap/1/mapMarker-Default.png',
+                icon: 'http://pages.aifcdn.com/img/jmap/1/mapMarker-Default.png',
                 size: {
                     w: 35,
                     h: 34
