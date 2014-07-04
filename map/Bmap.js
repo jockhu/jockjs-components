@@ -1,7 +1,6 @@
 
 /// require('map.Bload');
 /// require('page.page');
-
 ;(function(J){
     function Bmap(opption){
         var baseDomain = "http://pages.aifcdn.com";
@@ -230,7 +229,7 @@
                 var div = J.create('div',{
                     style:"position:absolute;cursor:pointer;z-index:"+this._zIndex,
                     className:me.p.className||'',
-                    title:me.p.title||''
+                    //title:me.p.title||''
                 }).html(this.p.html);
                 div.on('click',function(){
                     me.onClick&&me.onClick();
@@ -425,6 +424,9 @@
         function setViewport(viewport){
             return map.setViewport(viewport);
         }
+        function setMapStyle(anjukestyle){
+            return map.setMapStyle({styleJson: anjukestyle });
+        }
 
 
         function pro() {
@@ -445,6 +447,7 @@
                 zoomOut:zoomOut,
                 getViewport:getViewport,
                 setViewport:setViewport,
+                setMapStyle:setMapStyle,
                 localSearchNearby:localSearchNearby,
 		        localSearch:localSearch
             }

@@ -2,7 +2,7 @@
  * Jock
  * * Base api
  */
-/// require('map.baiduTwo');
+/// require('map.baidu2.0');
 ;(function(J){
     J.map = {};
 })(J);
