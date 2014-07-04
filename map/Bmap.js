@@ -229,6 +229,7 @@
                 var div = J.create('div',{
                     style:"position:absolute;cursor:pointer;z-index:"+this._zIndex,
                     className:me.p.className||''
+                    //title:me.p.title||''
                 }).html(this.p.html);
                 div.on('click',function(){
                     me.onClick&&me.onClick();
