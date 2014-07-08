@@ -225,7 +225,6 @@
                 this._zIndex = this.p.zIndex || 0;
 
                 me = this;
-
                 var div = J.create('div',{
                     style:"position:absolute;cursor:pointer;z-index:"+this._zIndex,
                     className:me.p.className||''
