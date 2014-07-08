@@ -203,7 +203,7 @@
 
 
         function addOverlay(param, overlayType, key) {
-            var p = param
+            var p = param;
             J.mix(p,param);
             p.latlng = p.latlng ? p.latlng : getLatLng(p);
             var _key = param.key||key||buildOverlayKey(p.latlng),
@@ -228,8 +228,7 @@
 
                 var div = J.create('div',{
                     style:"position:absolute;cursor:pointer;z-index:"+this._zIndex,
-                    className:me.p.className||'',
-                    //title:me.p.title||''
+                    className:me.p.className||''
                 }).html(this.p.html);
                 div.on('click',function(){
                     me.onClick&&me.onClick();
@@ -375,6 +374,7 @@
                 callback && callback.call(null, s),A=null;
             });
             A.searchNearby(keyword, map.getCenter(), radius)
+
         }
         function setCenter(lng,lat,zoom){
             map.centerAndZoom(new BMap.Point(lng, lat),zoom);
@@ -449,7 +449,7 @@
                 setViewport:setViewport,
                 setMapStyle:setMapStyle,
                 localSearchNearby:localSearchNearby,
-		        localSearch:localSearch
+                localSearch:localSearch
             }
             for (var i in m) {
                 this[i] = m[i];
