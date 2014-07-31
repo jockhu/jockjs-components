@@ -57,7 +57,7 @@
 
     J.ready(function(){
         if( !(tim && !(tim.loadEventStart - tim.fetchStart <= 0) || false) || !J.times.PL){
-            J.on && J.on(win, 'load', speed);
+            J.W.onload = speed;
         }else speed();
     });
 
