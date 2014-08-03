@@ -45,9 +45,9 @@
 
             perHTML = perHTML ? perHTML+'<li class="sep"></li>':'';
 
-            config.showNotiy = true;
-            config.msg_title = '<span style="color: #f60;font-weight: bold;">29</span>个新提问';
-            config.qaurl = 'http://user.anjuke.com/expert/view/';
+//            config.showNotiy = true;
+//            config.msg_title = '<span style="color: #f60;font-weight: bold;">29</span>个新提问';
+//            config.qaurl = 'http://user.anjuke.com/expert/view/';
 
             //小黄条
             var notifyHTML = config.showNotiy ? '<div class="login_tip"> <a href="javascript:void(0);" url="'+config.qa_url+'" style="margin-left:5px;">'+config.msg_title+'</a>'+
