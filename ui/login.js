@@ -392,7 +392,7 @@
 
     //判断首页，临时方案
     function isHome(str) {
-        return /anjuke\.(com|test)\/\?/.test(str) || /anjuke\.(com|test)\/?$/.test(str) || /anjuke\.(com|test)\?/.test(str);
+        return (! (/\.(fang|zu|chat).anjuke.com/.test(str))) && (/anjuke\.(com|test)\/\?/.test(str) || /anjuke\.(com|test)\/?$/.test(str) || /anjuke\.(com|test)\?/.test(str));
     }
 
     if (isHome(window.document.location.host)) {
