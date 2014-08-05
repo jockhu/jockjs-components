@@ -396,7 +396,7 @@
     }
 
     if (isHome(window.document.location.host)) {
-        ;(function(){}.require([''], 'ui.loginNew', true));
+//        ;(function(){}.require([''], 'ui.loginNew', true));
     } else {
         ;(function(){}.require([''], 'ui.login', true));
     }

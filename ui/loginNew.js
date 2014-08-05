@@ -246,7 +246,7 @@
                         isExpert:data.qamember.cons> -1 ||0,
                         isMananer:data.qamember.admin|| false,
                         msgCount:data.common.totalUnreadCount,
-                        userName:data.common.usernamestr ? data.common.usernamestr.slice(0, 5) : '',
+                        userName:data.common.usernamestr ? ((data.common.usernamestr.length > 5) ? data.common.usernamestr.slice(0, 4)+'...' : data.common.usernamestr) : '',
                         my_favorite:data.righturl.links.my_favorite,
                         my_recommend:data.righturl.links.my_recommend,
                         view_history:data.righturl.links.view_history,
@@ -414,7 +414,7 @@
     if (isHome(window.document.location.host)) {
         ;(function(){}.require([''], 'ui.loginNew', true));
     } else {
-        ;(function(){}.require([''], 'ui.login', true));
+//        ;(function(){}.require([''], 'ui.login', true));
     }
 
     J.ui.loginNew = LoginPanel;
