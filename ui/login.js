@@ -395,7 +395,7 @@
         return (! (/\.(fang|zu|chat).anjuke.com/.test(str))) && (/anjuke\.(com|test)\/\?/.test(str) || /anjuke\.(com|test)\/?$/.test(str) || /anjuke\.(com|test)\?/.test(str));
     }
 
-    if (isHome(window.document.location.host)) {
+    if (isHome(window.document.location.href)) {
 //        ;(function(){}.require([''], 'ui.loginNew', true));
     } else {
         ;(function(){}.require([''], 'ui.login', true));
