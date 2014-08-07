@@ -20,7 +20,6 @@
  *
  */
 (function (J, D) {
-
     /**
      * 缺省的选项配置
      * @type {Object}
@@ -57,7 +56,8 @@
         onKeyUp:null,
         dataMap:null, // {id:'k', name:'v}
         itemBuild:null,
-        tpl:'autocomplete_def'
+        tpl:'autocomplete_def',
+        parentWidth:null
     };
 
     /**
@@ -75,11 +75,13 @@
             aId = 'Autocomplete_' + getId();
             targetEl = opts.offsetTarget ? J.isFunction(opts.offsetTarget) ? opts.offsetTarget() : J.g(opts.offsetTarget) : el;
             opts.width || (opts.width = targetEl.width()-2);
+
             opts.query = (opts.query || el.attr('name') || 'q');
             if(currentValue === '' && opts.placeholder){
                 el.val(opts.placeholder);
                 opts.toggleClass && el.removeClass(opts.toggleClass);
             }
+
             buildMain();
             bindEvent();
         })();
@@ -94,7 +96,7 @@
 
         function buildMain(){
             var boxTarget;
-            mainContainer = J.create('div', {style:'position:absolute;z-index:10100'}).html('<div class="'+opts.tpl+'" id="' + aId + '" style="display:none; width:'+opts.width+'px"></div>');
+            mainContainer = J.create('div', {style:'position:absolute;z-index:10100;width:'+opts.parentWidth+';'}).html('<div class="'+opts.tpl+'" id="' + aId + '" style="display:none; width:'+opts.width+'px"></div>');
             if(opts.boxTarget){
                 if(J.isFunction(opts.boxTarget) && (boxTarget = opts.boxTarget())){
                     boxTarget.append(mainContainer);
