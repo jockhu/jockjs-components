@@ -33,21 +33,12 @@
 
         function getGeneralHTML(config){
             var msgHTML = getMessageHTML(config.msgCount);
-            //test
-            config.isExpert = true;
-            config.isMananer = true;
-            config.expert_home = 'http://user.anjuke.com/expert/view/';
-            config.ask_center = 'http://user.anjuke.com/qa/man/';
 
             var expertHTML = config.isExpert?'<li><a href="'+config.expert_home+'">专家主页</a></li>':'';//专家主页
             var managerHTML = config.isMananer?'<li><a href="'+config.ask_center+'">问答中心</a></li>':'';//管理员用户
             var perHTML = expertHTML+managerHTML;
 
             perHTML = perHTML ? perHTML+'<li class="sep"></li>':'';
-
-//            config.showNotiy = true;
-//            config.msg_title = '<span style="color: #f60;font-weight: bold;">29</span>个新提问';
-//            config.qaurl = 'http://user.anjuke.com/expert/view/';
 
             //小黄条
             var notifyHTML = config.showNotiy ? '<div class="login_tip"> <a href="javascript:void(0);" url="'+config.qa_url+'" style="margin-left:5px;">'+config.msg_title+'</a>'+
@@ -75,7 +66,6 @@
 
 
         function getBrokerHTML(config) {
-//          config.developUrl = true;
             var msgHTML = getMessageHTML(config.msgCount);
             var fxsStr = config.developUrl ? '<li><a href="'+config.developUrl+'">新房分销平台</a></li>' :'';
 
@@ -105,7 +95,6 @@
          * @returns {string}*/
 
         function getDeveloperHTML(config){
-//            config.developUrl = true;
             var msgHTML = getMessageHTML(config.msgCount);
             var fxsStr = config.developUrl ? '<li><a href="'+config.developUrl+'">新房分销平台</a></li>' :'';
 
