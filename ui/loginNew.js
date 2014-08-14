@@ -71,7 +71,7 @@
 
             var html='<div class="login_info">' + getAllMsgHTML(config.msgCount) + '<div class="l" id="login_l"><div class="m"><a href="'+config.my_anjuke+'" class="usr">'+config.userName+'</a>'+
                 '<span class="up_down_usr"></span></div><div class="o_b" style="display: none;"><ul>'+
-                '<li><a href="'+config.my_msg+'">我的消息'+ msgHTML+'</a></li>'+
+                '<li><a href="'+config.msgUrl+'">我的消息'+ msgHTML+'</a></li>'+
                 '<li class="sep"></li>'+
                 '<li><a href="'+config.myanjuke+'">中国网络经纪人</a></li>'+
                 fxsStr +
@@ -96,20 +96,21 @@
 
         function getDeveloperHTML(config){
             var msgHTML = getMessageHTML(config.msgCount);
+            var fytStr = config.fytUrl ? '<li><a href="'+config.fytUrl+'">房易通</a></li>' : '';
             var fxsStr = config.developUrl ? '<li><a href="'+config.developUrl+'">新房分销平台</a></li>' :'';
 
             var html='<div class="login_info">'+ getAllMsgHTML(config.msgCount) + '<div class="l" id="login_l"><div class="m"><a href="'+config.my_anjuke+'" class="usr">'+config.userName+'</a>'+
                 '<span class="up_down_usr"></span></div><div class="o_b" style="display: none;"><ul>'+
-                '<li><a href="'+config.my_msg+'">我的消息'+ msgHTML+'</a></li>'+
+                '<li><a href="'+config.msgUrl+'">我的消息'+ msgHTML+'</a></li>'+
                 '<li class="sep"></li>'+
-                '<li><a href="'+config.fytUrl+'">房易通</a></li>'+
+                fytStr +
                 fxsStr +
-                '<li class="sep"></li>'+
+                ((fytStr || fxsStr) ? '<li class="sep"></li>' : '')+
                 '<li class="exit"><a class="exit" href="'+config.exit+'">退出</a></li>'+
                 '</ul></div>  '+
                 '</div>'+ appdown +
                 '</div>';
-            var notifyHTML = '<a class="u" href="'+config.fytUrl+'">房易通</a>' +
+            var notifyHTML = (config.fytUrl ? '<a class="u" href="'+config.fytUrl+'">房易通</a>' : '') +
                 (config.developUrl ? '<a class="u" href="'+config.developUrl+'">新房分销平台</a>' :'');
             setContainerHtml(html,notifyHTML);
         }
@@ -281,6 +282,10 @@
             bindEvent();
         }
         function getMyFavorites(data){
+            var countDom = J.g("login_r") && J.g("login_r").s(".my").eq(0);
+            if (!countDom) {
+                return;
+            }
             var str='';
             if(!data){
                 isgetFav = true;
@@ -291,7 +296,7 @@
                     data:{r:Math.random()},callback:' loginObj.getFavorite'});
                 return;
             }
-            var countDom = J.g("login_r") && J.g("login_r").s(".my").eq(0);
+
             var delUrl = baseUrl+'ajax/favorite/del_favorite';
             var content = J.g("login_r")&&J.g("login_r").s("ul").eq(0);
             if(!data.code&&data.val.length){
