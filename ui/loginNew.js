@@ -5,11 +5,13 @@
         var eleBroker,content;
         var showSimple = opts.showSimple || false;//显示科易头部
         var isgetFav = false,loginUrl='';
+        var appdown = '';
 
-        J.ready(init)
+        J.ready(init);
         function init(){
             eleBroker = J.s(".glbR").length&&J.s(".glbR").eq(0)||false;
             content = J.s(".R_user").length&&J.s(".R_user").eq(0)||false;
+            appdown = J.s('.appContainer').length && getOuterHtml(J.s('.appContainer').eq(0).get());
             if(!content){
                 return false;
             }
@@ -18,6 +20,12 @@
             (J.getCookie('aQQ_ajkauthinfos')&&sendAjax())||bindEvent();
 
         };
+
+        function getOuterHtml(ele) {
+            var div = document.createElement('div');
+            div.appendChild(ele.cloneNode(true));
+            return J.g(div).html();
+        }
         /**
          * 网络门店用户
          *
@@ -25,20 +33,23 @@
 
         function getGeneralHTML(config){
             var msgHTML = getMessageHTML(config.msgCount);
+
             var expertHTML = config.isExpert?'<li><a href="'+config.expert_home+'">专家主页</a></li>':'';//专家主页
             var managerHTML = config.isMananer?'<li><a href="'+config.ask_center+'">问答中心</a></li>':'';//管理员用户
             var perHTML = expertHTML+managerHTML;
 
             perHTML = perHTML ? perHTML+'<li class="sep"></li>':'';
+
+            //小黄条
             var notifyHTML = config.showNotiy ? '<div class="login_tip"> <a href="javascript:void(0);" url="'+config.qa_url+'" style="margin-left:5px;">'+config.msg_title+'</a>'+
                 '<span class="login_close"></span><span class="t_d"></span></div>':'';
-            var html='<div class="login_info"><span class="tip_d"></span><div class="l" id="login_l"><div class="m"><a href="'+config.my_anjuke+'" class="usr">'+config.userName+'</a>'+
-                '</div><div class="o_b"><ul>'+perHTML+
+            var html='<div class="login_info">' + getAllMsgHTML(config.msgCount)+ notifyHTML + '<div class="l" id="login_l"><div class="m"><a href="'+config.my_anjuke+'" class="usr">'+config.userName+'</a>'+
+                '<span class="up_down_usr"></span></div><div class="o_b" style="display: none;"><ul>'+perHTML+
                 '<li><a href="'+config.my_favorite+'">我的收藏</a></li>'+
                 '<li><a href="'+config.view_history+'">浏览历史</a></li>'+
                 '<li><a href="'+config.subscription_management+'">订阅管理</a></li>'+
                 '<li><a href="'+config.my_ask+'">我的问答</a></li>'+
-                '<li style="text-align: left;padding-left: 27px;"><a href="'+config.my_msg+'">我的消息'+ msgHTML+'</a></li>'+
+                '<li><a href="'+config.my_msg+'">我的消息'+ msgHTML+'</a></li>'+
                 '<li class="sep"></li>'+
                 '<li><a target="_blank" href="'+config.publish_sell+'?from=i_dhfa">我要发房</a></li>'+
                 '<li><a target="_blank" href="'+config.my_house+'?from=i_dhmge">我的房源</a></li>'+
@@ -46,59 +57,35 @@
                 '<li class="exit"><a class="exit" href="'+config.exit+'">退出</a></li>'+
                 '</ul></div>  '+
                 '</div>'+
-                '<div class="r" id="login_r"><a class="my" href="'+config.my_favorite+'">收藏夹（0）</a><ul class="m_l" style="display: none">'+
+                '<div class="r" id="login_r"><a class="my" href="'+config.my_favorite+'">收藏夹（0）</a><span class="up_down_sc"></span><ul class="m_l" style="display: none">'+
                 '<li class="empty"><span>您的收藏夹是空的，赶紧收藏吧！</span></li>'+
-                '</ul></div></div>';
-            setContainerHtml(html,notifyHTML);
-          /*  content&&content.html(html);
-            eleBroker&&eleBroker.html(notifyHTML);*/
+                '</ul></div>' + appdown + '</div>';
+            setContainerHtml(html,'');
+
         }
-        /**
-         * 简头
-         * @param config
-         * @returns {string}*/
-
-        /**
-         * 网络门店用户4*/
 
 
-        function getInternetHTML(config){
+        function getBrokerHTML(config) {
             var msgHTML = getMessageHTML(config.msgCount);
-            var notifyHTML = config.showNotiy ? '<div class="login_tip"> <a href="javascript:void(0);" url="'+config.qa_url+'" style="margin-left:5px;">'+config.msg_title+'</a>'+
-                '<span class="login_close"></span><span class="t_d"></span></div>':'';
-            var html='<div class="login_info">    <span class="tip_d"></span><div class="l" id="login_l"><div class="m"><a href="'+config.my_anjuke+'" class="usr">'+config.userName+'</a>'+
-                '</div><div class="o_b"><ul>'+
+            var fxsStr = config.developUrl ? '<li><a href="'+config.developUrl+'">新房分销平台</a></li>' :'';
+            config.my_anjuke = 'http://my.anjuke.com/user/broker/brokerhome';//临时处理方案，写死后台经纪人链接
+            var html='<div class="login_info">' + getAllMsgHTML(config.msgCount) + '<div class="l" id="login_l"><div class="m"><a href="'+config.my_anjuke+'" class="usr">'+config.userName+'</a>'+
+                '<span class="up_down_usr"></span></div><div class="o_b" style="display: none;"><ul>'+
+                '<li><a href="'+config.msgUrl+'">我的消息'+ msgHTML+'</a></li>'+
+                '<li class="sep"></li>'+
+                '<li><a href="'+config.myanjuke+'">中国网络经纪人</a></li>'+
+                fxsStr +
+                '<li class="sep"></li>'+
                 '<li class="exit"><a class="exit" href="'+config.exit+'">退出</a></li>'+
                 '</ul></div>  '+
-                '</div>'+
-                '<div class="r" id="login_r"><a class="my" href="'+config.my_favorite+'">收藏夹（0）</a><ul class="m_l" style="display: none">'+
-                '<li class="empty"><span>您的收藏夹是空的，赶紧收藏吧！</span></li>'+
-                '</ul></div></div>';
-
+                '</div>'+ appdown+
+                '</div>';
+            var notifyHTML = '<a class="u" href="'+config.myanjuke+'">中国网络经纪人</a>' +
+                (config.developUrl ? '<a class="u" href="'+config.developUrl+'">新房分销平台</a>' :'');
             setContainerHtml(html,notifyHTML);
-
-            return html;
         }
-        /**
-         * 经济人
-         * @param data
-         * @returns {string}*/
 
 
-        function getBrokerHTML(data){
-            var msgHTMl = getMessageHTML(data.msgCount);
-            var html='<span class="broker_info">' +
-                '<span style="margin-right: 8px;">您好，'+data.userName+'</span>'+
-                '[<a class="a_logoout" href="'+data.exit+'" style="margin:0 2px;">退出</a>]&nbsp;&nbsp;'+
-                '<a href="'+data.msgUrl+'" class="a_logoout">消息&nbsp;'+msgHTMl+'</a>'+
-                '<span class="sep_l"></span><a href="'+data.myanjuke+'">中国网络经纪人</a>'+
-                '<span class="sep_l"></span><a href="'+data.developUrl+'">新房分销平台</a>'+
-                '</span>';
-            setContainerHtml('',html);
-
-            /* content&&content.html('');
-            eleBroker&&eleBroker.html(html);*/
-        }
 
 
 
@@ -107,19 +94,25 @@
          * @param data
          * @returns {string}*/
 
-
-        function getDeveloperHTML(data){
-            var msgHTMl = getMessageHTML(data.msgCount);
-            var fytStr = data.fytUrl?'<span class="sep_l"></span><a href="'+data.fytUrl+'">房易通</a>':'';
-            var fxsStr = data.developUrl ?'<span class="sep_l"></span><a href="'+data.developUrl+'">新房分销平台</a>':'';
-            var html='<span class="broker_info">' +
-                '<span style="margin-right: 8px;">您好，'+data.userName+'</span>'+
-                '[<a class="a_logoout" href="'+data.exit+'" style="margin:0 2px;">退出</a>]'+
-                '<a href="'+data.msgUrl+'" style="margin-left:8px;" class="a_logoout">消息&nbsp;'+msgHTMl+'</a>'+
-                fytStr+fxsStr+ '</span>';
-            setContainerHtml('',html);
-           /* content&&content.html('');
-            eleBroker&&eleBroker.html(html);*/
+        function getDeveloperHTML(config){
+            var msgHTML = getMessageHTML(config.msgCount);
+            var fytStr = config.fytUrl ? '<li><a href="'+config.fytUrl+'">房易通</a></li>' : '';
+            var fxsStr = config.developUrl ? '<li><a href="'+config.developUrl+'">新房分销平台</a></li>' :'';
+            config.my_anjuke = 'http://svip.fang.anjuke.com/login';//临时处理方案
+            var html='<div class="login_info">'+ getAllMsgHTML(config.msgCount) + '<div class="l" id="login_l"><div class="m"><a href="'+config.my_anjuke+'" class="usr">'+config.userName+'</a>'+
+                '<span class="up_down_usr"></span></div><div class="o_b" style="display: none;"><ul>'+
+                '<li><a href="'+config.msgUrl+'">我的消息'+ msgHTML+'</a></li>'+
+                '<li class="sep"></li>'+
+                fytStr +
+                fxsStr +
+                ((fytStr || fxsStr) ? '<li class="sep"></li>' : '')+
+                '<li class="exit"><a class="exit" href="'+config.exit+'">退出</a></li>'+
+                '</ul></div>  '+
+                '</div>'+ appdown +
+                '</div>';
+            var notifyHTML = (config.fytUrl ? '<a class="u" href="'+config.fytUrl+'">房易通</a>' : '') +
+                (config.developUrl ? '<a class="u" href="'+config.developUrl+'">新房分销平台</a>' :'');
+            setContainerHtml(html,notifyHTML);
         }
 
 
@@ -136,6 +129,14 @@
 
         }
 
+        function getAllMsgHTML(count) {
+            count = count * 1;
+            var width = count > 0 ? (count > 99 ? '25' : (count > 9 ? '19' : '14')) : 0;
+            var msgCount = count > 0 ? (count > 99 ? '99+' : count) : 0;
+            var html = count > 0 ? '<span class="tip_d" style="width:' + width + 'px">' + msgCount + '</span>' : '<span class="tip_d"></span>';
+            return html;
+        }
+
         /*
          *
          * 获各消息HTML
@@ -146,7 +147,7 @@
 
         function getMessageHTML(data){
             var totalMsg = data;
-            var msgClassName  = totalMsg >0 ?"m_count":"z_count" ;
+            var msgClassName  = "z_count" ;
             var msgNum = totalMsg >0?(totalMsg>99?"99+":totalMsg):0;
             return '<span class="'+msgClassName+'">'+msgNum+'</span>';
         }
@@ -154,16 +155,27 @@
             var thirdBlock = content.s(".o_b").length?content.s(".o_b").eq(0):null;
             thirdBlock&&J.g("login_l").on("mouseenter",function(){
                 J.g("login_l").addClass("over");
+                thirdBlock.show();
+                J.s('.up_down_usr').length && (J.s('.up_down_usr').eq(0).get().style.backgroundPosition = '0 -172px');
             }).on("mouseleave",function(){
-                    J.g("login_l").removeClass("over");
-                })
+                J.g("login_l").removeClass("over");
+                thirdBlock.hide();
+                J.s('.up_down_usr').length && (J.s('.up_down_usr').eq(0).get().style.backgroundPosition = '0 -195px');
+            });
             J.g("login_r")&& J.g("login_r").on("mouseenter",function(){
                 J.g("login_r").addClass("over");
-                !isgetFav&&(getMyFavorites(),isgetFav=true);
+                J.site.trackEvent('navigation_favorite_hover');
+                J.s('.m_l').length && J.s('.m_l').eq(0).show();
+                J.s('.up_down_sc').length && (J.s('.up_down_sc').eq(0).get().style.backgroundPosition = '0 -172px');
             }).on("mouseleave",function(){
-                    J.g("login_r").removeClass("over");
-                })
+                J.g("login_r").removeClass("over");
+                J.s('.m_l').length && J.s('.m_l').eq(0).hide();
+                J.s('.up_down_sc').length && (J.s('.up_down_sc').eq(0).get().style.backgroundPosition = '0 -195px');
+            }).on('click', function() {
+                J.site.trackEvent('navigation_favorite_click');
+            });
 
+            //
             var closeDom = J.s(".login_close").length?J.s(".login_close").eq(0):false;
             closeDom&& closeDom.on('click',function(){
                 var url = baseUrl +'ajax/usersetting/?key=shutNotify&value=1&_r='+Math.random();
@@ -191,14 +203,19 @@
                 J.load(set_url, "js");
                 return false;
             });
+            //
+
             getFavoriteCount();
+            !isgetFav&&(getMyFavorites(),isgetFav=true);
+
             J.s(".glbR").length&&J.s(".glbR").eq(0).show();
             J.s(".R_user").length&&J.s(".R_user").eq(0).show();
         }
+
+
+
         /*
-
          * 初始化发送AJAX确定是否登录
-
          */
         function sendAjax(){
             J.get({
@@ -212,14 +229,14 @@
             var html ='';
             if(data.common.userid >0){
                 var userType =  data.common.usertype;
-                if(userType ==1){
+                if(userType ==1){//网络门店或者用户
                     var loginData={
                         my_anjuke:data.righturl.myanjuke,
                         showNotiy:!parseInt(data.shutNotify),
                         isExpert:data.qamember.cons> -1 ||0,
                         isMananer:data.qamember.admin|| false,
                         msgCount:data.common.totalUnreadCount,
-                        userName:data.common.usernamestr,
+                        userName:data.common.usernamestr ? ((data.common.usernamestr.length > 5) ? data.common.usernamestr.slice(0, 4)+'...' : data.common.usernamestr) : '',
                         my_favorite:data.righturl.links.my_favorite,
                         my_recommend:data.righturl.links.my_recommend,
                         view_history:data.righturl.links.view_history,
@@ -238,32 +255,20 @@
                     }
                     this.my_favorite = loginData.my_favorite;
                     html = getGeneralHTML(loginData);
-                }else if(userType == 2){
+                }else if(userType == 2){//经济人
                     var data = {
-                        userName:data.common.usernamestr||'',
+                        userName:data.common.usernamestr ? data.common.usernamestr.slice(0, 5):'',
                         exit:data.lefturl.logouturl||'#',
-                        myanjuke:data.righturl.myanjuke||'#',
+                        myanjuke:data.righturl.myanjuke||'#',//中国网络经纪人
                         msgUrl:data.lefturl.pmurl ||'#',
                         msgCount:data.common.totalUnreadCount,
                         my_house:data.common.my_house||'#',
                         developUrl:data.common.developUrl|| false//新房分销平台
                     };
                     html = getBrokerHTML(data);
-                }else if(userType == 4){
+                }else if(userType == 8){//开发商(房易通/分销平台)
                     var data = {
-                        showNotiy:!parseInt(data.shutNotify),
-                        userName:data.common.usernamestr||'',
-                        exit:data.lefturl.logouturl||'#',
-                        myanjuke:data.righturl.myanjuke||'#',
-                        qa_url:data.lefturl.qaurl,
-                        msg_title:data.lefturl.title,
-                        msgUrl:data.lefturl.pmurl ||'#',
-                        msgCount:data.common.totalUnreadCount
-                    };
-                    html = getInternetHTML(data);
-                }else if(userType == 8){
-                    var data = {
-                        userName:data.common.usernamestr||'',
+                        userName:data.common.usernamestr ? data.common.usernamestr.slice(0, 5):'',
                         exit:data.lefturl.logouturl||'#',
                         myanjuke:data.righturl.links.fang_anjuke||'#',
                         msgUrl:data.lefturl.pmurl ||'#',
@@ -277,6 +282,10 @@
             bindEvent();
         }
         function getMyFavorites(data){
+            var countDom = J.g("login_r") && J.g("login_r").s(".my").eq(0);
+            if (!countDom) {
+                return;
+            }
             var str='';
             if(!data){
                 isgetFav = true;
@@ -287,7 +296,7 @@
                     data:{r:Math.random()},callback:' loginObj.getFavorite'});
                 return;
             }
-            var countDom = J.g("login_r").s(".my").eq(0);
+
             var delUrl = baseUrl+'ajax/favorite/del_favorite';
             var content = J.g("login_r")&&J.g("login_r").s("ul").eq(0);
             if(!data.code&&data.val.length){
@@ -313,7 +322,7 @@
                 content.html(html);
                 var lis =content.s("li");
                 lis.each(function(k,v){
-                    if(!k||k==lis.length-1){
+                    if(!k||k==lis.length-1 || k==lis.length-2){
                         return;
                     }
                     v.on('mouseenter',function(){
@@ -323,6 +332,7 @@
                         v.removeClass("active");
                     });
                     v.on('click',function(){
+                        J.site.trackEvent('navigation_favorite_everydata');
                         location.href= v.s("a").eq(0).attr("href");
                     });
                     v.s("a").each(function(k,v){
@@ -388,7 +398,7 @@
             getFavoriteCount:getFavoriteCount
         }
     }
-//    ;(function(){}.require([''], ['ui.loginNew'], true));
+
 
     //判断首页，临时方案
     function isHome(str) {
@@ -396,10 +406,10 @@
     }
 
     if (isHome(window.document.location.href)) {
-//        ;(function(){}.require([''], 'ui.loginNew', true));
+        ;(function(){}.require([''], 'ui.loginNew', true));
     } else {
-        ;(function(){}.require([''], 'ui.login', true));
+//        ;(function(){}.require([''], 'ui.login', true));
     }
 
-    J.ui.login = LoginPanel;
+    J.ui.loginNew = LoginPanel;
 })(J, document);
