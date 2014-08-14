@@ -68,7 +68,7 @@
         function getBrokerHTML(config) {
             var msgHTML = getMessageHTML(config.msgCount);
             var fxsStr = config.developUrl ? '<li><a href="'+config.developUrl+'">新房分销平台</a></li>' :'';
-
+            config.my_anjuke = 'http://my.anjuke.com/user/broker/brokerhome';//临时处理方案，写死后台经纪人链接
             var html='<div class="login_info">' + getAllMsgHTML(config.msgCount) + '<div class="l" id="login_l"><div class="m"><a href="'+config.my_anjuke+'" class="usr">'+config.userName+'</a>'+
                 '<span class="up_down_usr"></span></div><div class="o_b" style="display: none;"><ul>'+
                 '<li><a href="'+config.msgUrl+'">我的消息'+ msgHTML+'</a></li>'+
@@ -98,7 +98,7 @@
             var msgHTML = getMessageHTML(config.msgCount);
             var fytStr = config.fytUrl ? '<li><a href="'+config.fytUrl+'">房易通</a></li>' : '';
             var fxsStr = config.developUrl ? '<li><a href="'+config.developUrl+'">新房分销平台</a></li>' :'';
-
+            config.my_anjuke = 'http://svip.fang.anjuke.com/login';//临时处理方案
             var html='<div class="login_info">'+ getAllMsgHTML(config.msgCount) + '<div class="l" id="login_l"><div class="m"><a href="'+config.my_anjuke+'" class="usr">'+config.userName+'</a>'+
                 '<span class="up_down_usr"></span></div><div class="o_b" style="display: none;"><ul>'+
                 '<li><a href="'+config.msgUrl+'">我的消息'+ msgHTML+'</a></li>'+
