@@ -74,8 +74,7 @@
             opts = J.mix(defaultOpts, options || {}, true);
             aId = 'Autocomplete_' + getId();
             targetEl = opts.offsetTarget ? J.isFunction(opts.offsetTarget) ? opts.offsetTarget() : J.g(opts.offsetTarget) : el;
-            opts.width || (opts.width = targetEl.width()-2);
-
+            opts.width || (opts.width = opts.parentWidth ? opts.parentWidth:targetEl.width()-2);
             opts.query = (opts.query || el.attr('name') || 'q');
             if(currentValue === '' && opts.placeholder){
                 el.val(opts.placeholder);
