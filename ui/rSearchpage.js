@@ -12,6 +12,7 @@
 /// require('ui.ui');
 
 (function(J){
+
 	function searchHistory(options){
 		var defaultOptions = {
 			eleId: '',
@@ -23,6 +24,8 @@
 			onTapAction:null
 		},
 		spId, tag, input, opts;
+
+
 		(function(){
 			opts = J.mix(defaultOptions, options || {}, true);
 			spId = J.g(opts.eleId);
@@ -30,6 +33,7 @@
 			input = spId.s('input').eq(0);
 			bindEvent();
 		}());
+
 		function htmlencode(s) {
 	    	var div = document.createElement('div');
 	    	div.appendChild(document.createTextNode(s));
@@ -91,7 +95,8 @@
 	        searchBtn.on('click',function(){
 	        	onTap(input.val());
 	        }, null, true, true);
-	        input.get().addEventListener('keydown',function(e){
+
+	        input.on('keydown',function(e){
 	        	if(e.keyCode==13){
 	        		onTap(input.val());
 	            	input.get().blur();
@@ -129,5 +134,7 @@
 			hidePage: hidePage
 		};
 	}
-	J.ui.searchHistory = searchHistory;
+
+
+    J.ui.searchHistory = searchHistory;
 })(J);
