@@ -74,7 +74,7 @@
      */
     function Validate(options) {
 
-        var GROUPS = {}, CACHE = [], opts, formElm, CUSTOM = {}, submiting = false, onErrorCallbacked = false;
+        var GROUPS = {}, CACHE = [], opts, formElm, CUSTOM = {}, submiting = false, onErrorCallbacked = true, taskerReady = true;
 
         /**
          * Initialize
@@ -91,9 +91,11 @@
             });
             formElm.on('submit', function (e) {
                 e.stop();
-                // 如果是第一次提交，立即开始验证
                 if(!submiting){
-                    validate();
+                    setTimeout(function(){
+                        validate();
+                    },20)
+
                 }
             });
         })();
@@ -163,9 +165,10 @@
                 });
 
                 if (!groupId) {
-                    infoTarget = target || createInfoElement(opts.infoTagName, elm, infoMessage);
+                    infoTarget = (target && target.length) ? target : createInfoElement(opts.infoTagName, elm, infoMessage);
                 } else {
-                    infoTarget = J.g(groupId) || createInfoElement(opts.infoTagName, elm, infoMessage, groupId);
+                    var gropElm = J.g(groupId);
+                    infoTarget = gropElm.length ? gropElm : createInfoElement(opts.infoTagName, elm, infoMessage, groupId);
                     GROUPS[groupId].ok = validateMessage.ok;
                     GROUPS[groupId].error = validateMessage.error;
                     GROUPS[groupId].require = require;
@@ -195,13 +198,18 @@
             /**
              * 单个表单验证完成
              * @param status 单个表单验证返回的状态
-             * @param message 提示信息
+             * @param message 提示信息。
+             *          注意：如果 message 是 null，则仅仅是改变状态，而非最终结果
+             *          比如远程验证，解决用户点击提交按钮，同时会提前触发失去焦点产生的验证过程，避免2次相同的发送ajax验证
              */
             function validateFinish(status, message) {
-                // 第一事件更新状态
+                // 第一时间更新状态
                 setStatus(status);
-                // 如果有任何不同过，复位submiting状态
-                if(status === -1) submiting = false;
+
+                if(message == null) return;
+
+                // 如果有任何验证不通过，复位taskerReady状态
+                if(status === -1) taskerReady = false;
 
                 // 显示提示信息
                 toggleInformation(status, filterMessage(status, message), (status == 0));
@@ -330,7 +338,7 @@
              * @param autoValidate 是否自动验证
              */
             function elementBindEvent(autoValidate) {
-                var elmType = elm.attr('type'), tagName = elm.get().tagName, callback;
+                var elmType = elm.attr('type'), tagName = elm.get().tagName, callback, timer = null;
 
                 function customEventBind(elm, type, callback){
                     elm.on(type, function(){
@@ -351,8 +359,8 @@
                     }
                     // 如果是分组，或者状态等于 -1 的才触发验证
                     if (groupId || getStatus() === -1) {
-                        submiting = false; // 任何非提交按钮触发的验证，都需要复位状态，意味着验证不够通过与否都不会触发提交动作
-                        trigger();
+                        taskerReady = false; // 任何非提交按钮触发的验证，都需要复位状态，意味着验证不够通过与否都不会触发提交动作
+                        trigger();  // 触发验证
                     }
                 }
 
@@ -360,7 +368,7 @@
                     elm.on(key, function(){
                         // 当个元素上设置是否自动验证要优先全局设置
                         // 如果自动验证，将事件加入队列，否则，设置最简单的隐藏
-                        ( (autoValidate !== '') ? autoValidate : opts.auto ) ? setTimeout(doTrigger, 0) : toggleInformation(0, '', true);
+                        ( (autoValidate !== '') ? autoValidate : opts.auto ) ? doTrigger() : toggleInformation(0, '', true);
                     });
                 }
 
@@ -395,6 +403,7 @@
                 // -2 是验证中，如果不是在验证中，开始执行验证
                 if(getStatus() !== -2){
                     setStatus(-2); // 标记为验证中
+                    // 开始验证
                     validateCenter.doValidate();
                 }
             }
@@ -419,7 +428,7 @@
             return {
                 elm: elm,
                 trigger: trigger,
-                groupId:groupId,
+                groupId: groupId,
                 validateItems: validateItems,
                 validateOr: validateOr,
                 infoTarget: infoTarget,
@@ -453,12 +462,10 @@
              * 验证核心入口，单个输入框包含的所有验证类型
              */
             function doValidate() {
-                var status = 0, groupId = null, elmVal = elm.val(), inCustom = false, iLen = validateItems.length;
-
+                var status = 0, groupId = null, elmVal = elm.val(), inCustom = false, iLen = validateItems.length - 1;
                 J.each(validateItems, function (i, vItem) {
-
-                    // 如果是disabled，或者不是必填但内容为空的可跳过验证
-                    if ((elmVal == '' && vItem.type != 'require')) {
+                    // 内容为空,不是必填的,且不是分组验证, 不是自定义，可跳过验证
+                    if ( elmVal == '' && vItem.type != 'require' && vItem.type !== 'group' && vItem.type !== 'custom') {
                         return true;
                     }
 
@@ -466,11 +473,11 @@
                         case 'group':
                             var GRP = GROUPS[groupId = vItem.groupId];
                             GROUPS[groupId].source = elm.get();
-                            // 修复分组类型，解决了页面中不许要每一个都必须写明分组类型
+                            // 修复分组类型，解决了页面中需要每一个都必须写明分组类型的限制
                             vItem.groupType || (vItem.groupType = GRP.groupType);
                             GROUPS[groupId].status = status = groupAction(vItem);
                             if (status === -1) {
-                                if (i !== iLen-1 && vItem.validateOr) break;
+                                if (i !== iLen && vItem.validateOr) break;
                                 finishCallback(status, GRP.message);
                                 return false;
                             }
@@ -478,7 +485,7 @@
                         case 'range':
                             status = rangeAction(vItem);
                             if (status === -1) {
-                                if (i !== iLen-1 && vItem.validateOr) break;
+                                if (i !== iLen && vItem.validateOr) break;
                                 finishCallback(status, vItem.message);
                                 return false;
                             }
@@ -486,21 +493,23 @@
                         case 'length':
                             status = lenAction(vItem);
                             if (status === -1) {
-                                if (i !== iLen-1 && vItem.validateOr) break;
+                                if (i !== iLen && vItem.validateOr) break;
                                 finishCallback(status, vItem.message);
                                 return false;
                             }
                             break;
                         case 'custom':
                             inCustom = true;
+                            finishCallback(-2, null); // 远程验证需提前设置状态为验证中
                             customAction(vItem, function(res){
+                                (res.validateOr !== J.undef) && (vItem.validateOr = res.validateOr);
                                 finishCallback(res.status, res.message || (res.status == -1 ? vItem.message : ''));
                             });
                             break;
                         default:
                             status = regAction(vItem);
                             if (status === -1) {
-                                if (i !== iLen-1 && vItem.validateOr) break;
+                                if (i !== iLen && vItem.validateOr) break;
                                 finishCallback(status, vItem.message);
                                 return false;
                             }
@@ -517,16 +526,18 @@
             /**
              * 用户自定义验证
              * @param vItem
-             * @param success
+             * @param validateCallback
              */
-            function customAction(vItem, success) {
+            function customAction(vItem, validateCallback) {
                 var customFn, customId = vItem.elm.get().id;
                 if(opts.custom && (customFn = opts.custom[customId])){
                     /**
                      * 执行用户定义的函数，传入参数，和回调函数
                      */
-                    customFn(vItem.elm, function(res){
-                        success(res);
+                    customFn( vItem.elm, function(res){ validateCallback(res)}, {
+                        regAction: regAction,
+                        rangeAction: rangeAction,
+                        lenAction: lenAction
                     });
                 }
             }
@@ -534,10 +545,13 @@
 
             /**
              * 验证规则解析
-             * @param type
-             * @param o
-             * @param condition
-             * @return {*}
+             * @param type 验证类型
+             * @param o 对象|数量
+             * @param condition 规则
+             * @return
+             *        -1 : 验证失败
+             *        0  ：无操作，通常显示初始化提示信息
+             *        1  ：验证通过
              */
             function conditionTranscoding(type, o, condition) {
                 if (condition) {
@@ -656,6 +670,7 @@
                     J.each(GRP.items, function (i, k) {
                         elm = k.elm, el = elm.get(), elmType = elm.attr('type');
                         (el.checked || ( (elmType !== 'checkbox' && elmType !== 'radio') && elm.attr('checked') ) ) && count++;
+
                     });
                     return conditionTranscoding('checked', count, GRP.condition);
                 }
@@ -745,11 +760,10 @@
          * @return {Boolean}
          */
         function getAllIsSuccess() {
-            var finished = true;
+            var finished = true, custom_finished = true;
             J.each(CACHE, function (i, vObj) {
                 if (vObj.groupId) {
                     var GRP = GROUPS[vObj.groupId];
-
                     if (GRP.require && GRP.status === -1) {// 如果是必填项，且验证未通过的
                         return (finished = false);
                     } else if (vObj.elm.val() !== '' && GRP.status === -1) {// 如果不是必填项，内容为空，且验证未通过
@@ -763,7 +777,13 @@
                     return (finished = false);
                 }
             });
-            return finished;
+            // 检查所有自定义任务状态
+            J.each(CUSTOM, function(i, v){
+                if(v === -1 || v === -2){
+                    return (custom_finished = false);
+                }
+            });
+            return (finished && custom_finished);
         }
 
         /**
@@ -771,7 +791,10 @@
          */
         function validate(targetElm) {
             submiting = true;
-            onErrorCallbacked = false;
+            onErrorCallbacked = false; //重置，标识 onErrorCallBack 未完成
+            taskerReady = true;
+            //J.log('validate', 'submiting:'+submiting, 'onErrorCallbacked:'+onErrorCallbacked)
+
             var isTriggering = false;
             targetElm = (targetElm && targetElm.get) ? targetElm.get() : targetElm;
 
@@ -801,30 +824,21 @@
             }
 
             // 如果没有任何 Tringger 发生，把所有权交给任务触发器
-            if(!isTriggering && !targetElm){
-                taskerTrigger();
-            }
+            (!isTriggering && !targetElm) && taskerTrigger();
         }
 
         /**
          * 任务回调触发器
          */
         function taskerTrigger(){
-            var taskerReady = true;
-            // 检查所有任务状态
-            J.each(CUSTOM, function(i, v){
-                if(v === -1 || v === -2){
-                    return (taskerReady = false);
-                }
-            });
+            //J.log('taskerTrigger', 'submiting:'+submiting, 'taskerReady:'+taskerReady, 'onErrorCallbacked:'+onErrorCallbacked, 'getAllIsSuccess():'+getAllIsSuccess())
 
-            //console. log('taskerTrigger', submiting, taskerReady)
             // 如果是点击提交按钮触发的验证，并且tasker都是完成的，并且所有验证都是通过的，完成验证
             if (submiting && taskerReady && getAllIsSuccess()) {
-                // 完成验证
-                validateComplate();
-            }else if(!onErrorCallbacked){
-                onErrorCallbacked = true;
+                validateComplate(); // 完成验证
+            }else if(submiting && !onErrorCallbacked){ // 如果 onError 未执行，执行以下过程
+                onErrorCallbacked = true; // 更新状态，确保 onError 只执行一次，因为 taskerTrigger 会被调用多次
+                submiting = false; // 重置提交状态
                 opts.onError && opts.onError(formElm);
             }
         }

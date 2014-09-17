@@ -97,7 +97,7 @@
 	            setStorage(input.val());
 	            opts.onSearch && opts.onSearch();
 	        }, null, true, true);
-	        input.get().addEventListener('keydown',function(e){
+	        input.on('keydown',function(e){
 	        	if(e.keyCode==13){
 	            	tapAction(input.val());
 	            	setStorage(input.val());
