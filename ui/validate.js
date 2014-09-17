@@ -87,7 +87,7 @@
             formElm = J.g(opts.formId);
             formElm.addClass(opts.tpl);
             formElm.s("*").each(function (i, element) {
-                addValidateElement(element);
+                addValidateElement(element.eq(0).get());
             });
             formElm.on('submit', function (e) {
                 e.stop();

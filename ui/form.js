@@ -68,7 +68,7 @@
             var elm;
 
             formElm.s("*").each(function (i, element) {
-                ((elm = element.get()) && elm.type && !elm.disabled) && filterAvailableElement(element);
+                ((elm = element.eq(0).get()) && elm.type && !elm.disabled) && filterAvailableElement(element);
             });
             filterGroupObject();
             J.mix(data, group);
@@ -103,7 +103,7 @@
          * @param element
          */
         function filterAvailableElement(element) {
-            var elm = element.get();
+            var elm = element.eq(0).get();
             switch (elm.type.toLowerCase()) {
                 case 'checkbox':
                 case 'radio':
@@ -121,7 +121,7 @@
          * @param element 有效的表单元素
          */
         function buildElementValue(element) {
-            var elm = element.get(), key = elm.name || elm.id, elmValue = element.val();
+            var elm = element.eq(0).get(), key = elm.name || elm.id, elmValue = element.val();
             var match = key.match(/^(\w+)\[(\d*)\]$/);
             if (!match) {
                 data[key] = elmValue;

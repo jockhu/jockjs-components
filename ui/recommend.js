@@ -43,7 +43,7 @@
         function bindEvent() {
             var elem= J.g(opts.elem);
              if(opts.type=='home' || opts.type=='view'){
-                 elem&&elem.on('click',function(){
+                 elem.length&&elem.on('click',function(){
                      opts.onComplete && opts.onComplete();
                      if(opts.type=='home'){
                          elem.s('span').eq(0).addClass('loading').html('加载中');
@@ -106,7 +106,7 @@
                             }
                         }
                         fetchEnd=true;
-                        box&&box.show();
+                        box.show();
                         if(opts.requestUrl !== ""){
                             len = box.s("a").length;
                             stopQuest = (pageIndex == 1 && len < 10) || len < (10 + (pageIndex-1)*20) ? true : false;
