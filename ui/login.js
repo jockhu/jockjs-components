@@ -229,7 +229,7 @@
             var html ='';
             if(data.common.userid >0){
                 var userType =  data.common.usertype;
-                if(userType ==1){//网络门店或者用户
+                if(userType == 1 || userType == 9){//1: 网络门店或者用户 9:大业主
                     var loginData={
                         my_anjuke:data.righturl.myanjuke,
                         showNotiy:!parseInt(data.shutNotify),
