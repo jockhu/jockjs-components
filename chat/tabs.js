@@ -120,7 +120,7 @@
             tabWidth = maxWidth / tabCount;
             tabWidth = Math.floor((tabWidth > maxTabWidth) ? maxTabWidth * scale : tabWidth * scale);  
             C.container.tabContainer.s('li').each(function(k, v) {
-                v.get().style.width = tabWidth + 'px';
+                v.eq(0).get().style.width = tabWidth + 'px';
             });
         }
 

@@ -56,7 +56,7 @@
             opts.latlng = getLatLng(opts);
             if (!opts.id || typeof BMap!=='object') return;
             var elem = J.g(opts.id);
-            if(!elem){
+            if(!elem.length){
                 alert('文档中未找到id：'+opts.id+'对像');
                 return false;
             }

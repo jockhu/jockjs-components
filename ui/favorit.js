@@ -139,12 +139,12 @@ function favorit(options){
         masker.on('click',function(){
             tipHide();
         });
-        J.g('tip_close')&&J.g('tip_close').on('click',function(){
+        J.g('tip_close').length&&J.g('tip_close').on('click',function(){
             tipHide();
         });
     }
     function tipHide(){
-        tipBox&&tipBox.hide();
+        tipBox.hide();
         masker.hide();
         opts.onHide && opts.onHide();
     }

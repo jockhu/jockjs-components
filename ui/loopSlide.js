@@ -74,7 +74,7 @@
                 };
             }
 
-            if(J.g(_left)){
+            if(J.g(_left).length){
             	J.g(_left).on("click", function(){
                     if(!!_stop){ //防止快速点击 切换太快
                         _stop = false;
@@ -107,7 +107,7 @@
 	            });
             }
 
-            if(J.g(_right)){
+            if(J.g(_right).length){
             	J.g(_right).on("click", function(){
                     if(!!_stop){ //防止快速点击 切换太快
                         _stop = false;

@@ -2,22 +2,22 @@
 
     function LoginPanel(opts){
         var baseUrl = opts.baseUrl || '';
-        var eleBroker,content;
+        var eleBroker, content;
         var showSimple = opts.showSimple || false;//显示科易头部
         var isgetFav = false,loginUrl='';
         var appdown = '';
 
         J.ready(init);
         function init(){
-            eleBroker = J.s(".glbR").length&&J.s(".glbR").eq(0)||false;
-            content = J.s(".R_user").length&&J.s(".R_user").eq(0)||false;
+            eleBroker = J.s(".glbR").eq(0);
+            content = J.s(".R_user").eq(0);
             appdown = J.s('.appContainer').length && getOuterHtml(J.s('.appContainer').eq(0).get());
-            if(!content){
+            if(! content.length){
                 return false;
             }
             baseUrl = content.attr("url");
-            loginUrl =content.s("a").eq(0).attr("href");
-            (J.getCookie('aQQ_ajkauthinfos')&&sendAjax())||bindEvent();
+            loginUrl = content.s("a").eq(0).attr("href");
+            (J.getCookie('aQQ_ajkauthinfos') && sendAjax()) || bindEvent();
 
         };
 
@@ -60,7 +60,7 @@
                 '<div class="r" id="login_r"><a class="my" href="'+config.my_favorite+'">收藏夹（0）</a><span class="up_down_sc"></span><ul class="m_l" style="display: none">'+
                 '<li class="empty"><span>您的收藏夹是空的，赶紧收藏吧！</span></li>'+
                 '</ul></div>' + appdown + '</div>';
-            setContainerHtml(html,'');
+            setContainerHtml(html, '');
 
         }
 
@@ -116,17 +116,16 @@
         }
 
 
-        function setContainerHtml(clientHtml,brokerHtml){
-            if(content){
+        function setContainerHtml(clientHtml,brokerHtml) {
+            if (content.length) {
                 content.html(clientHtml);
             }
-            if(eleBroker){
+            if (eleBroker.length) {
                 eleBroker.html(brokerHtml);
-            }else{
+            } else {
                 content.setStyle({width:'auto'});
                 J.create('span',{className:'glbR'}).appendTo(content).html(brokerHtml);
             }
-
         }
 
         function getAllMsgHTML(count) {
@@ -152,8 +151,8 @@
             return '<span class="'+msgClassName+'">'+msgNum+'</span>';
         }
         function bindEvent(){
-            var thirdBlock = content.s(".o_b").length?content.s(".o_b").eq(0):null;
-            thirdBlock&&J.g("login_l").on("mouseenter",function(){
+            var thirdBlock = content.s(".o_b").eq(0);
+            thirdBlock.length && J.g("login_l").on("mouseenter",function(){
                 J.g("login_l").addClass("over");
                 thirdBlock.show();
                 J.s('.up_down_usr').length && (J.s('.up_down_usr').eq(0).get().style.backgroundPosition = '0 -172px');
@@ -226,10 +225,10 @@
             return true;
         }
         function successCallBack(data){
-            var html ='';
+            var html = '';
             if(data.common.userid >0){
                 var userType =  data.common.usertype;
-                if(userType ==1){//网络门店或者用户
+                if(userType == 1 || userType == 9){//1: 网络门店或者用户 9:大业主
                     var loginData={
                         my_anjuke:data.righturl.myanjuke,
                         showNotiy:!parseInt(data.shutNotify),
@@ -320,7 +319,7 @@
                 var count = J.g("login_r").s(".my").eq(0).html().match(/\d+/)[0];
                 html = html + '<li class="nav_count">收藏夹里共有'+count+'个收藏</li><li style="padding-top: 0px!important;padding-bottom: 3px!important;"><a class="li_btn" href="'+ J.g('login_r').s("a").eq(0).attr("href")+'">查看全部收藏</a></li>';
                 content.html(html);
-                var lis =content.s("li");
+                var lis = content.s("li");
                 lis.each(function(k,v){
                     if(!k||k==lis.length-1 || k==lis.length-2){
                         return;
