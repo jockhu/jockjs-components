@@ -302,7 +302,7 @@
                 var isLogin = J.getCookie('aQQ_ajkauthinfos');
                 var loginStr = isLogin?'':'<li style="border: 1px solid #fc6;background-color: #fefded;padding: 0;text-indent: 10px;line-height: 34px;margin: 10px 0;">该收藏仅在本设备暂时保存，若需永久保存并同步请<a style="display: inline" _target="blank" href="'+loginUrl+'">登录</a>。</li>';
                 var arr = data.val,html='<li class="t">最近加入的房子</li>'+loginStr;
-                countDom.html(countDom.html().replace(/\d+/,data.num.num));
+                countDom.html() && countDom.html(countDom.html().replace(/\d+/,data.num.num));
                 for(var i=0,len=arr.length;i<len;i++){
                     if(arr[i].is_invalid){
                         str ='<li style="padding: 0;cursor: default">'+
@@ -316,7 +316,8 @@
                         '<div class="li_r"><em>'+arr[i].price+'</em><a onclick="return false;" href="javascript:void(0)" data-cids="'+arr[i].id+'">删除</a></div></li>';
                     html=html+str;
                 }
-                var count = J.g("login_r").s(".my").eq(0).html().match(/\d+/)[0];
+                var myCount = J.g("login_r").s(".my").eq(0).html();
+                var count = (myCount && myCount.match(/\d+/)[0]) || 0;
                 html = html + '<li class="nav_count">收藏夹里共有'+count+'个收藏</li><li style="padding-top: 0px!important;padding-bottom: 3px!important;"><a class="li_btn" href="'+ J.g('login_r').s("a").eq(0).attr("href")+'">查看全部收藏</a></li>';
                 content.html(html);
                 var lis = content.s("li");
