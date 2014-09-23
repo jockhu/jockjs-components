@@ -97,7 +97,7 @@
                     '<a href="javascript:void(0);" class="now">当前咨询房源</a><a href="javascript:void(0);" class="br0">当前咨询经纪人</a>'+
                 '</div>':
                 '<h5>当前咨询经纪人</h5>';
-            dom.s(".infos").eq(0).first().html(tabHtml);
+            dom.s(".infos").eq(0).first(true).html(tabHtml);
             return dom;
         }
 
@@ -115,7 +115,7 @@
             var mapPanel = J.g('map_panel');
             var imgPanel = J.g('img_panel');
 
-            var scrollTopElm = chatBox.first();
+            var scrollTopElm = chatBox.first(true);
             var scrollIsReturn = false;
 
 
@@ -474,7 +474,7 @@
             //经纪人发给用户的图片，改成600*500
             (msg.msg_type == 2 && msg.from_uid != C.uid) ? msg.body = msg.body.replace(/(\d+)x(\d+)/, '599x499') : null;
             messageBox = fn(msg.msg_type,msg.body, opts.icon);
-            var dom = chatList.first();
+            var dom = chatList.first(true);
             timerDom = timerTasker(parseInt(msg.created));
             dom ? dom.insertBefore(messageBox):chatList.append(messageBox);
             timerDom&&messageBox.insertBefore(timerDom);
