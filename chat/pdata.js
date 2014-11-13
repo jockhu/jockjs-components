@@ -21,13 +21,13 @@
     function Pdata(){
 
         var opts = {
-            apiDomain : C.isDev ? 'http://chatapi.dev.anjuke.com' : C.isPg ? 'http://chatapi.anjuke.test': 'http://api.anjuke.com/weiliao',
+            apiDomain : (C.isDev || C.isPg) ? 'http://api.anjuke.test/weiliao' : 'http://api.anjuke.com/weiliao',
             longDomain: (C.isDev || C.isPg) ? 'http://dev.aifang.com:8080/register' : 'http://push10.anjuke.com/register'
         }, fnid=0;
 
         function buildUrl(type){
             var urls = {
-                'friends': opts.apiDomain + '/user/getFriends/' + C.phone,
+                'friends': opts.apiDomain + '/user/getFriends/',
                 'chatlist': opts.apiDomain + '/message/getChatList',
                 'friend': opts.apiDomain + '/user/getFriendInfo/' + C.phone + '/',
                 'poll': opts.longDomain + '/' + C.guid + '/w-ajk-user-chat/' + C.uid,
