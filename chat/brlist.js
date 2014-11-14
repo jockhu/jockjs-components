@@ -21,7 +21,7 @@
      * @constructor
      */
     function Brlist(){  
-        var BROKERSCACHE = {}, brokerCount = 0, TMPECACHE = {}, arrHtml = [], newBroker = {}, brLen = 0, listBox = J.g('brlist'), allUnreadMsgNum = 0;//联系人列表数组，每个元素是borker实例
+        var BROKERSCACHE = {}, brokerCount = 0, TMPECACHE = {}, arrHtml = [], newBrokers = [], newBrokerIds = [], brLen = 0, listBox = J.g('brlist'), allUnreadMsgNum = 0;//联系人列表数组，每个元素是borker实例
 
         /**
          * 初始化：只初始化BROKERSCACHE数组
@@ -59,22 +59,36 @@
             }
         }
 
+        function brCallback(arrData) {
+            if (!arrData || !arrData.result || !!arrData.result.length) return;
+            arrData = arrData.result;
+            var i = 0, j;
+            //newBrokerIds表明了右侧联系人展示的先后顺序
+            for (; i < newBrokerIds.length; i++) {
+                for (j = 0; j < arrData.length; j++) {
+                    if (newBrokerIds[i] == arrData[j].user_id) {
+                        brSingleCallback(arrData[j], newBrokers[i]);   
+                        break;                 
+                    }
+                }
+            }
+            BROKERSCACHE = TMPECACHE;
+            listBox.html(arrHtml.join(''));
+            newBrokers = [];
+            newBrokerIds = [];
+        }
 
-        function brCallback(data){
-            if(!data || !data.result) return;
-            var result = data.result, brObj, v = newBroker.chatInfo;
+        //处理单条记录
+        function brSingleCallback(data, newBroker){
+            if(!data) return;
+            var result = data, brObj, v = newBroker.chatInfo;
             TMPECACHE[v.from_uid] = brObj = new C.Broker({
                 id: v.from_uid,
                 brokerId: '',
                 name: result.nick_name,
                 icon: result.icon
             });
-            arrHtml[newBrokerIndex] = brObj.getHtml(v.new_msg_count, v.last_active * 1000);
-            if(brLen == arrHtml.length){
-                BROKERSCACHE = TMPECACHE;
-                listBox.html(arrHtml.join(''));
-            }
-            newBroker = {};
+            arrHtml.push(brObj.getHtml(v.new_msg_count, v.last_active * 1000));
         }
 
         /*
@@ -149,16 +163,25 @@
                         TMPECACHE[v.from_uid] = brObj;
                         boxMsgList[v.from_uid] = v.new_msg_count;  //key[uid]-value[new_msg_count]
                     }else{
-                        arrHtml.push('');
-                        newBroker = {
-                            index: i,
-                            chatInfo: v
-                        };
-                        C.pdata.getFriendInfo(v.from_uid, brCallback);
+                        if (!!newBrokers.length) {
+                            newBrokers = [{
+                                index: i,
+                                chatInfo: v
+                            }];
+                        } else {
+                            newBrokers.push({
+                                index: i,
+                                chatInfo: v
+                            });
+                        }
+                        !!newBrokerIds.length ? (newBrokerIds = [v.from_uid]) ? newBrokerIds.push(v.from_uid);
                     }
                 });
+                //多个新经纪人一次性请求
+                C.pdata.getFriendInfo(newBrokerIds, brCallback);
 
-                if(!newBroker['index']){
+                //新经纪人数为０
+                if(!!newBrokers.length){
                     BROKERSCACHE = TMPECACHE;
                     listBox.html(arrHtml.join(''));
                 }
