@@ -178,7 +178,7 @@
                     }
                 });
                 //多个新经纪人一次性请求
-                C.pdata.getFriendInfo(newBrokerIds, brCallback);
+                C.pdata.getAccountInfo(newBrokerIds, brCallback);
 
                 //新经纪人数为０
                 if(!!newBrokers.length){
