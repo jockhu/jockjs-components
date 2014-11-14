@@ -298,7 +298,6 @@
          */
         function sendMsgToBroker(msgObject, brokerId, callback) {
             var param = {
-                phone: C.phone,
                 body: msgObject.body,
                 msg_type: msgObject.msg_type,
                 to_uid: brokerId
