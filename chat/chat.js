@@ -14,7 +14,18 @@ J.add('chat', {
     isPg:/\.test/.test(J.D.location.host),
     version:'1.0.0',
 
-    chatDomain:/\.test/.test(J.D.location.host) ? 'http://www.app-chat-web.' + J.D.location.host.match(/^\w+\.([\w\-]*)\./)[1] + '.anjuke.test': (!/\.dev/.test(J.D.location.host) ? 'http://chat.anjuke.com':'http://www.app-chat-web.'+ (J.D.location.host.match(/^\w+\.(\w+)\./) ? J.D.location.host.match(/^\w+\.(\w+)\./)[1] : "")+'.dev.anjuke.com/'),
+    chatDomain: (function() {
+        var host = J.D.location.host, 
+            isPg = /\.test/.test(host),
+            isDev = /\.dev/.test(host),
+            subDomain = 'http://www.app-chat-web.',
+            devMatch = host.match(/^\w+\.(\w+)\./),
+            pgMatch = host.match(/^\w+\.([\w\-]*)\./),
+            onlineHost = 'http://chat.anjuke.com';
+        return isPg ? subDomain + (pgMatch ? pgMatch[1] : "") + '.anjuke.test' : (!isDev ? onlineHost : subDomain+ (devMatch ? devMatch[1] : "")+'.dev.anjuke.com/');
+    })(),
+
+    // chatDomain:/\.test/.test(J.D.location.host) ? 'http://www.app-chat-web.' + J.D.location.host.match(/^\w+\.([\w\-]*)\./)[1] + '.anjuke.test': (!/\.dev/.test(J.D.location.host) ? 'http://chat.anjuke.com':'http://www.app-chat-web.'+ (J.D.location.host.match(/^\w+\.(\w+)\./) ? J.D.location.host.match(/^\w+\.(\w+)\./)[1] : "")+'.dev.anjuke.com/'),
 //    chatDomain:'http://chat.anjuke.com',
     cookie:{
         name:'chatconf', //轮询的cookie名字
