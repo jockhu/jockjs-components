@@ -29,7 +29,7 @@
             var urls = {
                 'friends': opts.apiDomain + '/user/getFriends/',
                 'chatlist': opts.apiDomain + '/message/getChatList',
-                'friend': '/user/getAccountInfo',
+                'friend': '/api/account-info',
                 'poll': opts.longDomain + '/' + C.guid + '/w-ajk-user-chat/' + C.uid,
                 'recomm': '/api/rec',
                 'property': '/property/info',
