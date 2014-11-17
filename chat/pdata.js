@@ -317,7 +317,7 @@
             getFriends: getFriends,
             getChatList: getChatList,
             getChatDetail: getChatDetail,
-            getFriendInfo: getFriendInfo,
+            getAccountInfo: getAccountInfo,
             getPollListener: getPollListener,
             getRecomm: getRecomm,
             getPropertyInfo: getPropertyInfo,

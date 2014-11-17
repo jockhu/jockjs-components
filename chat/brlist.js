@@ -174,7 +174,7 @@
                                 chatInfo: v
                             });
                         }
-                        !!newBrokerIds.length ? (newBrokerIds = [v.from_uid]) ? newBrokerIds.push(v.from_uid);
+                        !!newBrokerIds.length ? (newBrokerIds = [v.from_uid]) : newBrokerIds.push(v.from_uid);
                     }
                 });
                 //多个新经纪人一次性请求
