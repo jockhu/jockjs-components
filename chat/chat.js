@@ -21,7 +21,7 @@ J.add('chat', {
             subDomain = 'http://www.app-chat-web.',
             devMatch = host.match(/^\w+\.(\w+)\./),
             pgMatch = host.match(/^\w+\.([\w\-]*)\./),
-            onlineHost = 'http://chat.anjuke.com'; console.log('11111');
+            onlineHost = 'http://chat.anjuke.com'; 
         return isPg ? subDomain + (pgMatch ? pgMatch[1] : "") + '.anjuke.test' : (!isDev ? onlineHost : subDomain+ (devMatch ? devMatch[1] : "")+'.dev.anjuke.com/');
     })(),
 
