@@ -21,7 +21,7 @@
     function Pdata(){
 
         var opts = {
-            apiDomain : C.isDev ? 'http://master.mp.dev.anjuke.com/weiliao' : (isPg ? 'http://api.anjuke.test/weiliao' : 'http://api.anjuke.com/weiliao'),
+            apiDomain : C.isDev ? 'http://master.mp.dev.anjuke.com/weiliao' : (C.isPg ? 'http://api.anjuke.test/weiliao' : 'http://api.anjuke.com/weiliao'),
             longDomain: (C.isDev || C.isPg) ? 'http://app20-011.i.ajkdns.com:8080/register' : 'http://push10.anjuke.com/register'
         }, fnid=0;
 
