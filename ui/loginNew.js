@@ -43,23 +43,23 @@
             //小黄条
             var notifyHTML = config.showNotiy ? '<div class="login_tip"> <a href="javascript:void(0);" url="'+config.qa_url+'" style="margin-left:5px;">'+config.msg_title+'</a>'+
                 '<span class="login_close"></span><span class="t_d"></span></div>':'';
-            var html='<div class="login_info">' + getAllMsgHTML(config.msgCount)+ notifyHTML + '<div class="l" id="login_l"><div class="m"><a href="'+config.my_anjuke+'" class="usr">'+config.userName+'</a>'+
-                '<span class="up_down_usr"></span></div><div class="o_b" style="display: none;"><ul>'+perHTML+
+            var html='<div class="login_info">' + getAllMsgHTML(config.msgCount)+ notifyHTML + '<div class="dropdown user-login l" id="login_l"><div class="title m"><a href="'+config.my_anjuke+'" class="usr">'+config.userName+'</a>'+
+                '<i class="icon arrow-down"></i></div><div class="list" style="display: none;"><ul>'+perHTML+
                 '<li><a href="'+config.my_favorite+'">我的收藏</a></li>'+
                 '<li><a href="'+config.view_history+'">浏览历史</a></li>'+
                 '<li><a href="'+config.subscription_management+'">订阅管理</a></li>'+
                 '<li><a href="'+config.my_ask+'">我的问答</a></li>'+
                 '<li><a href="'+config.my_msg+'">我的消息'+ msgHTML+'</a></li>'+
-                '<li class="sep"></li>'+
+                '<li class="hr"></li>'+
                 '<li><a target="_blank" href="'+config.publish_sell+'?from=i_dhfa">我要发房</a></li>'+
                 '<li><a target="_blank" href="'+config.my_house+'?from=i_dhmge">我的房源</a></li>'+
-                '<li class="sep"></li>'+
+                '<li class="hr"></li>'+
                 '<li class="exit"><a class="exit" href="'+config.exit+'">退出</a></li>'+
                 '</ul></div>  '+
                 '</div>'+
-                '<div class="r" id="login_r"><a class="my" href="'+config.my_favorite+'">收藏夹（0）</a><span class="up_down_sc"></span><ul class="m_l" style="display: none">'+
+                '<div class="dropdown favorite r" id="login_r"><div class="title"><a class="my" href="'+config.my_favorite+'">收藏夹（0）</a><i class="icon arrow-down"></i></div><div class="list " style="display: none"><ul class="m_l">'+
                 '<li class="empty"><span>您的收藏夹是空的，赶紧收藏吧！</span></li>'+
-                '</ul></div>' + appdown + '</div>';
+                '</ul></div></div>' + appdown + '</div>';
             setContainerHtml(html, '');
 
         }
@@ -70,7 +70,7 @@
             var fxsStr = config.developUrl ? '<li><a href="'+config.developUrl+'">新房分销平台</a></li>' :'';
             config.my_anjuke = 'http://my.anjuke.com/user/broker/brokerhome';//临时处理方案，写死后台经纪人链接
             var html='<div class="login_info">' + getAllMsgHTML(config.msgCount) + '<div class="l" id="login_l"><div class="m"><a href="'+config.my_anjuke+'" class="usr">'+config.userName+'</a>'+
-                '<span class="up_down_usr"></span></div><div class="o_b" style="display: none;"><ul>'+
+                '<i class="icon arrow-down"></i></span></div><div class="list" style="display: none;"><ul>'+
                 '<li><a href="'+config.msgUrl+'">我的消息'+ msgHTML+'</a></li>'+
                 '<li class="sep"></li>'+
                 '<li><a href="'+config.myanjuke+'">中国网络经纪人</a></li>'+
@@ -100,7 +100,7 @@
             var fxsStr = config.developUrl ? '<li><a href="'+config.developUrl+'">新房分销平台</a></li>' :'';
             config.my_anjuke = 'http://svip.fang.anjuke.com/login';//临时处理方案
             var html='<div class="login_info">'+ getAllMsgHTML(config.msgCount) + '<div class="l" id="login_l"><div class="m"><a href="'+config.my_anjuke+'" class="usr">'+config.userName+'</a>'+
-                '<span class="up_down_usr"></span></div><div class="o_b" style="display: none;"><ul>'+
+                '<i class="icon arrow-down"></i></div><div class="list" style="display: none;"><ul>'+
                 '<li><a href="'+config.msgUrl+'">我的消息'+ msgHTML+'</a></li>'+
                 '<li class="sep"></li>'+
                 fytStr +
@@ -123,7 +123,7 @@
             if (eleBroker.length) {
                 eleBroker.html(brokerHtml);
             } else {
-                content.setStyle({width:'auto'});
+                //content.setStyle({width:'auto'});
                 J.create('span',{className:'glbR'}).appendTo(content).html(brokerHtml);
             }
         }
@@ -151,6 +151,7 @@
             return '<span class="'+msgClassName+'">'+msgNum+'</span>';
         }
         function bindEvent(){
+            /*
             var thirdBlock = content.s(".o_b").eq(0);
             thirdBlock.length && J.g("login_l").on("mouseenter",function(){
                 J.g("login_l").addClass("over");
@@ -172,6 +173,31 @@
                 J.s('.up_down_sc').length && (J.s('.up_down_sc').eq(0).get().style.backgroundPosition = '0 -195px');
             }).on('click', function() {
                 J.site.trackEvent('navigation_favorite_click');
+            });
+            */
+            var dropdown = content.s('.dropdown');
+//            var dropdownList = content.s('list');
+//            dropdown.on('mouseenter', function(event) {
+//                console.log(1,event);
+//                var target = event.target ? event.target : event.srcElement;
+//                J.s('.list', target).show();
+//            });
+//            dropdown.on('mouseleave', function(event) {
+//                console.log(2,event);
+//                var target = event.target ? event.target : event.srcElement;
+//                J.s('.list', target).hide();
+//            });
+//
+
+            dropdown.each(function(i, dom){
+                var list = J.s('.list', dom[0]);
+                dom.on('mouseenter', function(e){
+                    dom.addClass('hover');
+                    list.show();
+                }).on('mouseleave', function(e){
+                    dom.removeClass('hover');
+                    list.hide();
+                });
             });
 
             //
@@ -399,14 +425,7 @@
         }
     }
 
-    //判断是否列表页，临时方案
-    function isList(str) {
-        return (/\.(fang|zu|chat|xzl|sp).anjuke.(com|test)/.test(str)) || (/\.anjuke\.(com|test)\/(sale|list)/.test(str));
-    }
+    ;(function(){}.require([''], 'ui.loginNew', true));
 
-    if (! isList(window.document.location.href)) {
-        (function(){}.require([''], 'ui.login', true));
-    }
-
-    J.ui.login = LoginPanel;
+    J.ui.loginNew = LoginPanel;
 })(J, document);
