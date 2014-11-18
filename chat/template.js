@@ -32,8 +32,18 @@
             '6' : getMapTpl,
             '106' : getSysTpl,
             '107': getSysTpl
-        };
+        }, types = [1, 2, 3, 9, 5, 6, 106, 107];
 
+        //非以上消息类型，忽略
+        function inArray(type) {
+            var i = 0;
+            for (; i < types.length; i++) {
+                if (types[i] == type) {
+                    return true;
+                }
+            }
+            return false;
+        }
 
         /**
          * 获取发送者的消息模板
@@ -41,6 +51,9 @@
          * @param content
          */
         function getSendMessageTpl(type, content, icon){
+            if (!inArray(type)) {
+                return null;
+            }
             return FUNS[type]('me', content);
         }
 
@@ -50,6 +63,9 @@
          * @param content
          */
         function getShiftMessageTpl(type, content, icon){  
+            if (!inArray(type)) {
+                return null;
+            }
             if(type!=106 && type!=107){
                 return FUNS[type]('jjr',content, icon);
             }else{
@@ -114,6 +130,9 @@
          * @param content
          */
         function getSysMessageTpl(type,content,callback){
+            if (!inArray(type)) {
+                return null;
+            }
             return FUNS[type](content,callback);
         }
 

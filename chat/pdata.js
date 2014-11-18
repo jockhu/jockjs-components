@@ -21,8 +21,8 @@
     function Pdata(){
 
         var opts = {
-            apiDomain : (C.isDev || C.isPg) ? 'http://api.anjuke.test/weiliao' : 'http://api.anjuke.com/weiliao',
-            longDomain: (C.isDev || C.isPg) ? 'http://dev.aifang.com:8080/register' : 'http://push10.anjuke.com/register'
+            apiDomain : C.isDev ? 'http://master.mp.dev.anjuke.com/weiliao' : (isPg ? 'http://api.anjuke.test/weiliao' : 'http://api.anjuke.com/weiliao'),
+            longDomain: (C.isDev || C.isPg) ? 'http://app20-011.i.ajkdns.com:8080/register' : 'http://push10.anjuke.com/register'
         }, fnid=0;
 
         function buildUrl(type){
@@ -104,7 +104,7 @@
         function getAccountInfo(brokerIds, callback) {
             J.post({
                 url: buildUrl('friend'),
-                data: {'user_id': brokerIds},
+                data: brokerIds,
                 type: 'json',
                 timeout: 20000,
                 onSuccess: callback
