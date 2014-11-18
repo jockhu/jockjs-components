@@ -444,6 +444,7 @@
                 }
             }
             messageBox = fn(msg.msg_type,msg.body, opts.icon.replace(/\.[a-z]+$/,function(str){return 'c'+str}));//加ｃ
+            if (!messageBox) return;
             //经纪人发给用户的图片，改成600*500
             (msg.msg_type == 2 && msg.to_uid == C.uid) ? msg.body = msg.body.replace(/(\d+)x(\d+)/, '599x499') : null;
             messageBox = fn(msg.msg_type,msg.body, opts.icon);
@@ -471,6 +472,7 @@
                 }
             }
             messageBox = fn(msg.msg_type,msg.body, opts.icon.replace(/\.[a-z]+$/,function(str){return 'c'+str}));//加ｃ
+            if (!messageBox) return;
             //经纪人发给用户的图片，改成600*500
             (msg.msg_type == 2 && msg.from_uid != C.uid) ? msg.body = msg.body.replace(/(\d+)x(\d+)/, '599x499') : null;
             messageBox = fn(msg.msg_type,msg.body, opts.icon);

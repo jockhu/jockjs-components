@@ -21,7 +21,7 @@
      * @constructor
      */
     function Brlist(){  
-        var BROKERSCACHE = {}, brokerCount = 0, TMPECACHE = {}, arrHtml = [], newBrokers = [], newBrokerIds = [], brLen = 0, listBox = J.g('brlist'), allUnreadMsgNum = 0;//联系人列表数组，每个元素是borker实例
+        var BROKERSCACHE = {}, brokerCount = 0, TMPECACHE = {}, arrHtml = [], newBrokers = [], sendBrIdObj ={}, newBrokerIds = [], brLen = 0, listBox = J.g('brlist'), allUnreadMsgNum = 0;//联系人列表数组，每个元素是borker实例
 
         /**
          * 初始化：只初始化BROKERSCACHE数组
@@ -60,8 +60,10 @@
         }
 
         function brCallback(arrData) {
-            if (!arrData || !arrData.result || !!arrData.result.length) return;
-            arrData = arrData.result;
+            //retcode=0表示成功
+            if (!arrData || !!arrData.retcode) return;
+
+            arrData = arrData.retdata.result;
             var i = 0, j;
             //newBrokerIds表明了右侧联系人展示的先后顺序
             for (; i < newBrokerIds.length; i++) {
@@ -88,7 +90,7 @@
                 name: result.nick_name,
                 icon: result.icon
             });
-            arrHtml.push(brObj.getHtml(v.new_msg_count, v.last_active * 1000));
+            arrHtml[newBroker.index] = brObj.getHtml(v.new_msg_count, v.last_active * 1000);
         }
 
         /*
@@ -158,12 +160,12 @@
                     brokerCount++;
 
                     brObj = BROKERSCACHE[v.from_uid];
-                    if( brObj ){
+                    if( brObj ){ 
                         arrHtml.push( brObj.getHtml(dealNewMsgCount, v.last_active * 1000) );
                         TMPECACHE[v.from_uid] = brObj;
                         boxMsgList[v.from_uid] = v.new_msg_count;  //key[uid]-value[new_msg_count]
                     }else{
-                        if (!!newBrokers.length) {
+                        if (!newBrokers.length) {
                             newBrokers = [{
                                 index: i,
                                 chatInfo: v
@@ -174,16 +176,18 @@
                                 chatInfo: v
                             });
                         }
-                        !!newBrokerIds.length ? (newBrokerIds = [v.from_uid]) : newBrokerIds.push(v.from_uid);
+                        arrHtml.push(i);
+                        !newBrokerIds.length ? (newBrokerIds = [v.from_uid]) : newBrokerIds.push(v.from_uid);
+                        sendBrIdObj['user_id[' + (newBrokerIds.length - 1) + ']'] = v.from_uid;   
                     }
                 });
-                //多个新经纪人一次性请求
-                C.pdata.getAccountInfo(newBrokerIds, brCallback);
-
                 //新经纪人数为０
-                if(!!newBrokers.length){
+                if(!newBrokerIds.length){
                     BROKERSCACHE = TMPECACHE;
                     listBox.html(arrHtml.join(''));
+                } else {
+                    //多个新经纪人一次性请求
+                    C.pdata.getAccountInfo(sendBrIdObj, brCallback);
                 }
 
                 //"所有经纪人"按钮显示未读消息数
