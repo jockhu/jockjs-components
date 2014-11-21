@@ -401,7 +401,9 @@
 
     //判断是否列表页，临时方案
     function isList(str) {
-        return (/\.(fang|zu|chat|xzl|sp).anjuke.(com|test)/.test(str)) || (/\.anjuke\.(com|test)\/(sale|list)/.test(str));
+        return ((/\.(fang|zu|chat|xzl|sp).anjuke.(com|test)/.test(str))
+            || (/\.anjuke\.(com|test)\/(sale|list|community|tycoon|maifang|gujia|ask)/.test(str))
+            || (/\.(fang|zu|chat|xzl|sp).dev.anjuke.(com|test)/.test(str)));
     }
 
     if (! isList(window.document.location.href)) {
