@@ -69,25 +69,21 @@
             var msgHTML = getMessageHTML(config.msgCount);
             var fxsStr = config.developUrl ? '<li><a href="'+config.developUrl+'">新房分销平台</a></li>' :'';
             config.my_anjuke = 'http://my.anjuke.com/user/broker/brokerhome';//临时处理方案，写死后台经纪人链接
-            var html='<div class="login_info">' + getAllMsgHTML(config.msgCount) + '<div class="l" id="login_l"><div class="m"><a href="'+config.my_anjuke+'" class="usr">'+config.userName+'</a>'+
-                '<i class="icon arrow-down"></i></span></div><div class="list" style="display: none;"><ul>'+
-                '<li><a href="'+config.msgUrl+'">我的消息'+ msgHTML+'</a></li>'+
-                '<li class="sep"></li>'+
-                '<li><a href="'+config.myanjuke+'">中国网络经纪人</a></li>'+
-                fxsStr +
-                '<li class="sep"></li>'+
-                '<li class="exit"><a class="exit" href="'+config.exit+'">退出</a></li>'+
-                '</ul></div>  '+
-                '</div>'+ appdown+
-                '</div>';
-            var notifyHTML = '<a class="u" href="'+config.myanjuke+'">中国网络经纪人</a>' +
-                (config.developUrl ? '<a class="u" href="'+config.developUrl+'">新房分销平台</a>' :'');
-            setContainerHtml(html,notifyHTML);
+
+            var html = '<div class="login_info">'
+                + getAllMsgHTML(config.msgCount)
+                + '<div class="dropdown broker-login" id="login_l">'
+                +   '<div class="title m">'
+                +       '<span>您好，</span><a href="'+config.my_anjuke+'" class="usr">'+config.userName+'</a><a class="exit" href="'+config.exit+'">[退出]</a>'
+                +       '<a href="'+config.msgUrl+'"><span class="text">消息</span>'+ msgHTML+'</a>'
+                +   '</div>'
+                + '</div>'
+                + '<div class="dropdown menu '+(config.developUrl ? '' : 'last-child')+'"><div class="title"><a class="u" href="'+config.myanjuke+'">中国网络经纪人</a></div></div>'
+                + ((config.developUrl) ? '<div class="dropdown menu last-child"><div class="title"><a class="u" href="'+config.developUrl+'">新房分销平台</a></div></div>' : '')
+                + '</div>';
+
+            setContainerHtml(html);
         }
-
-
-
-
 
         /**
          * 开发商
@@ -99,20 +95,15 @@
             var fytStr = config.fytUrl ? '<li><a href="'+config.fytUrl+'">房易通</a></li>' : '';
             var fxsStr = config.developUrl ? '<li><a href="'+config.developUrl+'">新房分销平台</a></li>' :'';
             config.my_anjuke = 'http://svip.fang.anjuke.com/login';//临时处理方案
-            var html='<div class="login_info">'+ getAllMsgHTML(config.msgCount) + '<div class="l" id="login_l"><div class="m"><a href="'+config.my_anjuke+'" class="usr">'+config.userName+'</a>'+
-                '<i class="icon arrow-down"></i></div><div class="list" style="display: none;"><ul>'+
-                '<li><a href="'+config.msgUrl+'">我的消息'+ msgHTML+'</a></li>'+
-                '<li class="sep"></li>'+
-                fytStr +
-                fxsStr +
-                ((fytStr || fxsStr) ? '<li class="sep"></li>' : '')+
-                '<li class="exit"><a class="exit" href="'+config.exit+'">退出</a></li>'+
-                '</ul></div>  '+
-                '</div>'+ appdown +
-                '</div>';
-            var notifyHTML = (config.fytUrl ? '<a class="u" href="'+config.fytUrl+'">房易通</a>' : '') +
-                (config.developUrl ? '<a class="u" href="'+config.developUrl+'">新房分销平台</a>' :'');
-            setContainerHtml(html,notifyHTML);
+
+            var html = '<div class="login_info">'
+                        + getAllMsgHTML(config.msgCount)
+                        + '<div class="dropdown developer-login" id="login_l">'
+                        +   '<div class="title m"><span>您好，</span><a href="'+config.my_anjuke+'" class="usr">'+config.userName+'</a><a class="exit" href="'+config.exit+'">[退出]</a></div>'
+                        + '</div>'
+                        + '<div class="dropdown notification last-child"><div class="title"><a href="'+config.msgUrl+'">消息'+ msgHTML+'</a></div></div>'
+                        + '</div>';
+            setContainerHtml(html);
         }
 
 
@@ -120,6 +111,7 @@
             if (content.length) {
                 content.html(clientHtml);
             }
+            //TODO::remove brokerHtml later
             if (eleBroker.length) {
                 eleBroker.html(brokerHtml);
             } else {
@@ -151,43 +143,7 @@
             return '<span class="'+msgClassName+'">'+msgNum+'</span>';
         }
         function bindEvent(){
-            /*
-            var thirdBlock = content.s(".o_b").eq(0);
-            thirdBlock.length && J.g("login_l").on("mouseenter",function(){
-                J.g("login_l").addClass("over");
-                thirdBlock.show();
-                J.s('.up_down_usr').length && (J.s('.up_down_usr').eq(0).get().style.backgroundPosition = '0 -172px');
-            }).on("mouseleave",function(){
-                J.g("login_l").removeClass("over");
-                thirdBlock.hide();
-                J.s('.up_down_usr').length && (J.s('.up_down_usr').eq(0).get().style.backgroundPosition = '0 -195px');
-            });
-            J.g("login_r")&& J.g("login_r").on("mouseenter",function(){
-                J.g("login_r").addClass("over");
-                J.site.trackEvent('navigation_favorite_hover');
-                J.s('.m_l').length && J.s('.m_l').eq(0).show();
-                J.s('.up_down_sc').length && (J.s('.up_down_sc').eq(0).get().style.backgroundPosition = '0 -172px');
-            }).on("mouseleave",function(){
-                J.g("login_r").removeClass("over");
-                J.s('.m_l').length && J.s('.m_l').eq(0).hide();
-                J.s('.up_down_sc').length && (J.s('.up_down_sc').eq(0).get().style.backgroundPosition = '0 -195px');
-            }).on('click', function() {
-                J.site.trackEvent('navigation_favorite_click');
-            });
-            */
             var dropdown = content.s('.dropdown');
-//            var dropdownList = content.s('list');
-//            dropdown.on('mouseenter', function(event) {
-//                console.log(1,event);
-//                var target = event.target ? event.target : event.srcElement;
-//                J.s('.list', target).show();
-//            });
-//            dropdown.on('mouseleave', function(event) {
-//                console.log(2,event);
-//                var target = event.target ? event.target : event.srcElement;
-//                J.s('.list', target).hide();
-//            });
-//
 
             dropdown.each(function(i, dom){
                 var list = J.s('.list', dom[0]);
