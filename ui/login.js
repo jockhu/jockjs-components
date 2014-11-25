@@ -401,11 +401,14 @@
 
     //判断是否列表页，临时方案
     function isList(str) {
-        str.replace(/\?(.*)/, '');//remove "?xxx" from url
+        var str = str.replace(/\?(.*)/, '');//remove "?xxx" from url
 
-        return /\.(fang|zu|chat|xzl|sp).anjuke.(com|test)/.test(str)
-            || /\.(fang|zu|chat|xzl|sp).dev.anjuke.(com|test)/.test(str)
-            || /\.anjuke\.(com|test)\/(sale|list|community|tycoon|maifang|gujia|ask)(\/)?$/.test(str);
+        return (! /\.anjuke\.(com|test)\/community\/view/.test(str))
+            &&
+            (  /\.(fang|zu|chat|xzl|sp).anjuke.(com|test)/.test(str)
+                || /\.(fang|zu|chat|xzl|sp).dev.anjuke.(com|test)/.test(str)
+                || /\.anjuke\.(com|test)\/(sale|list|community|tycoon|maifang|gujia|ask)/.test(str)
+                );
     }
 
     if (! isList(window.location.href)) {
