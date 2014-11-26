@@ -38,7 +38,7 @@
             var managerHTML = config.isMananer?'<li><a href="'+config.ask_center+'">问答中心</a></li>':'';//管理员用户
             var perHTML = expertHTML+managerHTML;
 
-            perHTML = perHTML ? perHTML+'<li class="sep"></li>':'';
+            perHTML = perHTML ? perHTML+'<li class="hr"></li>':'';
 
             //小黄条
             var notifyHTML = config.showNotiy ? '<div class="login_tip"> <a href="javascript:void(0);" url="'+config.qa_url+'" style="margin-left:5px;">'+config.msg_title+'</a>'+
