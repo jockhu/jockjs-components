@@ -403,7 +403,7 @@
     function isList(str) {
         var str = str.replace(/\?(.*)/, '');//remove "?xxx" from url
 
-        return (! /\.anjuke\.(com|test)\/community\/view/.test(str))
+        return (! /\.anjuke\.(com|test)\/(community|ask)\/view/.test(str))
             &&
             (  /\.(fang|zu|chat|xzl|sp).anjuke.(com|test)/.test(str)
                 || /\.(fang|zu|chat|xzl|sp).dev.anjuke.(com|test)/.test(str)
