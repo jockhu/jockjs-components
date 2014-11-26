@@ -399,21 +399,27 @@
         }
     }
 
-    //判断是否列表页，临时方案
+    // START - 判断是否列表页，临时方案.
+    //导航登陆逻辑
     function isList(str) {
         var str = str.replace(/\?(.*)/, '');//remove "?xxx" from url
 
-        return (! /\.anjuke\.(com|test)\/(community|ask)\/view/.test(str))
-            &&
-            (  /\.(fang|zu|chat|xzl|sp).anjuke.(com|test)/.test(str)
-                || /\.(fang|zu|chat|xzl|sp).dev.anjuke.(com|test)/.test(str)
-                || /\.anjuke\.(com|test)\/(sale|list|community|tycoon|maifang|gujia|ask)/.test(str)
-                );
+        return (
+            ! /\.anjuke\.(com|test)\/(community|ask)\/(view|props|trends|photos|photos2|round|qa)/.test(str)
+                &&
+                ! /\.(zu|xzl|sp)(\.dev)?.anjuke\.(com|test)\/(fangyuan|zu|shou|loupan|wuye)\/(\d+)/.test(str)
+            ) && (
+            /\.(fang|zu|chat|xzl|sp)(\.dev)?.anjuke.(com|test)/.test(str)
+                ||
+                /\.anjuke\.(com|test)\/(sale|list|community|tycoon|maifang|gujia|ask)/.test(str)
+            );
     }
+    J.site.isList = isList(window.location.href);
 
-    if (! isList(window.location.href)) {
+    if (! J.site.isList) {
         (function(){}.require([''], 'ui.login', true));
     }
+    // END - 判断是否列表页，临时方案.
 
     J.ui.login = LoginPanel;
 })(J, document);
