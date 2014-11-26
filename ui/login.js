@@ -410,6 +410,8 @@
                 ! /\.(zu|xzl|sp)(\.dev)?.anjuke\.(com|test)\/(fangyuan|zu|shou|loupan|wuye)\/(\d+)/.test(str)
                 &&
                 ! /\.anjuke\.(com|test)\/(baike)\/(\d+)/.test(str)
+                &&
+                ! /\.anjuke\.(com|test)\/rent/.test(str)
             ) && (
             /\.(fang|zu|chat|xzl|sp)(\.dev)?.anjuke.(com|test)/.test(str)
                 ||
