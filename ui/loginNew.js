@@ -381,7 +381,10 @@
         }
     }
 
-    ;(function(){}.require([''], 'ui.loginNew', true));
+    // 判断是否列表页，临时方案.
+    if (J.site.isList) {
+        (function(){}.require([''], 'ui.loginNew', true));
+    }
 
     J.ui.loginNew = LoginPanel;
 })(J, document);
