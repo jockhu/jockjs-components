@@ -409,13 +409,13 @@
                 &&
                 ! /\.(zu|xzl|sp)(\.dev)?.anjuke\.(com|test)\/(fangyuan|zu|shou|loupan|wuye)(\/(xiangce|jiaotong|canshu))?\/(\d+)/.test(str)
                 &&
-                ! /\.anjuke\.(com|test)\/(baike)\/(\d+)/.test(str)
+                ! /\.anjuke\.(com|test)\/(school|baike)\/(\d+)/.test(str)
                 &&
                 ! /\.anjuke\.(com|test)\/rent/.test(str)
             ) && (
             /\.(fang|zu|chat|xzl|sp)(\.dev)?.anjuke.(com|test)/.test(str)
                 ||
-                /\.anjuke\.(com|test)\/(sale|list|community|tycoon|maifang|gujia|ask|baike)/.test(str)
+                /\.anjuke\.(com|test)\/(sale|list|school|community|tycoon|maifang|gujia|ask|baike)/.test(str)
             );
     }
     J.site.isList = isList(window.location.href);
