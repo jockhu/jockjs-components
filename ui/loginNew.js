@@ -43,7 +43,7 @@
             //小黄条
             var notifyHTML = config.showNotiy ? '<div class="login_tip"> <a href="javascript:void(0);" url="'+config.qa_url+'" style="margin-left:5px;">'+config.msg_title+'</a>'+
                 '<span class="login_close"></span><span class="t_d"></span></div>':'';
-            var html='<div class="login_info">' + getAllMsgHTML(config.msgCount)+ notifyHTML + '<div class="dropdown user-login l" id="login_l"><div class="title m"><a href="'+config.my_anjuke+'" class="usr">'+config.userName+'</a>'+
+            var html='<div class="login_info">' + getAllMsgHTML(config.msgCount)+ notifyHTML + '<div class="dropdown user-login l" id="login_l"><div class="title m"><a href="'+config.my_anjuke+'" class="usr" alt="'+config.userName+'">'+config.userName+'</a>'+
                 '<i class="icon arrow-down"></i></div><div class="list" style="display: none;"><ul>'+perHTML+
                 '<li><a href="'+config.my_favorite+'">我的收藏</a></li>'+
                 '<li><a href="'+config.view_history+'">浏览历史</a></li>'+
@@ -74,7 +74,7 @@
                 + getAllMsgHTML(config.msgCount)
                 + '<div class="dropdown broker-login" id="login_l">'
                 +   '<div class="title m">'
-                +       '<span>您好，</span><a href="'+config.my_anjuke+'" class="usr">'+config.userName+'</a><a class="exit" href="'+config.exit+'">[退出]</a>'
+                +       '<span>您好，</span><a href="'+config.my_anjuke+'" class="usr" alt="'+config.userName+'">'+config.userName+'</a><a class="exit" href="'+config.exit+'">[退出]</a>'
                 +       '<a href="'+config.msgUrl+'"><span class="text">消息</span>'+ msgHTML+'</a>'
                 +   '</div>'
                 + '</div>'
@@ -99,7 +99,7 @@
             var html = '<div class="login_info">'
                         + getAllMsgHTML(config.msgCount)
                         + '<div class="dropdown developer-login" id="login_l">'
-                        +   '<div class="title m"><span>您好，</span><a href="'+config.my_anjuke+'" class="usr">'+config.userName+'</a><a class="exit" href="'+config.exit+'">[退出]</a></div>'
+                        +   '<div class="title m"><span>您好，</span><a href="'+config.my_anjuke+'" class="usr" alt="'+config.userName+'">'+config.userName+'</a><a class="exit" href="'+config.exit+'">[退出]</a></div>'
                         + '</div>'
                         + '<div class="dropdown notification last-child"><div class="title"><a href="'+config.msgUrl+'">消息'+ msgHTML+'</a></div></div>'
                         + '</div>';
@@ -217,7 +217,8 @@
                         isExpert:data.qamember.cons> -1 ||0,
                         isMananer:data.qamember.admin|| false,
                         msgCount:data.common.totalUnreadCount,
-                        userName:data.common.usernamestr ? ((data.common.usernamestr.length > 5) ? data.common.usernamestr.slice(0, 4)+'...' : data.common.usernamestr) : '',
+                        //userName:data.common.usernamestr ? ((data.common.usernamestr.length > 5) ? data.common.usernamestr.slice(0, 4)+'...' : data.common.usernamestr) : '',
+                        userName:data.common.usernamestr,
                         my_favorite:data.righturl.links.my_favorite,
                         my_recommend:data.righturl.links.my_recommend,
                         view_history:data.righturl.links.view_history,
@@ -238,7 +239,8 @@
                     html = getGeneralHTML(loginData);
                 }else if(userType == 2){//经济人
                     var data = {
-                        userName:data.common.usernamestr ? data.common.usernamestr.slice(0, 5):'',
+                        //userName:data.common.usernamestr ? data.common.usernamestr.slice(0, 5):'',
+                        userName:data.common.usernamestr,
                         exit:data.lefturl.logouturl||'#',
                         myanjuke:data.righturl.myanjuke||'#',//中国网络经纪人
                         msgUrl:data.lefturl.pmurl ||'#',
@@ -249,7 +251,8 @@
                     html = getBrokerHTML(data);
                 }else if(userType == 8){//开发商(房易通/分销平台)
                     var data = {
-                        userName:data.common.usernamestr ? data.common.usernamestr.slice(0, 5):'',
+                        //userName:data.common.usernamestr ? data.common.usernamestr.slice(0, 5):'',
+                        userName:data.common.usernamestr,
                         exit:data.lefturl.logouturl||'#',
                         myanjuke:data.righturl.links.fang_anjuke||'#',
                         msgUrl:data.lefturl.pmurl ||'#',
