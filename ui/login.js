@@ -407,7 +407,7 @@
         return (
             ! /\.anjuke\.(com|test)\/(community|ask)\/(view|props|trends|photos|photos2|round|qa)/.test(str)
                 &&
-                ! /\.(zu|xzl|sp)(\.dev)?.anjuke\.(com|test)\/(fangyuan|zu|shou|loupan|wuye)\/(\d+)/.test(str)
+                ! /\.(zu|xzl|sp)(\.dev)?.anjuke\.(com|test)\/(fangyuan|zu|shou|loupan|wuye)(\/(xiangce|jiaotong|canshu))?\/(\d+)/.test(str)
                 &&
                 ! /\.anjuke\.(com|test)\/(baike)\/(\d+)/.test(str)
                 &&
