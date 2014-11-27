@@ -282,7 +282,7 @@
         }
         function getMyFavorites(data){
             var countDom = J.g("login_r") && J.g("login_r").s(".my").eq(0);
-            if (!countDom) {
+            if (!countDom.length) {
                 return;
             }
             var str='';
