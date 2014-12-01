@@ -74,7 +74,7 @@
                 + getAllMsgHTML(config.msgCount)
                 + '<div class="dropdown broker-login" id="login_l">'
                 +   '<div class="title m">'
-                +       '<span>您好，</span><a href="'+config.my_anjuke+'" class="usr" alt="'+config.userName+'">'+config.userName+'</a><a class="exit" href="'+config.exit+'">[退出]</a>'
+                +       '<span>您好，' + config.userName + '</span><a class="exit" href="'+config.exit+'">[退出]</a>'
                 +       '<a href="'+config.msgUrl+'"><span class="text">消息</span>'+ msgHTML+'</a>'
                 +   '</div>'
                 + '</div>'
