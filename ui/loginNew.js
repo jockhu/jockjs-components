@@ -64,7 +64,10 @@
 
         }
 
-
+        /**
+         * 经纪人
+         * @param data
+         * @returns {string}*/
         function getBrokerHTML(config) {
             var msgHTML = getMessageHTML(config.msgCount);
             var fxsStr = config.developUrl ? '<li><a href="'+config.developUrl+'">新房分销平台</a></li>' :'';
@@ -74,8 +77,8 @@
                 + getAllMsgHTML(config.msgCount)
                 + '<div class="dropdown broker-login" id="login_l">'
                 +   '<div class="title m">'
-                +       '<span>您好，' + config.userName + '</span><a class="exit" href="'+config.exit+'">[退出]</a>'
-                +       '<a href="'+config.msgUrl+'"><span class="text">消息</span>'+ msgHTML+'</a>'
+                +       '<span class="name">您好，' + config.userName + '</span><a class="exit ie6" href="'+config.exit+'">[退出]</a>'
+                +       '<a class="ie6" href="'+config.msgUrl+'"><span class="text">消息</span>'+ msgHTML+'</a>'
                 +   '</div>'
                 + '</div>'
                 + '<div class="dropdown menu '+(config.developUrl ? '' : 'last-child')+'"><div class="title"><a class="u" href="'+config.myanjuke+'">中国网络经纪人</a></div></div>'
@@ -99,7 +102,7 @@
             var html = '<div class="login_info">'
                         + getAllMsgHTML(config.msgCount)
                         + '<div class="dropdown developer-login" id="login_l">'
-                        +   '<div class="title m"><span>您好，</span><a href="'+config.my_anjuke+'" class="usr" alt="'+config.userName+'">'+config.userName+'</a><a class="exit" href="'+config.exit+'">[退出]</a></div>'
+                        +   '<div class="title m"><span class="name">您好，'+config.userName+'</span><a class="exit" href="'+config.exit+'">[退出]</a></div>'
                         + '</div>'
                         + '<div class="dropdown notification last-child"><div class="title"><a href="'+config.msgUrl+'">消息'+ msgHTML+'</a></div></div>'
                         + '</div>';
