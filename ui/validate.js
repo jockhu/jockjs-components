@@ -372,7 +372,7 @@
                     });
                 }
 
-                if ('text' === elmType || 'TEXTAREA' === tagName) {
+                if ('text' === elmType || 'TEXTAREA' === tagName || 'password' === elmType) {
                     elm.on('focus', function () {
                         // 如果获得焦点已经在验证的过程中，不对状态进行复位，失去焦点就不会做重复的验证
                         if(getStatus() !== -2) setStatus(-1);
