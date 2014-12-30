@@ -122,7 +122,7 @@
                     'auth':C.auth,
                     'r': Math.random()
                 },
-                timeout: 5000,
+                timeout: 30000,
                 type: 'jsonp',
                 onFailure:function(data){
                     callback(data)
