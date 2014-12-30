@@ -375,7 +375,7 @@
                         return false;
                     }
                     if(!ret.retcode){
-                        !maxMsgId&&(maxMsgId = ret.retdata.result);
+                        !maxMsgId&&(maxMsgId = ret.retdata.result.msg_id);
                         //brlist 里面没有数据的情况下，发送消息添加联系人
                         if(type != 3 && !C.brlist.BROKERSCACHE[opts.id]){
                             opts.created = msg.created;
@@ -419,7 +419,7 @@
                     if (data&&!data.retcode) {
                         aWrong.parentNode.removeChild(aWrong);
                         aWrong.onclick = null;
-                        maxMsgId = data.retdata.result;
+                        maxMsgId = data.retdata.result.msg_id;
                     }
                 });
             }
