@@ -263,7 +263,7 @@
             if(opts.type=='home'){
                 var elem=J.g(opts.elem),elem_text=elem.s('span').eq(0);
                 if(pageIndex < x){
-                    elem_text.removeClass('loading').html('更多推荐<i class="icon-m">&#xe603;</i>');
+                    elem_text.removeClass('loading').html('更多推荐<i class="icon-m">&#xe602;</i>');
                 }else if(pageIndex >= x){
                     elem.hide();
                 }
