@@ -57,7 +57,7 @@
                 '<li class="exit"><a class="exit" href="'+config.exit+'">退出</a></li>'+
                 '</ul></div>  '+
                 '</div>'+
-                '<div class="dropdown favorite last-child r" id="login_r"><div class="title"><a class="my" href="'+config.my_favorite+'">收藏夹</a><i class="icon arrow-down"></i></div><div class="list " style="display: none"><ul class="m_l">'+
+                '<div class="dropdown favorite last-child r" id="login_r"><div class="title"><a class="my" href="'+config.my_favorite+'">收藏夹</a></div><div class="list " style="display: none"><ul class="m_l">'+
                 '<li class="empty"><span>您的收藏夹是空的，赶紧收藏吧！</span></li>'+
                 '</ul></div></div>' + appdown + '</div>';
             setContainerHtml(html, '');
