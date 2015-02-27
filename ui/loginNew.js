@@ -57,7 +57,7 @@
                 '<li class="exit"><a class="exit" href="'+config.exit+'">退出</a></li>'+
                 '</ul></div>  '+
                 '</div>'+
-                '<div class="dropdown favorite last-child r" id="login_r"><div class="title"><a class="my" href="'+config.my_favorite+'">收藏夹（0）</a><i class="icon arrow-down"></i></div><div class="list " style="display: none"><ul class="m_l">'+
+                '<div class="dropdown favorite last-child r" id="login_r"><div class="title"><a class="my" href="'+config.my_favorite+'">收藏夹</a><i class="icon arrow-down"></i></div><div class="list " style="display: none"><ul class="m_l">'+
                 '<li class="empty"><span>您的收藏夹是空的，赶紧收藏吧！</span></li>'+
                 '</ul></div></div>' + appdown + '</div>';
             setContainerHtml(html, '');
@@ -147,17 +147,25 @@
         }
         function bindEvent(){
             var dropdown = content.s('.dropdown');
-
-            dropdown.each(function(i, dom){
-                var list = J.s('.list', dom[0]);
-                dom.on('mouseenter', function(e){
-                    dom.addClass('hover');
-                    list.show();
-                }).on('mouseleave', function(e){
-                    dom.removeClass('hover');
-                    list.hide();
-                });
-            });
+            var downxin=content.s('.dropdown').eq(0);
+            var listxin = J.s('.list').eq(0);
+            downxin.on('mouseenter',function(){
+                downxin.addClass('hover');
+                listxin.show();
+            }).on('mouseleave',function(){
+                downxin.removeClass('hover');
+                listxin.hide()
+            })
+            // dropdown.each(function(i, dom){
+            //     var list = J.s('.list', dom[0]);
+            //     dom.on('mouseenter', function(e){
+            //         dom.addClass('hover');
+            //         list.show();
+            //     }).on('mouseleave', function(e){
+            //         dom.removeClass('hover');
+            //         list.hide();
+            //     });
+            // });
 
             //
             var closeDom = J.s(".login_close").length?J.s(".login_close").eq(0):false;
@@ -189,7 +197,7 @@
             });
             //
 
-            getFavoriteCount();
+            //getFavoriteCount();
             !isgetFav&&(getMyFavorites(),isgetFav=true);
 
             J.s(".glbR").length&&J.s(".glbR").eq(0).show();
@@ -351,7 +359,7 @@
                         content.html('<li class="empty"><span>您的收藏夹是空的，赶紧收藏吧！</span></li>');
                     }
                 });
-                getMyFavorites();
+                //getMyFavorites();
             })()
         }
         function getFavoriteCount(data){

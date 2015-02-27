@@ -57,7 +57,7 @@
                 '<li class="exit"><a class="exit" href="'+config.exit+'">退出</a></li>'+
                 '</ul></div>  '+
                 '</div>'+
-                '<div class="r" id="login_r"><a class="my" href="'+config.my_favorite+'">收藏夹（0）</a><span class="up_down_sc"></span><ul class="m_l" style="display: none">'+
+                '<div class="r" id="login_r"><a class="my" href="'+config.my_favorite+'">收藏夹</a><span class="up_down_sc"></span><ul class="m_l" style="display: none">'+
                 '<li class="empty"><span>您的收藏夹是空的，赶紧收藏吧！</span></li>'+
                 '</ul></div>' + appdown + '</div>';
             setContainerHtml(html, '');
@@ -161,16 +161,19 @@
                 thirdBlock.hide();
                 J.s('.up_down_usr').length && (J.s('.up_down_usr').eq(0).get().style.backgroundPosition = '0 -195px');
             });
-            J.g("login_r")&& J.g("login_r").on("mouseenter",function(){
-                J.g("login_r").addClass("over");
-                J.site.trackEvent('navigation_favorite_hover');
-                J.s('.m_l').length && J.s('.m_l').eq(0).show();
-                J.s('.up_down_sc').length && (J.s('.up_down_sc').eq(0).get().style.backgroundPosition = '0 -172px');
-            }).on("mouseleave",function(){
-                J.g("login_r").removeClass("over");
-                J.s('.m_l').length && J.s('.m_l').eq(0).hide();
-                J.s('.up_down_sc').length && (J.s('.up_down_sc').eq(0).get().style.backgroundPosition = '0 -195px');
-            }).on('click', function() {
+            // J.g("login_r")&& J.g("login_r").on("mouseenter",function(){
+            //     J.g("login_r").addClass("over");
+            //     J.site.trackEvent('navigation_favorite_hover');
+            //     J.s('.m_l').length && J.s('.m_l').eq(0).show();
+            //     J.s('.up_down_sc').length && (J.s('.up_down_sc').eq(0).get().style.backgroundPosition = '0 -172px');
+            // }).on("mouseleave",function(){
+            //     J.g("login_r").removeClass("over");
+            //     J.s('.m_l').length && J.s('.m_l').eq(0).hide();
+            //     J.s('.up_down_sc').length && (J.s('.up_down_sc').eq(0).get().style.backgroundPosition = '0 -195px');
+            // }).on('click', function() {
+            //     J.site.trackEvent('navigation_favorite_click');
+            // });
+            J.g("login_r")&& J.g("login_r").on('click', function() {
                 J.site.trackEvent('navigation_favorite_click');
             });
 
@@ -204,7 +207,7 @@
             });
             //
 
-            getFavoriteCount();
+            //getFavoriteCount();
             !isgetFav&&(getMyFavorites(),isgetFav=true);
 
             J.s(".glbR").length&&J.s(".glbR").eq(0).show();
@@ -363,7 +366,7 @@
                         content.html('<li class="empty"><span>您的收藏夹是空的，赶紧收藏吧！</span></li>');
                     }
                 });
-                getMyFavorites();
+                //getMyFavorites();
             })()
         }
         function getFavoriteCount(data){
