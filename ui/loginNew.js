@@ -313,7 +313,8 @@
                     html=html+str;
                 }
                 var myCount = J.g("login_r").s(".my").eq(0).html();
-                var count = (myCount && myCount.match(/\d+/)[0]) || 0;
+                //var count = (myCount && myCount.match(/\d+/)[0]) || 0;
+                var count = 0;
                 html = html + '<li class="nav_count">收藏夹里共有'+count+'个收藏</li><li style="padding-top: 0px!important;padding-bottom: 3px!important;"><a class="li_btn" href="'+ J.g('login_r').s("a").eq(0).attr("href")+'">查看全部收藏</a></li>';
                 content.html(html);
                 var lis = content.s("li");
