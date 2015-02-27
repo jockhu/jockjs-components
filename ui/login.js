@@ -208,7 +208,7 @@
             //
 
             //getFavoriteCount();
-            !isgetFav&&(getMyFavorites(),isgetFav=true);
+            //!isgetFav&&(getMyFavorites(),isgetFav=true);
 
             J.s(".glbR").length&&J.s(".glbR").eq(0).show();
             J.s(".R_user").length&&J.s(".R_user").eq(0).show();
