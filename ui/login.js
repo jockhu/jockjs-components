@@ -283,79 +283,79 @@
             }
             bindEvent();
         }
-        function getMyFavorites(data){
-            var countDom = J.g("login_r") && J.g("login_r").s(".my").eq(0);
-            if (!countDom.length) {
-                return;
-            }
-            var str='';
-            if(!data){
-                isgetFav = true;
-                var url = baseUrl+'ajax/favorite/list_4_favorite';
-                J.get({
-                    url:url,
-                    type:'jsonp',
-                    data:{r:Math.random()},callback:' loginObj.getFavorite'});
-                return;
-            }
+        // function getMyFavorites(data){
+        //     var countDom = J.g("login_r") && J.g("login_r").s(".my").eq(0);
+        //     if (!countDom.length) {
+        //         return;
+        //     }
+        //     var str='';
+        //     if(!data){
+        //         isgetFav = true;
+        //         var url = baseUrl+'ajax/favorite/list_4_favorite';
+        //         J.get({
+        //             url:url,
+        //             type:'jsonp',
+        //             data:{r:Math.random()},callback:' loginObj.getFavorite'});
+        //         return;
+        //     }
 
-            var delUrl = baseUrl+'ajax/favorite/del_favorite';
-            var content = J.g("login_r")&&J.g("login_r").s("ul").eq(0);
-            if(!data.code&&data.val.length){
-                var isLogin = J.getCookie('aQQ_ajkauthinfos');
-                var loginStr = isLogin?'':'<li style="border: 1px solid #fc6;background-color: #fefded;padding: 0;text-indent: 10px;line-height: 34px;margin: 10px 0;">该收藏仅在本设备暂时保存，若需永久保存并同步请<a style="display: inline" _target="blank" href="'+loginUrl+'">登录</a>。</li>';
-                var arr = data.val,html='<li class="t">最近加入的房子</li>'+loginStr;
-                countDom.html() && countDom.html(countDom.html().replace(/\d+/,data.num.num));
-                for(var i=0,len=arr.length;i<len;i++){
-                    if(arr[i].is_invalid){
-                        str ='<li style="padding: 0;cursor: default">'+
-                            '<span style="color: #999;padding: 0;line-height: 34px;">本房源已失效，您可以从列表中删除</span>'+
-                            '<div class="li_r" style="top:0" ><a style="line-height: 34px;" onclick="return false;" href="javascript:void(0)" data-cids="'+arr[i].id+'">删除</a></div></li>';
-                        html=html+str;
-                        continue;
-                    }
-                    str = '<li><a href="'+arr[i].link+'" class="li_a"><img src="'+arr[i].image+'" alt=""/></a>'+
-                        '<div class="li_c"><a href="'+arr[i].link+'">['+arr[i].category+']'+arr[i].title+'</a><div>'+arr[i].info+'</div></div>'+
-                        '<div class="li_r"><em>'+arr[i].price+'</em><a onclick="return false;" href="javascript:void(0)" data-cids="'+arr[i].id+'">删除</a></div></li>';
-                    html=html+str;
-                }
-                var myCount = J.g("login_r").s(".my").eq(0).html();
-                //var count = (myCount && myCount.match(/\d+/)[0]) || 0;
-                var count = 0;
-                html = html + '<li class="nav_count">收藏夹里共有'+count+'个收藏</li><li style="padding-top: 0px!important;padding-bottom: 3px!important;"><a class="li_btn" href="'+ J.g('login_r').s("a").eq(0).attr("href")+'">查看全部收藏</a></li>';
-                content.html(html);
-                var lis = content.s("li");
-                lis.each(function(k,v){
-                    if(!k||k==lis.length-1 || k==lis.length-2){
-                        return;
-                    }
-                    v.on('mouseenter',function(){
-                        v.addClass("active");
-                    });
-                    v.on('mouseleave',function(){
-                        v.removeClass("active");
-                    });
-                    v.on('click',function(){
-                        J.site.trackEvent('navigation_favorite_everydata');
-                        location.href= v.s("a").eq(0).attr("href");
-                    });
-                    v.s("a").each(function(k,v){
-                        v.on('click',function(e){
-                            if(e&& e.stopPropagation){ e.stopPropagation()}else{
-                                window.event.cancelBubble = true;
-                            }
-                            if(v.html()==='删除'){
-                                //删除收藏的房源操作。
-                                J.get({url:delUrl,callback:' loginObj.delFavorite',type:"jsonp",data:{cids: v.attr("data-cids")}});
-                            }
-                        });
-                    });
-                });
-                return;
-            }
-            countDom.html(countDom.html().replace(/\d+/,0));
-            content.html('<li class="empty"><span>您的收藏夹是空的，赶紧收藏吧！</span></li>');
-        }
+        //     var delUrl = baseUrl+'ajax/favorite/del_favorite';
+        //     var content = J.g("login_r")&&J.g("login_r").s("ul").eq(0);
+        //     if(!data.code&&data.val.length){
+        //         var isLogin = J.getCookie('aQQ_ajkauthinfos');
+        //         var loginStr = isLogin?'':'<li style="border: 1px solid #fc6;background-color: #fefded;padding: 0;text-indent: 10px;line-height: 34px;margin: 10px 0;">该收藏仅在本设备暂时保存，若需永久保存并同步请<a style="display: inline" _target="blank" href="'+loginUrl+'">登录</a>。</li>';
+        //         var arr = data.val,html='<li class="t">最近加入的房子</li>'+loginStr;
+        //         countDom.html() && countDom.html(countDom.html().replace(/\d+/,data.num.num));
+        //         for(var i=0,len=arr.length;i<len;i++){
+        //             if(arr[i].is_invalid){
+        //                 str ='<li style="padding: 0;cursor: default">'+
+        //                     '<span style="color: #999;padding: 0;line-height: 34px;">本房源已失效，您可以从列表中删除</span>'+
+        //                     '<div class="li_r" style="top:0" ><a style="line-height: 34px;" onclick="return false;" href="javascript:void(0)" data-cids="'+arr[i].id+'">删除</a></div></li>';
+        //                 html=html+str;
+        //                 continue;
+        //             }
+        //             str = '<li><a href="'+arr[i].link+'" class="li_a"><img src="'+arr[i].image+'" alt=""/></a>'+
+        //                 '<div class="li_c"><a href="'+arr[i].link+'">['+arr[i].category+']'+arr[i].title+'</a><div>'+arr[i].info+'</div></div>'+
+        //                 '<div class="li_r"><em>'+arr[i].price+'</em><a onclick="return false;" href="javascript:void(0)" data-cids="'+arr[i].id+'">删除</a></div></li>';
+        //             html=html+str;
+        //         }
+        //         var myCount = J.g("login_r").s(".my").eq(0).html();
+        //         //var count = (myCount && myCount.match(/\d+/)[0]) || 0;
+        //         var count = 0;
+        //         html = html + '<li class="nav_count">收藏夹里共有'+count+'个收藏</li><li style="padding-top: 0px!important;padding-bottom: 3px!important;"><a class="li_btn" href="'+ J.g('login_r').s("a").eq(0).attr("href")+'">查看全部收藏</a></li>';
+        //         content.html(html);
+        //         var lis = content.s("li");
+        //         lis.each(function(k,v){
+        //             if(!k||k==lis.length-1 || k==lis.length-2){
+        //                 return;
+        //             }
+        //             v.on('mouseenter',function(){
+        //                 v.addClass("active");
+        //             });
+        //             v.on('mouseleave',function(){
+        //                 v.removeClass("active");
+        //             });
+        //             v.on('click',function(){
+        //                 J.site.trackEvent('navigation_favorite_everydata');
+        //                 location.href= v.s("a").eq(0).attr("href");
+        //             });
+        //             v.s("a").each(function(k,v){
+        //                 v.on('click',function(e){
+        //                     if(e&& e.stopPropagation){ e.stopPropagation()}else{
+        //                         window.event.cancelBubble = true;
+        //                     }
+        //                     if(v.html()==='删除'){
+        //                         //删除收藏的房源操作。
+        //                         J.get({url:delUrl,callback:' loginObj.delFavorite',type:"jsonp",data:{cids: v.attr("data-cids")}});
+        //                     }
+        //                 });
+        //             });
+        //         });
+        //         return;
+        //     }
+        //     countDom.html(countDom.html().replace(/\d+/,0));
+        //     content.html('<li class="empty"><span>您的收藏夹是空的，赶紧收藏吧！</span></li>');
+        // }
         function delMyFavorite(data){
             var content = J.g("login_r")&&J.g("login_r").s("ul").eq(0);
             !data.code&&(function(){
